@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  RootScreen.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/08/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct RootScreen: View {
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -20,5 +20,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    RootScreen()
 }
