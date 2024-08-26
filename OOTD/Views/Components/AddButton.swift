@@ -14,15 +14,11 @@ struct AddButton: View {
         Button {
             action()
         } label: {
-            Rectangle()
-                .opacity(0)
-                .overlay {
-                    Image(systemName: "plus")
-                        .font(.title)
-                        .foregroundColor(.gray)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .aspectRatio(1, contentMode: .fill)
+            AspectRatioContainer(aspectRatio: 1) {
+                Image(systemName: "plus")
+                    .foregroundColor(.gray)
+                    .font(.system(size: 40))
+            }
         }
     }
 }
