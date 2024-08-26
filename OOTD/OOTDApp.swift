@@ -11,7 +11,7 @@ import SwiftUI
 struct OOTDApp: App {
     var body: some Scene {
         WindowGroup {
-            RootScreen()
+            RootView()
         }
     }
 }
