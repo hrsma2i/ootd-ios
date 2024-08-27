@@ -40,7 +40,6 @@
 		8862328C2C7CC71F00A1802D /* RoundRectangleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862327E2C7CC71F00A1802D /* RoundRectangleButton.swift */; };
 		886232902C7CC71F00A1802D /* AspectRatioContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232822C7CC71F00A1802D /* AspectRatioContainer.swift */; };
 		886232912C7CC71F00A1802D /* OutfitsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232832C7CC71F00A1802D /* OutfitsRow.swift */; };
-		886232922C7CC71F00A1802D /* WebImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232842C7CC71F00A1802D /* WebImage.swift */; };
 		886232932C7CC71F00A1802D /* WrappedLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232852C7CC71F00A1802D /* WrappedLayout.swift */; };
 		886232942C7CC71F00A1802D /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232862C7CC71F00A1802D /* AddButton.swift */; };
 		886232982C7CC78B00A1802D /* ItemDeleteConfirmOutfitsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232972C7CC78B00A1802D /* ItemDeleteConfirmOutfitsSheet.swift */; };
@@ -114,7 +113,6 @@
 		8862327E2C7CC71F00A1802D /* RoundRectangleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RoundRectangleButton.swift; path = ../../../../Closet/Closet/Views/Components/RoundRectangleButton.swift; sourceTree = "<group>"; };
 		886232822C7CC71F00A1802D /* AspectRatioContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AspectRatioContainer.swift; path = ../../../../Closet/Closet/Views/Components/AspectRatioContainer.swift; sourceTree = "<group>"; };
 		886232832C7CC71F00A1802D /* OutfitsRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitsRow.swift; sourceTree = "<group>"; };
-		886232842C7CC71F00A1802D /* WebImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebImage.swift; sourceTree = "<group>"; };
 		886232852C7CC71F00A1802D /* WrappedLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrappedLayout.swift; sourceTree = "<group>"; };
 		886232862C7CC71F00A1802D /* AddButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddButton.swift; sourceTree = "<group>"; };
 		886232972C7CC78B00A1802D /* ItemDeleteConfirmOutfitsSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDeleteConfirmOutfitsSheet.swift; sourceTree = "<group>"; };
@@ -276,7 +274,6 @@
 				886232832C7CC71F00A1802D /* OutfitsRow.swift */,
 				8862327E2C7CC71F00A1802D /* RoundRectangleButton.swift */,
 				8862327B2C7CC71E00A1802D /* SelectedItemsGrid.swift */,
-				886232842C7CC71F00A1802D /* WebImage.swift */,
 				886232852C7CC71F00A1802D /* WrappedLayout.swift */,
 			);
 			path = Components;
@@ -503,7 +500,6 @@
 			files = (
 				8862324D2C7CC23100A1802D /* SampleItemDataSource.swift in Sources */,
 				8862324E2C7CC23100A1802D /* ItemDataSource.swift in Sources */,
-				886232922C7CC71F00A1802D /* WebImage.swift in Sources */,
 				886232462C7CC11700A1802D /* Logger.swift in Sources */,
 				886232432C7CC0E900A1802D /* HashableView.swift in Sources */,
 				886232642C7CC32900A1802D /* ItemFilter.swift in Sources */,
