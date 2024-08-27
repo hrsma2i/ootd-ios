@@ -19,50 +19,13 @@ struct ItemCard: View {
         isThumbnail ? item.thumbnailURL ?? item.imageURL : item.imageURL
     }
 
-    func imageView(_ image: Image) -> some View {
-        image
-            .resizable()
-            .scaledToFit()
-            .padding(padding)
-    }
-
-    var errorView: some View {
-        VStack(spacing: 5) {
-            Image(systemName: "multiply.circle.fill")
-            // フォントサイズを View のサイズに合わせる
-            // https://stackoverflow.com/questions/57035746/how-to-scale-text-to-fit-parent-view-with-swiftui
-            Text("読み込みエラー")
-                .font(.system(size: 500))
-                .minimumScaleFactor(0.01)
-                .lineLimit(1)
-                .font(.callout)
-        }
-        .foregroundColor(.red)
-    }
-
-    @ViewBuilder
     var body: some View {
-        AspectRatioContainer(aspectRatio: 1) {
-            if let image = item.image {
-                imageView(Image(uiImage: image))
-            } else if let url {
-                CachedAsyncImage(url: URL(string: url)) { phase in
-                    if let image = phase.image {
-                        imageView(image)
-                    } else if let error = phase.error {
-                        errorView
-                            .task {
-                                logger.error("\(error.localizedDescription)")
-                            }
-                    } else {
-                        ProgressView()
-                    }
-                }
-            } else {
-                errorView
-            }
-        }
-        .background(.white)
+        ImageCard(
+            uiImage: item.image,
+            url: url,
+            aspectRatio: 1,
+            padding: padding
+        )
     }
 }
 
