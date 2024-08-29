@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		884CF6562C7F670200250026 /* LocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6552C7F670200250026 /* LocalStorage.swift */; };
 		886232102C7CBDD900A1802D /* OOTDApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862320F2C7CBDD900A1802D /* OOTDApp.swift */; };
 		886232142C7CBDDA00A1802D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 886232132C7CBDDA00A1802D /* Assets.xcassets */; };
 		886232172C7CBDDA00A1802D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 886232162C7CBDDA00A1802D /* Preview Assets.xcassets */; };
@@ -58,6 +59,7 @@
 		886232B52C7CCA7800A1802D /* UserInfoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232B12C7CCA7800A1802D /* UserInfoScreen.swift */; };
 		886232B92C7CCB5000A1802D /* ItemCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232B82C7CCB5000A1802D /* ItemCard.swift */; };
 		886232BD2C7CCC9100A1802D /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232BC2C7CCC9100A1802D /* NavigationManager.swift */; };
+		88B2BCE92C7E0E89008F45B7 /* SwiftDataItemDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B2BCE82C7E0E89008F45B7 /* SwiftDataItemDataSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +80,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		884CF6522C7F597600250026 /* sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = sample.xcconfig; sourceTree = "<group>"; };
+		884CF6532C7F599300250026 /* swiftData.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swiftData.xcconfig; sourceTree = "<group>"; };
+		884CF6542C7F5F1800250026 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		884CF6552C7F670200250026 /* LocalStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorage.swift; sourceTree = "<group>"; };
 		8862320C2C7CBDD900A1802D /* OOTD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OOTD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8862320F2C7CBDD900A1802D /* OOTDApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OOTDApp.swift; sourceTree = "<group>"; };
 		886232132C7CBDDA00A1802D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -131,6 +137,7 @@
 		886232B12C7CCA7800A1802D /* UserInfoScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoScreen.swift; sourceTree = "<group>"; };
 		886232B82C7CCB5000A1802D /* ItemCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCard.swift; sourceTree = "<group>"; };
 		886232BC2C7CCC9100A1802D /* NavigationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationManager.swift; sourceTree = "<group>"; };
+		88B2BCE82C7E0E89008F45B7 /* SwiftDataItemDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataItemDataSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,9 +166,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		884CF6512C7F596000250026 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				884CF6522C7F597600250026 /* sample.xcconfig */,
+				884CF6532C7F599300250026 /* swiftData.xcconfig */,
+			);
+			path = xcconfig;
+			sourceTree = "<group>";
+		};
 		886232032C7CBDD900A1802D = {
 			isa = PBXGroup;
 			children = (
+				884CF6512C7F596000250026 /* xcconfig */,
 				8862320E2C7CBDD900A1802D /* OOTD */,
 				8862321F2C7CBDDA00A1802D /* OOTDTests */,
 				886232292C7CBDDA00A1802D /* OOTDUITests */,
@@ -182,6 +199,7 @@
 		8862320E2C7CBDD900A1802D /* OOTD */ = {
 			isa = PBXGroup;
 			children = (
+				884CF6542C7F5F1800250026 /* Info.plist */,
 				886232A22C7CC7D100A1802D /* Extensions */,
 				886232472C7CC12D00A1802D /* Models */,
 				886232442C7CC10A00A1802D /* Others */,
@@ -259,6 +277,7 @@
 			children = (
 				8862324B2C7CC23000A1802D /* ItemDataSource.swift */,
 				8862324A2C7CC23000A1802D /* SampleItemDataSource.swift */,
+				88B2BCE82C7E0E89008F45B7 /* SwiftDataItemDataSource.swift */,
 			);
 			path = Item;
 			sourceTree = "<group>";
@@ -294,6 +313,7 @@
 				886232672C7CC4C600A1802D /* Config.swift */,
 				886232782C7CC6EC00A1802D /* downloadImage.swift */,
 				886232452C7CC11700A1802D /* Logger.swift */,
+				884CF6552C7F670200250026 /* LocalStorage.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -509,6 +529,7 @@
 				886232BD2C7CCC9100A1802D /* NavigationManager.swift in Sources */,
 				886232A72C7CC7D100A1802D /* View+functionalModifier.swift in Sources */,
 				886232892C7CC71F00A1802D /* SelectedItemsGrid.swift in Sources */,
+				88B2BCE92C7E0E89008F45B7 /* SwiftDataItemDataSource.swift in Sources */,
 				886232402C7CC08600A1802D /* ItemGrid.swift in Sources */,
 				886232982C7CC78B00A1802D /* ItemDeleteConfirmOutfitsSheet.swift in Sources */,
 				886232662C7CC32900A1802D /* OutfitCondition.swift in Sources */,
@@ -529,6 +550,7 @@
 				886232AD2C7CC9F500A1802D /* RootView.swift in Sources */,
 				886232B32C7CCA7800A1802D /* OutfitGrid.swift in Sources */,
 				886232532C7CC2A700A1802D /* ItemStore.swift in Sources */,
+				884CF6562C7F670200250026 /* LocalStorage.swift in Sources */,
 				886232932C7CC71F00A1802D /* WrappedLayout.swift in Sources */,
 				886232102C7CBDD900A1802D /* OOTDApp.swift in Sources */,
 				8862326C2C7CC53C00A1802D /* DependencyInjector.swift in Sources */,
@@ -581,6 +603,7 @@
 /* Begin XCBuildConfiguration section */
 		8862322E2C7CBDDA00A1802D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 884CF6522C7F597600250026 /* sample.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -644,6 +667,7 @@
 		};
 		8862322F2C7CBDDA00A1802D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 884CF6532C7F599300250026 /* swiftData.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -709,6 +733,7 @@
 				DEVELOPMENT_TEAM = UYA338GXZR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OOTD/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -738,6 +763,7 @@
 				DEVELOPMENT_TEAM = UYA338GXZR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OOTD/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

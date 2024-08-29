@@ -17,6 +17,8 @@ class OutfitStore: ObservableObject {
         switch dataSourceType {
         case .sample:
             dataSource = SampleOutfitDataSource()
+        case .swiftData:
+            dataSource = SampleOutfitDataSource()
         }
     }
 

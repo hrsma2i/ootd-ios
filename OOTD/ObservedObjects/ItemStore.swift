@@ -14,10 +14,13 @@ class ItemStore: ObservableObject {
 
     @Published var items: [Item] = []
 
+    @MainActor
     init(_ dataSourceType: DataSourceType = .sample) {
         switch dataSourceType {
         case .sample:
             dataSource = SampleItemDataSource()
+        case .swiftData:
+            dataSource = SwiftDataItemDataSource.shared
         }
     }
 

@@ -4,10 +4,33 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>OOTD.xcscheme_^#shared#^_</key>
+		<key>Debug.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+		<key>Release.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>8862320B2C7CBDD900A1802D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8862321B2C7CBDDA00A1802D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>886232252C7CBDDA00A1802D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

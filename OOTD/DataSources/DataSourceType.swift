@@ -9,4 +9,5 @@ import Foundation
 
 enum DataSourceType: String {
     case sample
+    case swiftData
 }

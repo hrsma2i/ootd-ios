@@ -19,9 +19,35 @@ struct ItemCard: View {
         isThumbnail ? item.thumbnailURL ?? item.imageURL : item.imageURL
     }
 
+    // TODO: Image 内に image 取得メソッドを持たせ、描画時に取得したほうがいいか？Storage を protocol で抽象化して、 Firebase Storage にも切り替えられるようにする？
+    var image: UIImage? {
+        if let image = item.image {
+            return image
+        }
+
+        guard let imagePath = item.imagePath,
+              let thumbnailPath = item.thumbnailPath
+        else {
+            return nil
+        }
+
+        do {
+            if isThumbnail {
+                let thumbnail = try LocalStorage.loadImage(from: thumbnailPath)
+                return thumbnail
+            } else {
+                let image = try LocalStorage.loadImage(from: imagePath)
+                return image
+            }
+        } catch {
+            logger.warning("\(error)")
+            return nil
+        }
+    }
+
     var body: some View {
         ImageCard(
-            uiImage: item.image,
+            uiImage: image,
             url: url,
             aspectRatio: 1,
             padding: padding

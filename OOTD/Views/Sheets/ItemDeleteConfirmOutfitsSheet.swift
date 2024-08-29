@@ -157,6 +157,7 @@ struct ItemDeleteConfirmOutfitsSheet: HashableView {
 }
 
 #Preview {
+    @MainActor
     struct PreviewView: View {
         let outfitStore = OutfitStore()
         let itemStore = ItemStore()
