@@ -118,6 +118,15 @@ final class SwiftDataItemDataSource: ItemDataSource {
                 let dto = try toDTO(item)
                 logger.debug("[SwiftData] delete item id=\(dto.id)")
                 context.delete(dto)
+
+                guard let imagePath = item.imagePath,
+                      let thumbnailPath = item.thumbnailPath
+                else {
+                    throw "[SwiftData] either imagePath or thumbnailPath is nil"
+                }
+
+                try LocalStorage.remove(at: imagePath)
+                try LocalStorage.remove(at: thumbnailPath)
             } catch {
                 logger.error("\(error)")
             }

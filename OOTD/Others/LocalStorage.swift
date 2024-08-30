@@ -43,11 +43,13 @@ enum LocalStorage {
 
     static func load(from relPath: String) throws -> Data {
         let path = directory.appendingPathComponent(relPath)
-
-        guard let data = try? Data(contentsOf: path) else {
-            throw "[LocalStorage] failed to load data from \(path)"
-        }
-
+        let data = try Data(contentsOf: path)
         return data
+    }
+
+    static func remove(at relPath: String) throws {
+        let path = directory.appendingPathComponent(relPath)
+        try manager.removeItem(at: path)
+        logger.debug("[LocalStorage] remove \(path)")
     }
 }
