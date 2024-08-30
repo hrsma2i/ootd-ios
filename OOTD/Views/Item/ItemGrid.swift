@@ -59,7 +59,7 @@ struct ItemGrid: HashableView {
     var categoryFilterButton: some View {
         RoundRectangleButton(
             text: filter.category?.rawValue ?? "カテゴリー", systemName: "line.horizontal.3.decrease",
-            color: filter.category == nil ? .black : .blue
+            fill: filter.category != nil
         ) {
             activeSheet = .categorySelect
         }
