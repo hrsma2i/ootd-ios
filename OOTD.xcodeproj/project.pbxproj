@@ -204,7 +204,7 @@
 				886232472C7CC12D00A1802D /* Models */,
 				886232442C7CC10A00A1802D /* Others */,
 				8862323B2C7CBF3200A1802D /* DataSources */,
-				8862323A2C7CBF1C00A1802D /* ObservedObjects */,
+				8862323A2C7CBF1C00A1802D /* ObservableObjects */,
 				886232392C7CBF1500A1802D /* Views */,
 				8862320F2C7CBDD900A1802D /* OOTDApp.swift */,
 				886232132C7CBDDA00A1802D /* Assets.xcassets */,
@@ -252,14 +252,14 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		8862323A2C7CBF1C00A1802D /* ObservedObjects */ = {
+		8862323A2C7CBF1C00A1802D /* ObservableObjects */ = {
 			isa = PBXGroup;
 			children = (
 				886232BC2C7CCC9100A1802D /* NavigationManager.swift */,
 				886232552C7CC2EE00A1802D /* OutfitStore.swift */,
 				886232512C7CC2A700A1802D /* ItemStore.swift */,
 			);
-			path = ObservedObjects;
+			path = ObservableObjects;
 			sourceTree = "<group>";
 		};
 		8862323B2C7CBF3200A1802D /* DataSources */ = {
