@@ -129,14 +129,18 @@ struct OutfitDetail: HashableView {
         }
         .sheet(isPresented: $isImagePickerPresented) {
             ImagePicker(
-                isPresented: $isImagePickerPresented,
                 selectionLimit: 1
             ) { images in
-                if images.isEmpty { return }
+                if images.isEmpty {
+                    isImagePickerPresented = false
+                    return
+                }
 
                 if let image = images.first {
                     outfit.image = image
                 }
+
+                isImagePickerPresented = false
             }
         }
         .navigationDestination(for: ItemGrid.self) { $0 }

@@ -11,7 +11,6 @@ import SwiftUI
 struct ImagePicker: UIViewControllerRepresentable {
     typealias ImageSelectionHandler = ([UIImage]) -> Void
 
-    @Binding var isPresented: Bool
     var selectionLimit = 0 // 0 は制限なしを意味します
     let onImagesSelected: ImageSelectionHandler
 
@@ -41,8 +40,6 @@ struct ImagePicker: UIViewControllerRepresentable {
         }
 
         func picker(_: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            parent.isPresented = false
-
             var selectedImages: [UIImage] = []
 
             let group = DispatchGroup()

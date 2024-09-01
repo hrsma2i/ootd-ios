@@ -33,12 +33,13 @@ struct ItemGrid: HashableView {
     // MARK: - private
 
     @State private var isSelectable: Bool
-    @State private var isImagePickerPresented = false
     @State private var isAlertPresented = false
 
     private enum ActiveSheet: Int, Identifiable {
         case itemDeleteConfirmOutfits
         case categorySelect
+        case imagePicker
+        case addOptions
 
         var id: Int {
             rawValue
@@ -201,6 +202,31 @@ struct ItemGrid: HashableView {
         }
     }
 
+    func addOption(_ text: String, action: @escaping () -> Void = {}) -> some View {
+        return RoundRectangleButton(
+            text: text,
+            fontSize: 20,
+            radius: 5,
+            action: action
+        )
+    }
+
+    var addOptionsSheet: some View {
+        // navigation や sheet を切り替えやすくするため他の View に切り出さない
+        VStack {
+            addOption(
+                "カメラロールから"
+            ) {
+                activeSheet = .imagePicker
+            }
+
+            addOption(
+                "Webから"
+            )
+        }
+        .presentationDetents([.fraction(0.18)])
+    }
+
     var body: some View {
         let spacing: CGFloat = 2
         let columns = Array(repeating: GridItem(.flexible(), spacing: spacing), count: numColumns)
@@ -210,7 +236,7 @@ struct ItemGrid: HashableView {
                 LazyVGrid(columns: columns, spacing: spacing) {
                     if !isOnlySelectable {
                         AddButton {
-                            isImagePickerPresented = true
+                            activeSheet = .addOptions
                         }
                     }
 
@@ -228,19 +254,6 @@ struct ItemGrid: HashableView {
             $0
                 .navigationTitle("アイテム選択")
                 .navigationBarTitleDisplayMode(.inline)
-        }
-        .sheet(isPresented: $isImagePickerPresented) {
-            ImagePicker(isPresented: $isImagePickerPresented) { images in
-                if images.isEmpty { return }
-
-                let items = images.map {
-                    Item(image: $0)
-                }
-
-                navigation.path.append(ItemDetail(
-                    items: items
-                ))
-            }
         }
         .alert("本当に削除しますか？", isPresented: $isAlertPresented) {
             Button(role: .cancel) {} label: { Text("戻る") }
@@ -280,6 +293,27 @@ struct ItemGrid: HashableView {
                     activeSheet = nil
                     filter.category = category
                 }
+
+            case .imagePicker:
+                ImagePicker { images in
+                    if images.isEmpty {
+                        activeSheet = nil
+                        return
+                    }
+
+                    let items = images.map {
+                        Item(image: $0)
+                    }
+
+                    navigation.path.append(ItemDetail(
+                        items: items
+                    ))
+
+                    activeSheet = nil
+                }
+
+            case .addOptions:
+                addOptionsSheet
             }
         }
         .navigationBarBackButtonHidden(true)
