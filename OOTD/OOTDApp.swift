@@ -12,6 +12,10 @@ struct OOTDApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .task {
+                    // to avoid initial delay
+                    let _ = WebViewRepresentable.webView
+                }
         }
     }
 }

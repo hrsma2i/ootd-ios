@@ -16,6 +16,16 @@ public struct WebViewRepresentable: UIViewRepresentable {
     private let configuration: WKWebViewConfiguration?
     private let beforeLoad: (WKWebView) -> Void
 
+    static let webView = initWebView()
+
+    private static func initWebView() -> WKWebView {
+        let webView = WKWebView()
+        let request = URLRequest(url: URL(string: "https://example.com")!)
+        webView.load(request)
+        logger.debug("init webView to avoid first delay")
+        return webView
+    }
+
     public init(
         url: URL? = nil,
         configuration: WKWebViewConfiguration? = nil,
@@ -27,7 +37,7 @@ public struct WebViewRepresentable: UIViewRepresentable {
     }
 
     public func makeUIView(context: Context) -> WKWebView {
-        let _view = configuration == nil ? WKWebView() : WKWebView(frame: .zero, configuration: configuration!)
+        let _view = configuration == nil ? WebViewRepresentable.webView : WKWebView(frame: .zero, configuration: configuration!)
         beforeLoad(_view)
         _view.load(URLRequest(url: url!))
         return _view
