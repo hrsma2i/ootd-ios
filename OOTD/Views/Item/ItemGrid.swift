@@ -222,7 +222,12 @@ struct ItemGrid: HashableView {
 
             addOption(
                 "Webから"
-            )
+            ) {
+                activeSheet = nil
+                navigation.path.append(
+                    ItemAddSelectWebSiteScreen()
+                )
+            }
         }
         .presentationDetents([.fraction(0.18)])
     }
@@ -318,6 +323,7 @@ struct ItemGrid: HashableView {
         }
         .navigationBarBackButtonHidden(true)
         .navigationDestination(for: ItemDetail.self) { $0 }
+        .navigationDestination(for: ItemAddSelectWebSiteScreen.self) { $0 }
     }
 }
 

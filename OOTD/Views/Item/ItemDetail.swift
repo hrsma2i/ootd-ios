@@ -69,10 +69,10 @@ struct ItemDetail: HashableView {
 
                 for (i, item) in items.enumerated() {
                     if item.id == nil {
-                        guard item.image != nil else {
-                            logger.error("ID=nil Item has no UIImage")
-                            continue
-                        }
+//                        guard item.image != nil else {
+//                            logger.error("ID=nil Item has no UIImage")
+//                            continue
+//                        }
                         newItems.append(item)
                     } else {
                         existingItems.append(item)

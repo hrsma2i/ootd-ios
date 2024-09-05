@@ -1,6 +1,15 @@
 {
-  "originHash" : "a7db8808998c060790a871e06c703b552c6ba31781b413905af0c83fa0a78604",
+  "originHash" : "f608433bf67a1dc4f78887e1e43933b13553bf2fafa37a61e90dc2638e7af21c",
   "pins" : [
+    {
+      "identity" : "swiftsoup",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scinfu/SwiftSoup",
+      "state" : {
+        "revision" : "3c2c7e1e72b8abd96eafbae80323c5c1e5317437",
+        "version" : "2.7.5"
+      }
+    },
     {
       "identity" : "swiftui-cached-async-image",
       "kind" : "remoteSourceControl",
