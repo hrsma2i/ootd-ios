@@ -28,10 +28,14 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         }
     }
 
+    private var currentYear: Int {
+        Calendar.current.component(.year, from: Date())
+    }
+
     var body: some View {
         List {
             Section("インポート元") {
-                siteButton("ZOZOTOWN", url: "https://zozo.jp/_member/orderhistory/default.html?ohtype=1")
+                siteButton("ZOZOTOWN", url: "https://zozo.jp/sp/_member/orderhistory/?ohid=&ohtype=2&baship=2&ohterm=\(currentYear)")
                 siteButton("GU", url: "https://www.gu-global.com/jp/ja/member/purchase/history")
                 siteButton("UNIQLO", url: "https://www.uniqlo.com/jp/ja/member/purchase/history")
                 siteButton("Instagram", url: "https://www.instagram.com/")

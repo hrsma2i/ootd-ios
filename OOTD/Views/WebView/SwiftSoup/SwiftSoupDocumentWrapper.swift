@@ -111,10 +111,17 @@ struct SwiftSoupDocumentWrapper {
 //            }
         case .zozo:
             let urls = try defaultCase()
-            return urls.filter {
+            let goodsImageUrls = urls.filter {
                 $0.hasPrefix("https://c.imgz.jp")
-                    && $0.hasSuffix("_500.jpg")
             }
+            
+            // 画像サイズを500に変更
+            let pattern = #"(_d_)\d+(.jpg)"#
+            let scaledUrls = goodsImageUrls.map {
+                $0.replacingOccurrences(of: pattern, with: "$1500$2", options: .regularExpression)
+            }
+            return scaledUrls
+
         default:
             return try defaultCase()
         }

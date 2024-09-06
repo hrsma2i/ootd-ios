@@ -403,14 +403,22 @@
 		88CD559B2C8749E800A9B78A /* WebView */ = {
 			isa = PBXGroup;
 			children = (
+				88CD55AB2C89F53B00A9B78A /* SwiftSoup */,
 				88CD55972C8749E800A9B78A /* WebViewManager.swift */,
-				88CD55A32C8755CD00A9B78A /* SwiftSoupDocumentWrapper.swift */,
 				88CD55982C8749E800A9B78A /* WebViewRepresentable.swift */,
 				88CD55A12C874E9800A9B78A /* SelectWebImageScreen.swift */,
 				88CD55992C8749E800A9B78A /* ImageImportWebView.swift */,
 				88CD559A2C8749E800A9B78A /* WKWebView+getCookie.swift */,
 			);
 			path = WebView;
+			sourceTree = "<group>";
+		};
+		88CD55AB2C89F53B00A9B78A /* SwiftSoup */ = {
+			isa = PBXGroup;
+			children = (
+				88CD55A32C8755CD00A9B78A /* SwiftSoupDocumentWrapper.swift */,
+			);
+			path = SwiftSoup;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
