@@ -49,6 +49,26 @@ struct ImageImportWebView: HashableView {
         }
     }
 
+    var isImportblePage: Bool {
+        guard let currentUrl = manager.currentUrl?.absoluteString else {
+            return false
+        }
+
+        return !currentUrl.hasPrefix("https://zozo.jp") || isZOZOImportablePage
+    }
+
+    var isZOZOImportablePage: Bool {
+        guard let currentUrl = manager.currentUrl?.absoluteString else {
+            return false
+        }
+
+        let goodsDetailPattern = #"https://zozo\.jp/sp/shop/[\w-]+/(goods-sale|goods)/\d+/"#
+
+        return
+            currentUrl.hasPrefix("https://zozo.jp/sp/_member/orderhistory/")
+                || currentUrl.range(of: goodsDetailPattern, options: .regularExpression) != nil
+    }
+
     var button: some View {
         RoundRectangleButton(text: "画像を選ぶ", fontSize: 20) {
             manager.recieveSaveButtonTapped()
@@ -68,7 +88,9 @@ struct ImageImportWebView: HashableView {
 
             Divider()
 
-            button
+            if isImportblePage {
+                button
+            }
         }
         .navigationDestination(for: SelectWebImageScreen.self) { $0 }
     }

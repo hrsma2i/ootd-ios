@@ -15,6 +15,7 @@ final class WebViewManager: ObservableObject {
     @Published var isLoading = false
     @Published var estimatedProgress = 0.0
     @Published var lastButtonTappedAt: Date? = nil
+    @Published var currentUrl: URL? = nil
     var cancellable: Cancellable? = nil
 
     func observeWebViewProperties(_ webView: WKWebView) {
@@ -27,6 +28,9 @@ final class WebViewManager: ObservableObject {
 
             webView.publisher(for: \.estimatedProgress)
                 .assign(to: &self.$estimatedProgress)
+
+            webView.publisher(for: \.url)
+                .assign(to: &self.$currentUrl)
         }
     }
 
