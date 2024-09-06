@@ -10,8 +10,9 @@ import SwiftSoup
 
 private let logger = getLogger(#file)
 
-enum URLDomain: String {
+enum URLDomain: String, CaseIterable {
     case zozo = "zozo.jp"
+    case uniqlo = "uniqlo.com"
 //    case instagram = "instagram.com"
 }
 
@@ -28,9 +29,11 @@ struct SwiftSoupDocumentWrapper {
     
     var domain: URLDomain? {
         guard let host = URL(string: url)?.host else { return nil }
-
-        if host.contains(URLDomain.zozo.rawValue) {
-            return URLDomain.zozo
+        
+        for domain in URLDomain.allCases {
+            if host.contains(domain.rawValue) {
+                return domain
+            }
         }
 
         return nil
@@ -121,6 +124,14 @@ struct SwiftSoupDocumentWrapper {
                 $0.replacingOccurrences(of: pattern, with: "500$1", options: .regularExpression)
             }
             return scaledUrls
+        
+        case .uniqlo:
+            let urls = try defaultCase()
+            let pattern = #"https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/\d+/item/goods_\d+_\d+.*\.jpg"#
+            let validUrls = urls.filter {
+                $0.range(of: pattern, options: .regularExpression) != nil
+            }
+            return validUrls
 
         default:
             return try defaultCase()
