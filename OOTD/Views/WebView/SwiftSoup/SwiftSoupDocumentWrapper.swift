@@ -116,9 +116,9 @@ struct SwiftSoupDocumentWrapper {
             }
             
             // 画像サイズを500に変更
-            let pattern = #"(_d_)\d+(.jpg)"#
+            let pattern = #"\d+(.jpg)"#
             let scaledUrls = goodsImageUrls.map {
-                $0.replacingOccurrences(of: pattern, with: "$1500$2", options: .regularExpression)
+                $0.replacingOccurrences(of: pattern, with: "500$1", options: .regularExpression)
             }
             return scaledUrls
 
