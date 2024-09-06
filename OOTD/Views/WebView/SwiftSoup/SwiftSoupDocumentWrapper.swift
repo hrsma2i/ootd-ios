@@ -13,6 +13,7 @@ private let logger = getLogger(#file)
 enum URLDomain: String, CaseIterable {
     case zozo = "zozo.jp"
     case uniqlo = "uniqlo.com"
+    case gu = "gu-global.com"
 //    case instagram = "instagram.com"
 }
 
@@ -127,9 +128,24 @@ struct SwiftSoupDocumentWrapper {
         
         case .uniqlo:
             let urls = try defaultCase()
-            let pattern = #"https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/\d+/item/goods_\d+_\d+.*\.jpg"#
+            let pattern = #"https://image.uniqlo.com/UQ/ST3/(jp|AsianCommon)/imagesgoods/\d+/item/(jpgoods|goods)_\d+_\d+.*\.jpg"#
             let validUrls = urls.filter {
                 $0.range(of: pattern, options: .regularExpression) != nil
+            }
+            return validUrls
+
+        case .gu:
+            let urls = try defaultCase()
+            let urlsWoQueryParams = urls.map {
+                // remove query params
+                $0.split(separator: "?").first.map(String.init) ?? $0
+            }
+
+            let pattern = #"https://image.uniqlo.com/GU/ST3/(jp|AsianCommon)/imagesgoods/\d+/item/(jpgoods|goods)_\d+_\d+.*\.jpg"#
+            let pattern2 = #"https://image.uniqlo.com/GU/ST3/(jp|AsianCommon)/imagesgoods/\d+/sub/(jpgoods|goods)_\d+_sub\d+.*\.jpg"#
+            let validUrls = urlsWoQueryParams.filter {
+                $0.range(of: pattern, options: .regularExpression) != nil
+                    || $0.range(of: pattern2, options: .regularExpression) != nil
             }
             return validUrls
 
