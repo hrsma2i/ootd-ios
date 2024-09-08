@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		883B54452C8DD547007DB1E8 /* BrightroomEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 883B54442C8DD547007DB1E8 /* BrightroomEngine */; };
+		883B54472C8DD547007DB1E8 /* BrightroomUI in Frameworks */ = {isa = PBXBuildFile; productRef = 883B54462C8DD547007DB1E8 /* BrightroomUI */; };
+		883B54492C8DD5B8007DB1E8 /* CropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883B54482C8DD5B8007DB1E8 /* CropView.swift */; };
 		884CF6562C7F670200250026 /* LocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6552C7F670200250026 /* LocalStorage.swift */; };
 		884CF65E2C82018400250026 /* RoundRectangleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF65D2C82018400250026 /* RoundRectangleButton.swift */; };
 		884CF66C2C8201F900250026 /* MasonryGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6602C8201F800250026 /* MasonryGrid.swift */; };
@@ -88,6 +91,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		883B54482C8DD5B8007DB1E8 /* CropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropView.swift; sourceTree = "<group>"; };
 		884CF6522C7F597600250026 /* sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = sample.xcconfig; sourceTree = "<group>"; };
 		884CF6532C7F599300250026 /* swiftData.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swiftData.xcconfig; sourceTree = "<group>"; };
 		884CF6542C7F5F1800250026 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -160,8 +164,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				883B54452C8DD547007DB1E8 /* BrightroomEngine in Frameworks */,
 				886232772C7CC6CD00A1802D /* CachedAsyncImage in Frameworks */,
 				88CD55A72C8755E700A9B78A /* SwiftSoup in Frameworks */,
+				883B54472C8DD547007DB1E8 /* BrightroomUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +271,7 @@
 				886232962C7CC78100A1802D /* Sheets */,
 				886232412C7CC0D400A1802D /* Others */,
 				8862323E2C7CC03C00A1802D /* Components */,
+				883B54482C8DD5B8007DB1E8 /* CropView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -440,6 +447,8 @@
 			packageProductDependencies = (
 				886232762C7CC6CD00A1802D /* CachedAsyncImage */,
 				88CD55A62C8755E700A9B78A /* SwiftSoup */,
+				883B54442C8DD547007DB1E8 /* BrightroomEngine */,
+				883B54462C8DD547007DB1E8 /* BrightroomUI */,
 			);
 			productName = OOTD;
 			productReference = 8862320C2C7CBDD900A1802D /* OOTD.app */;
@@ -516,6 +525,7 @@
 			packageReferences = (
 				886232752C7CC6CD00A1802D /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
 				88CD55A52C8755E700A9B78A /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+				883B54432C8DD547007DB1E8 /* XCRemoteSwiftPackageReference "Brightroom" */,
 			);
 			productRefGroup = 8862320D2C7CBDD900A1802D /* Products */;
 			projectDirPath = "";
@@ -593,6 +603,7 @@
 				886232492C7CC14300A1802D /* Item.swift in Sources */,
 				88CD559D2C8749E800A9B78A /* WebViewManager.swift in Sources */,
 				884CF66C2C8201F900250026 /* MasonryGrid.swift in Sources */,
+				883B54492C8DD5B8007DB1E8 /* CropView.swift in Sources */,
 				886232722C7CC65200A1802D /* ItemDetail.swift in Sources */,
 				886232682C7CC4C600A1802D /* Config.swift in Sources */,
 				8862325D2C7CC2FF00A1802D /* OutfitDataSource.swift in Sources */,
@@ -950,6 +961,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		883B54432C8DD547007DB1E8 /* XCRemoteSwiftPackageReference "Brightroom" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/FluidGroup/Brightroom.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.10.1;
+			};
+		};
 		886232752C7CC6CD00A1802D /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image";
@@ -969,6 +988,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		883B54442C8DD547007DB1E8 /* BrightroomEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 883B54432C8DD547007DB1E8 /* XCRemoteSwiftPackageReference "Brightroom" */;
+			productName = BrightroomEngine;
+		};
+		883B54462C8DD547007DB1E8 /* BrightroomUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 883B54432C8DD547007DB1E8 /* XCRemoteSwiftPackageReference "Brightroom" */;
+			productName = BrightroomUI;
+		};
 		886232762C7CC6CD00A1802D /* CachedAsyncImage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 886232752C7CC6CD00A1802D /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
