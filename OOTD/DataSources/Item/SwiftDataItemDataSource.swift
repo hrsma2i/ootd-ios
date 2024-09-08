@@ -104,6 +104,9 @@ final class SwiftDataItemDataSource: ItemDataSource {
                 let dto = try toDTO(item)
                 context.insert(dto)
                 logger.debug("[SwiftData] insert updated item id=\(dto.id)")
+
+                // TODO: 画像を編集したときだけ更新したい
+                try await saveImage(item)
             } catch {
                 logger.error("\(error)")
             }

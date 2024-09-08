@@ -69,10 +69,6 @@ struct ItemDetail: HashableView {
 
                 for (i, item) in items.enumerated() {
                     if item.id == nil {
-//                        guard item.image != nil else {
-//                            logger.error("ID=nil Item has no UIImage")
-//                            continue
-//                        }
                         newItems.append(item)
                     } else {
                         existingItems.append(item)
@@ -92,16 +88,49 @@ struct ItemDetail: HashableView {
         }
     }
 
+    func itemCard(_ item: Item, index: Int = 0) -> some View {
+        Button {
+            Task {
+                let onCropped: (UIImage) -> Void = { uiImage in
+                    // 新規アイテムの id=nil なので、 Item.id ではなく index で特定する
+                    items[index] = item
+                        .copyWith(\.imageURL, value: nil)
+                        .copyWith(\.image, value: uiImage)
+
+                    navigation.path.removeLast()
+                }
+
+                let view: ImageCropView
+                if let url = item.imageURL {
+                    let data = try await downloadImage(url)
+                    view = try ImageCropView(data: data, onCropped: onCropped)
+                } else if let uiImage = item.image {
+                    view = ImageCropView(uiImage: uiImage, onCropped: onCropped)
+                } else if let imagePath = item.imagePath {
+                    let uiImage = try LocalStorage.loadImage(from: imagePath)
+                    view = ImageCropView(uiImage: uiImage, onCropped: onCropped)
+                } else {
+                    logger.error("no item image")
+                    return
+                }
+
+                navigation.path.append(view)
+            }
+        } label: {
+            ItemCard(item: item)
+        }
+    }
+
     var body: some View {
         ZStack {
             ScrollView {
                 if items.count == 1, let item = items.first {
-                    ItemCard(item: item)
+                    itemCard(item)
                 } else {
                     ScrollView(.horizontal) {
                         HStack {
-                            ForEach(items, id: \.self) { item in
-                                ItemCard(item: item)
+                            ForEach(0 ..< items.count, id: \.self) { i in
+                                itemCard(items[i], index: i)
                             }
                             .frame(height: 250)
                         }
@@ -169,6 +198,7 @@ struct ItemDetail: HashableView {
         } message: {
             Text("このまま戻ると、編集内容がすべて失われます。")
         }
+        .navigationDestination(for: ImageCropView.self) { $0 }
     }
 }
 
