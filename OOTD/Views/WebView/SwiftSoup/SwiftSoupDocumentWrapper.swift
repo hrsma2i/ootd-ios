@@ -100,9 +100,22 @@ struct SwiftSoupDocumentWrapper {
     private func _imageURLs() async throws -> [String] {
         func defaultCase() throws -> [String] {
             let imgs = try doc.select("img")
-            return imgs.compactMap {
+            
+            var imgUrls = imgs.compactMap {
                 try? $0.attr("src")
             }
+            
+            imgUrls = imgUrls.map {
+                if $0.hasPrefix("//") {
+                    return "https:\($0)"
+                } else if $0.hasPrefix("/") {
+                    guard let host = URL(string: url)?.host else { return $0 }
+                    return "https://\(host)\($0)"
+                }
+                return $0
+            }
+            
+            return imgUrls
         }
         
         switch domain {
@@ -157,6 +170,7 @@ struct SwiftSoupDocumentWrapper {
     func imageURLs() async throws -> [String] {
         let urls = try await _imageURLs()
         let deduplicatedUrls = Array(Set(urls))
+        // TODO: サイズ順にする？それともサイズで足切りする？
         let sortedUrls = deduplicatedUrls.sorted()
         return sortedUrls
     }
