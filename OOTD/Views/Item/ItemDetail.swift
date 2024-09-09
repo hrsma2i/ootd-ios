@@ -89,35 +89,56 @@ struct ItemDetail: HashableView {
     }
 
     func itemCard(_ item: Item, index: Int = 0) -> some View {
-        Button {
-            Task {
-                let onCropped: (UIImage) -> Void = { uiImage in
-                    // 新規アイテムの id=nil なので、 Item.id ではなく index で特定する
-                    items[index] = item
-                        .copyWith(\.imageURL, value: nil)
-                        .copyWith(\.image, value: uiImage)
-
-                    navigation.path.removeLast()
-                }
-
-                let view: ImageCropView
-                if let url = item.imageURL {
-                    let data = try await downloadImage(url)
-                    view = try ImageCropView(data: data, onCropped: onCropped)
-                } else if let uiImage = item.image {
-                    view = ImageCropView(uiImage: uiImage, onCropped: onCropped)
-                } else if let imagePath = item.imagePath {
-                    let uiImage = try LocalStorage.loadImage(from: imagePath)
-                    view = ImageCropView(uiImage: uiImage, onCropped: onCropped)
-                } else {
-                    logger.error("no item image")
-                    return
-                }
-
-                navigation.path.append(view)
-            }
-        } label: {
+        ZStack(alignment: .bottomTrailing) {
             ItemCard(item: item)
+
+            Button {
+                Task {
+                    let onCropped: (UIImage) -> Void = { uiImage in
+                        // 新規アイテムの id=nil なので、 Item.id ではなく index で特定する
+                        items[index] = item
+                            .copyWith(\.imageURL, value: nil)
+                            .copyWith(\.image, value: uiImage)
+
+                        navigation.path.removeLast()
+                    }
+
+                    let view: ImageCropView
+                    if let url = item.imageURL {
+                        let data = try await downloadImage(url)
+                        view = try ImageCropView(data: data, onCropped: onCropped)
+                    } else if let uiImage = item.image {
+                        view = ImageCropView(uiImage: uiImage, onCropped: onCropped)
+                    } else if let imagePath = item.imagePath {
+                        let uiImage = try LocalStorage.loadImage(from: imagePath)
+                        view = ImageCropView(uiImage: uiImage, onCropped: onCropped)
+                    } else {
+                        logger.error("no item image")
+                        return
+                    }
+
+                    navigation.path.append(view)
+                }
+            } label: {
+                var height: CGFloat = 40
+                var fontSize: CGFloat = 23
+                var padding: CGFloat = 10
+                if items.count >= 2 {
+                    height *= 0.75
+                    fontSize *= 0.75
+                    padding *= 0.75
+                }
+                return Circle()
+                    .foregroundColor(.black)
+                    .opacity(0.5)
+                    .frame(height: height)
+                    .overlay {
+                        Image(systemName: "crop")
+                            .foregroundColor(.white)
+                            .font(.system(size: fontSize))
+                    }
+                    .padding(padding)
+            }
         }
     }
 
