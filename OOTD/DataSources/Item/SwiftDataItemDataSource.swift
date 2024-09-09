@@ -14,18 +14,21 @@ private let logger = getLogger(#file)
 final class SwiftDataItemDataSource: ItemDataSource {
     @Model
     class ItemDTO {
-        init(id: String? = nil, category: String = Category.uncategorized.rawValue) {
+        init(id: String? = nil, category: String = Category.uncategorized.rawValue, sourceUrl: String? = nil) {
             self.id = id ?? UUID().uuidString
             self.category = category
+            self.sourceUrl = sourceUrl
         }
 
         init(from item: Item) {
             self.id = item.id ?? UUID().uuidString
             self.category = item.category.rawValue
+            self.sourceUrl = item.sourceUrl
         }
 
         @Attribute(.unique) var id: String
         var category: String
+        var sourceUrl: String?
     }
 
     var container: ModelContainer
@@ -143,7 +146,8 @@ final class SwiftDataItemDataSource: ItemDataSource {
 
         return Item(
             id: dto.id,
-            category: category
+            category: category,
+            sourceUrl: dto.sourceUrl
         )
     }
 

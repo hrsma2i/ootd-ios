@@ -144,31 +144,56 @@ struct ItemDetail: HashableView {
 
     var body: some View {
         ZStack {
-            ScrollView {
-                if items.count == 1, let item = items.first {
-                    itemCard(item)
-                } else {
-                    ScrollView(.horizontal) {
-                        HStack {
-                            ForEach(0 ..< items.count, id: \.self) { i in
-                                itemCard(items[i], index: i)
+            Form {
+                Section {
+                    if items.count == 1, let item = items.first {
+                        itemCard(item)
+                            .listRowInsets(.init())
+                    } else {
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach(0 ..< items.count, id: \.self) { i in
+                                    itemCard(items[i], index: i)
+                                }
+                                .frame(height: 250)
                             }
-                            .frame(height: 250)
                         }
-                        .padding(10)
+                    }
+                }
+                // https://stackoverflow.com/questions/77211847/how-can-i-make-each-button-in-the-swiftui-form-clickable
+                .buttonStyle(.plain)
+                // https://www.reddit.com/r/SwiftUI/comments/k4lthn/swiftui_clear_background_of_form_section/
+                .listRowBackground(Color(UIColor.systemGroupedBackground))
+                // https://zenn.dev/yimajo/articles/f69a775648fc9d
+                .listRowInsets(.init())
+
+                Section {
+                    HStack {
+                        Text("カテゴリー")
+                        Spacer()
+                        Button {
+                            activeSheet = .categorySelect
+                        } label: {
+                            Text(categoryDisplayed)
+                        }
                     }
                 }
 
-                HStack {
-                    Text("カテゴリー")
-                    Spacer()
-                    Button {
-                        activeSheet = .categorySelect
-                    } label: {
-                        Text(categoryDisplayed)
+                if items.count == 1, let item = items.first, let urlString = item.sourceUrl {
+                    Section("URL") {
+                        Button {
+                            if let url = URL(string: urlString) {
+                                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "link")
+                                Text(urlString)
+                                    .lineLimit(1)
+                            }
+                        }
                     }
                 }
-                .padding(20)
             }
 
             if hasChanges {
@@ -225,7 +250,7 @@ struct ItemDetail: HashableView {
 
 #Preview {
     struct SwitchableView: View {
-        @State private var isSingle = false
+        @State private var isSingle = true
 
         var body: some View {
             DependencyInjector {
@@ -235,7 +260,7 @@ struct ItemDetail: HashableView {
                     }
                     if isSingle {
                         ItemDetail(
-                            items: [sampleItems.first!]
+                            items: [sampleItems.last!]
                         )
                     } else {
                         ItemDetail(

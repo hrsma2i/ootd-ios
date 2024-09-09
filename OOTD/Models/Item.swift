@@ -18,6 +18,7 @@ struct Item: Hashable, Encodable {
     var thumbnailURL: String?
     var resizedImageURL: String?
     var category: Category = .uncategorized
+    var sourceUrl: String?
 
     static let imageSize: CGFloat = 500
     static let thumbnailSize: CGFloat = 200
@@ -42,7 +43,7 @@ struct Item: Hashable, Encodable {
 
     enum CodingKeys: String, CodingKey {
         case id
-        case createdAt
+        case createdAimportUrlt
         case updatedAt
         case imageURL
         case category

@@ -28,7 +28,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
     }
 
     private func passImagesToItemDetail(imageUrls: [String], sourceUrl: String) {
-        let items = imageUrls.map { Item(imageURL: $0) }
+        let items = imageUrls.map { Item(imageURL: $0, sourceUrl: sourceUrl) }
         navigation.path = NavigationPath()
         navigation.path.append(
             ItemDetail(items: items)

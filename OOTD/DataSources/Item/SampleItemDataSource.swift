@@ -74,6 +74,7 @@ let sampleItems = [
     ),
     Item(
         id: "clarks_black_wallabee_boots",
-        imageURL: "https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/clarks_black_wallabee_boots.jpeg?alt=media&token=13f736b1-1053-4430-ac93-e96ce2872c5e"
+        imageURL: "https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/clarks_black_wallabee_boots.jpeg?alt=media&token=13f736b1-1053-4430-ac93-e96ce2872c5e",
+        sourceUrl: "https://www.clarks.co.jp/commodity/SCKS0472G/CL915BM14109/"
     ),
 ]
