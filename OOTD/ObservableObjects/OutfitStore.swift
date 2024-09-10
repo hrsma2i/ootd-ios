@@ -13,12 +13,13 @@ class OutfitStore: ObservableObject {
     @Published var outfits: [Outfit] = []
     private let dataSource: OutfitDataSource
 
+    @MainActor
     init(_ dataSourceType: DataSourceType = .sample) {
         switch dataSourceType {
         case .sample:
             dataSource = SampleOutfitDataSource()
         case .swiftData:
-            dataSource = SampleOutfitDataSource()
+            dataSource = SwiftDataOutfitDataSource.shared
         }
     }
 

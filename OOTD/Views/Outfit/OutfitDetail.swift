@@ -41,16 +41,31 @@ struct OutfitDetail: HashableView {
         }
     }
 
+    // TODO: Image 内に image 取得メソッドを持たせ、描画時に取得したほうがいいか？Storage を protocol で抽象化して、 Firebase Storage にも切り替えられるようにする？
+    var image: UIImage? {
+        if let image = outfit.image {
+            return image
+        }
+
+        guard let imagePath = outfit.imagePath else {
+            return nil
+        }
+
+        do {
+            let image = try LocalStorage.loadImage(from: imagePath)
+            return image
+        } catch {
+            logger.warning("\(error)")
+            return nil
+        }
+    }
+
     var snapImage: some View {
         ZStack {
             // なぜか、そのまま Button の label としてラップすると画面が真っ白になってしまうので、しかたなく ZStack で透明な四角形のボタンを被せる
-            if let image = outfit.image {
+            if let image {
                 ImageCard(
                     uiImage: image
-                )
-            } else if let imageURL = outfit.imageURL {
-                ImageCard(
-                    url: imageURL
                 )
             } else {
                 imageEmptyView

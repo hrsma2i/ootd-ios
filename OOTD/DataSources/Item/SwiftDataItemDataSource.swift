@@ -14,15 +14,19 @@ private let logger = getLogger(#file)
 final class SwiftDataItemDataSource: ItemDataSource {
     @Model
     class ItemDTO {
-        init(id: String? = nil, category: String = Category.uncategorized.rawValue, sourceUrl: String? = nil) {
+        typealias OutfitDTO = SwiftDataOutfitDataSource.OutfitDTO
+
+        init(id: String? = nil, category: String = Category.uncategorized.rawValue, sourceUrl: String? = nil, outfits: [OutfitDTO] = []) {
             self.id = id ?? UUID().uuidString
             self.category = category
             self.sourceUrl = sourceUrl
+            self.outfits = outfits
         }
 
         @Attribute(.unique) var id: String
         var category: String
         var sourceUrl: String?
+        @Relationship(inverse: \OutfitDTO.items) var outfits: [OutfitDTO]
 
         func toItem() throws -> Item {
             guard let category = Category(rawValue: category) else {
@@ -68,7 +72,6 @@ final class SwiftDataItemDataSource: ItemDataSource {
         }
     }
 
-    var container: ModelContainer
     var context: ModelContext
 
     @MainActor
@@ -76,8 +79,7 @@ final class SwiftDataItemDataSource: ItemDataSource {
 
     @MainActor
     private init() {
-        self.container = try! ModelContainer(for: ItemDTO.self)
-        self.context = container.mainContext
+        self.context = SwiftDataManager.shared.context
     }
 
     func fetch() async throws -> [Item] {

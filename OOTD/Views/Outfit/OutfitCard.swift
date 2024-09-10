@@ -11,6 +11,7 @@ private let logger = getLogger(#file)
 
 struct OutfitCard: View {
     let outfit: Outfit
+    var isThumbnail: Bool = false
 
     var columns: Int {
         outfit.items.count <= 6 ? 2 : 3
@@ -18,6 +19,32 @@ struct OutfitCard: View {
 
     var collageAspectRatio: CGFloat? {
         outfit.items.isEmpty ? 1 : nil
+    }
+
+    // TODO: Image 内に image 取得メソッドを持たせ、描画時に取得したほうがいいか？Storage を protocol で抽象化して、 Firebase Storage にも切り替えられるようにする？
+    var image: UIImage? {
+        if let image = outfit.image {
+            return image
+        }
+
+        guard let imagePath = outfit.imagePath,
+              let thumbnailPath = outfit.thumbnailPath
+        else {
+            return nil
+        }
+
+        do {
+            if isThumbnail {
+                let thumbnail = try LocalStorage.loadImage(from: thumbnailPath)
+                return thumbnail
+            } else {
+                let image = try LocalStorage.loadImage(from: imagePath)
+                return image
+            }
+        } catch {
+            logger.warning("\(error)")
+            return nil
+        }
     }
 
     var collage: some View {
@@ -40,13 +67,9 @@ struct OutfitCard: View {
     }
 
     var body: some View {
-        if let image = outfit.image {
+        if let image {
             ImageCard(
                 uiImage: image
-            )
-        } else if let imageURL = outfit.imageURL {
-            ImageCard(
-                url: imageURL
             )
         } else {
             collage
