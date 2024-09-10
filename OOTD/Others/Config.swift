@@ -26,9 +26,9 @@ enum Config {
 
     static var BUILD_CONFIG: String {
         #if DEBUG
-        return "DEBUG"
+        return "Debug"
         #elseif RELEASE
-        return "RELEASE"
+        return "Release"
         #else
         return "unknown"
         #endif
