@@ -20,15 +20,52 @@ final class SwiftDataItemDataSource: ItemDataSource {
             self.sourceUrl = sourceUrl
         }
 
-        init(from item: Item) {
-            self.id = item.id ?? UUID().uuidString
-            self.category = item.category.rawValue
-            self.sourceUrl = item.sourceUrl
-        }
-
         @Attribute(.unique) var id: String
         var category: String
         var sourceUrl: String?
+
+        func toItem() throws -> Item {
+            guard let category = Category(rawValue: category) else {
+                throw "[ItemDTO.toItem] failed to convert ItemDTO to Item. unknown category: \(category)"
+            }
+
+            return Item(
+                id: id,
+                category: category,
+                sourceUrl: sourceUrl
+            )
+        }
+
+        static func from(item: Item, context: ModelContext) throws -> ItemDTO {
+            func toDTO(_ item: Item) -> ItemDTO {
+                return ItemDTO(
+                    id: item.id ?? UUID().uuidString,
+                    category: item.category.rawValue,
+                    sourceUrl: item.sourceUrl
+                )
+            }
+
+            guard let id = item.id else {
+                logger.debug("[ItemDTO.from(Item)] item.id == nil, so create new ItemDTO")
+                return toDTO(item)
+            }
+
+            let descriptor = FetchDescriptor<ItemDTO>(predicate: #Predicate { dto in
+                dto.id == id
+            })
+
+            // すでに container 内に保存済みのDTOと同じ id のDTOを生成すると、 DTO.id の参照時に EXC_BREAKPOINT のエラーが発生してしまう。
+            // id に @Attribute(.unique) 制約があるため起こる。
+            // なので、すでに保存済みの場合は container から取得する
+            if let dto = try context.fetch(descriptor).first {
+                logger.debug("[ItemDTO.from(Item)] ItemDTO with id=\(id) has alraedy exists, so get it from the container")
+                dto.category = item.category.rawValue
+                return dto
+            } else {
+                logger.debug("[ItemDTO.from(Item)] create new ItemDTO with id=\(id)")
+                return toDTO(item)
+            }
+        }
     }
 
     var container: ModelContainer
@@ -47,7 +84,14 @@ final class SwiftDataItemDataSource: ItemDataSource {
         logger.debug("[SwiftData] fetch all items")
         let descriptor = FetchDescriptor<ItemDTO>()
         let dtos = try context.fetch(descriptor)
-        let items = try dtos.map(toItem)
+        let items = dtos.compactMap {
+            do {
+                return try $0.toItem()
+            } catch {
+                logger.error("\(error)")
+                return nil
+            }
+        }
         return items
     }
 
@@ -56,7 +100,7 @@ final class SwiftDataItemDataSource: ItemDataSource {
 
         for item in items {
             do {
-                let dto = try toDTO(item)
+                let dto = try ItemDTO.from(item: item, context: context)
                 context.insert(dto)
                 logger.debug("[SwiftData] insert new item id=\(dto.id)")
 
@@ -104,7 +148,7 @@ final class SwiftDataItemDataSource: ItemDataSource {
         // SwiftData は context に同一idのオブジェクトが複数存在する場合、 save 時点の最後のオブジェクトが採用されるので、 insert でよい。
         for item in items {
             do {
-                let dto = try toDTO(item)
+                let dto = try ItemDTO.from(item: item, context: context)
                 context.insert(dto)
                 logger.debug("[SwiftData] insert updated item id=\(dto.id)")
 
@@ -121,7 +165,7 @@ final class SwiftDataItemDataSource: ItemDataSource {
     func delete(_ items: [Item]) async throws {
         for item in items {
             do {
-                let dto = try toDTO(item)
+                let dto = try ItemDTO.from(item: item, context: context)
                 logger.debug("[SwiftData] delete item id=\(dto.id)")
                 context.delete(dto)
 
@@ -136,41 +180,6 @@ final class SwiftDataItemDataSource: ItemDataSource {
             } catch {
                 logger.error("\(error)")
             }
-        }
-    }
-
-    private func toItem(_ dto: ItemDTO) throws -> Item {
-        guard let category = Category(rawValue: dto.category) else {
-            throw "failed to convert ItemDTO to Item. unknown category: \(dto.category)"
-        }
-
-        return Item(
-            id: dto.id,
-            category: category,
-            sourceUrl: dto.sourceUrl
-        )
-    }
-
-    private func toDTO(_ item: Item) throws -> ItemDTO {
-        guard let id = item.id else {
-            logger.debug("[toDTO] item.id == nil, so create new ItemDTO")
-            return ItemDTO(from: item)
-        }
-
-        let descriptor = FetchDescriptor<ItemDTO>(predicate: #Predicate { dto in
-            dto.id == id
-        })
-
-        // すでに container 内に保存済みのDTOと同じ id のDTOを生成すると、 DTO.id の参照時に EXC_BREAKPOINT のエラーが発生してしまう。
-        // id に @Attribute(.unique) 制約があるため起こる。
-        // なので、すでに保存済みの場合は container から取得する
-        if let dto = try context.fetch(descriptor).first {
-            logger.debug("[toDTO] ItemDTO with id=\(id) has alraedy exists, so get it from the container")
-            dto.category = item.category.rawValue
-            return dto
-        } else {
-            logger.debug("[toDTO] create new ItemDTO with id=\(id)")
-            return ItemDTO(from: item)
         }
     }
 
