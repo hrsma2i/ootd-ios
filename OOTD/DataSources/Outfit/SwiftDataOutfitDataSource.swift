@@ -36,7 +36,7 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
 
         static func from(outfit: Outfit, context: ModelContext) throws -> OutfitDTO {
             func itemsToItemDTOs(_ items: [Item]) -> [ItemDTO] {
-                return outfit.items.compactMapWithErrorLog(logger) {
+                return items.compactMapWithErrorLog(logger) {
                     try ItemDTO.from(item: $0, context: context)
                 }
             }
