@@ -133,6 +133,7 @@ struct SwiftSoupDocumentWrapper {
         case .zozo:
             if url.hasPrefix("https://zozo.jp/sp/_member/orderhistory/") {
                 let feedRows = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2) > ul > li > div")
+                // TODO: 以下の2つ使わなくなったので削除する
                 let imgs = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2) > ul > li > div > figure > div > div > a > img")
                 let links = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2) > ul > li > div > div > div > div.goodsH > a")
                 

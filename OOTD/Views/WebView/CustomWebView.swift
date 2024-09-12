@@ -12,44 +12,11 @@ private let logger = getLogger(#file)
 
 struct CustomWebView: HashableView {
     let url: String
-    var onSelected: ([(imageUrl: String, sourceUrl: String)]) -> Void = { _ in }
+    let buttonText: String
+    var onButtonTapped: (WKWebView) -> Void = { _ in }
 
     @StateObject private var manager = WebViewManager()
     @EnvironmentObject private var navigation: NavigationManager
-
-    private func onButtonTapped(_ webView: WKWebView) {
-        guard let currentUrl = webView.url?.absoluteString else {
-            logger.error("webView.url is nil")
-            return
-        }
-
-        webView.evaluateJavaScript("document.documentElement.outerHTML.toString()") { html, _ in
-
-            guard let html = html as? String else { return }
-            guard let doc = try? SwiftSoupDocumentWrapper(html, url: currentUrl) else { return }
-            Task {
-                do {
-                    let urls = try await doc.imageAndSourceUrls()
-
-                    navigation.path.append(
-                        SelectWebImageScreen(imageURLs: urls.map(\.imageUrl)) { selectedImageUrls in
-                            let selectedUrls = selectedImageUrls.compactMap { imageUrl -> (imageUrl: String, sourceUrl: String)? in
-                                guard let sourceUrl = urls.first(where: { $0.imageUrl == imageUrl })?.sourceUrl else {
-                                    logger.error("no sourceUrl for \(imageUrl)")
-                                    return nil
-                                }
-
-                                return (imageUrl: imageUrl, sourceUrl: sourceUrl)
-                            }
-                            onSelected(selectedUrls)
-                        }
-                    )
-                } catch {
-                    logger.error("\(error)")
-                }
-            }
-        }
-    }
 
     var webViewRepresentable: some View {
         WebViewRepresentable(url: URL(string: url)!) { webView in
@@ -114,7 +81,8 @@ struct CustomWebView: HashableView {
 #Preview {
     DependencyInjector {
         CustomWebView(
-            url: "https://zozo.jp/shop/barnssohostreet/goods-sale/41708194/?did=84288054"
+            url: "https://zozo.jp/shop/barnssohostreet/goods-sale/41708194/?did=84288054",
+            buttonText: "保存"
         )
     }
 }

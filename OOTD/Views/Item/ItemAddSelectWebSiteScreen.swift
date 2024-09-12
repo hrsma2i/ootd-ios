@@ -6,33 +6,30 @@
 //
 
 import SwiftUI
+import WebKit
+
+private let logger = getLogger(#file)
 
 struct ItemAddSelectWebSiteScreen: HashableView {
     @State private var searchQuery: String = ""
     @EnvironmentObject var navigation: NavigationManager
     @EnvironmentObject var itemStore: ItemStore
 
+    func webView(_ url: String) -> CustomWebView {
+        CustomWebView(
+            url: url,
+            buttonText: "画像を選ぶ",
+            onButtonTapped: extractedItemsToSelectWebImageScreen
+        )
+    }
+
     func siteButton(_ name: String, url: String) -> some View {
         return Button {
-            navigation.path.append(
-                CustomWebView(url: url, onSelected: passImagesToItemDetail)
-            )
+            navigation.path.append(webView(url))
         } label: {
             Text(name)
                 .font(.system(size: 20))
         }
-    }
-
-    private var currentYear: Int {
-        Calendar.current.component(.year, from: Date())
-    }
-
-    private func passImagesToItemDetail(urls: [(imageUrl: String, sourceUrl: String)]) {
-        let items = urls.map { Item(imageURL: $0.imageUrl, sourceUrl: $0.sourceUrl) }
-        navigation.path = NavigationPath()
-        navigation.path.append(
-            ItemDetail(items: items)
-        )
     }
 
     private var searchBar: some View {
@@ -49,9 +46,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                     } else {
                         url = "https://www.google.com/search?q=\(searchQuery)"
                     }
-                    navigation.path.append(
-                        CustomWebView(url: url, onSelected: passImagesToItemDetail)
-                    )
+                    navigation.path.append(webView(url))
                 }
 
             Button {
@@ -61,6 +56,54 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                     .foregroundColor(color)
             }
         }
+    }
+
+    private func extractedItemsToSelectWebImageScreen(_ webView: WKWebView) {
+        // TODO: manager の方から取得できるならそれでいい
+        guard let currentUrl = webView.url?.absoluteString else {
+            logger.error("webView.url is nil")
+            return
+        }
+
+        // TODO: await にしてネストを浅くする
+        webView.evaluateJavaScript("document.documentElement.outerHTML.toString()") { html, _ in
+
+            guard let html = html as? String else { return }
+            guard let doc = try? SwiftSoupDocumentWrapper(html, url: currentUrl) else { return }
+            Task {
+                do {
+                    let urls = try await doc.imageAndSourceUrls()
+
+                    navigation.path.append(
+                        SelectWebImageScreen(
+                            imageURLs: urls.map(\.imageUrl)
+                        ) { selectedImageUrls in
+                            let selectedUrls = urls.filter {
+                                selectedImageUrls.contains($0.imageUrl)
+                            }
+                            selectedItemsToItemDetail(selectedUrls)
+                        }
+                    )
+                } catch {
+                    logger.error("\(error)")
+                }
+            }
+        }
+    }
+
+    private func selectedItemsToItemDetail(_ urls: [(imageUrl: String, sourceUrl: String)]) {
+        let items = urls.compactMap {
+            Item(imageURL: $0.imageUrl, sourceUrl: $0.sourceUrl)
+        }
+
+        navigation.path = NavigationPath()
+        navigation.path.append(
+            ItemDetail(items: items)
+        )
+    }
+
+    private var currentYear: Int {
+        Calendar.current.component(.year, from: Date())
     }
 
     var body: some View {
