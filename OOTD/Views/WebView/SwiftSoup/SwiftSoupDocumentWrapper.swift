@@ -97,8 +97,8 @@ struct SwiftSoupDocumentWrapper {
 //        }
 //    }
     
-    private func _imageURLs() async throws -> [String] {
-        func defaultCase() throws -> [String] {
+    private func _imageAndSourceUrls() async throws -> [(imageUrl: String, sourceUrl: String)] {
+        func defaultCase() throws -> [(imageUrl: String, sourceUrl: String)] {
             let imgs = try doc.select("img")
             
             var imgUrls = imgs.compactMap {
@@ -115,7 +115,11 @@ struct SwiftSoupDocumentWrapper {
                 return $0
             }
             
-            return imgUrls
+            let urls = imgUrls.map {
+                (imageUrl: $0, sourceUrl: url)
+            }
+            
+            return urls
         }
         
         switch domain {
@@ -127,51 +131,85 @@ struct SwiftSoupDocumentWrapper {
 //                return try defaultCase()
 //            }
         case .zozo:
-            let urls = try defaultCase()
-            let goodsImageUrls = urls.filter {
-                $0.hasPrefix("https://c.imgz.jp")
+            if url.hasPrefix("https://zozo.jp/sp/_member/orderhistory/") {
+                let feedRows = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2) > ul > li > div")
+                let imgs = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2) > ul > li > div > figure > div > div > a > img")
+                let links = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2) > ul > li > div > div > div > div.goodsH > a")
+                
+                guard feedRows.count != 0 else {
+                    throw "feedRows.count == 0"
+                }
+                
+                let urls = feedRows.compactMapWithErrorLog(logger) { row in
+                    let img = try row.select("figure > div > div > a > img")
+                    let link = try row.select("div > div > div.goodsH > a")
+
+                    var imageUrl = try img.attr("src")
+                    // 画像サイズを500に変更
+                    let pattern = #"\d+(.jpg)"#
+                    imageUrl = imageUrl.replacingOccurrences(of: pattern, with: "500$1", options: .regularExpression)
+                    
+                    var sourceUrl = try link.attr("href")
+                    sourceUrl = sourceUrl.replacingOccurrences(of: "goods-sale", with: "goods")
+
+                    return (imageUrl: imageUrl, sourceUrl: sourceUrl)
+                }
+                return urls
+            } else {
+                var urls = try defaultCase()
+                urls = urls.compactMapWithErrorLog(logger) {
+                    // 画像サイズを500に変更
+                    let pattern = #"\d+(.jpg)"#
+                    let imageUrl = $0.imageUrl.replacingOccurrences(of: pattern, with: "500$1", options: .regularExpression)
+                    
+                    let sourceUrl = $0.sourceUrl.replacingOccurrences(of: "goods-sale", with: "goods")
+                    
+                    return (imageUrl: imageUrl, sourceUrl: sourceUrl)
+                }
+                return urls
             }
             
-            // 画像サイズを500に変更
-            let pattern = #"\d+(.jpg)"#
-            let scaledUrls = goodsImageUrls.map {
-                $0.replacingOccurrences(of: pattern, with: "500$1", options: .regularExpression)
-            }
-            return scaledUrls
-        
         case .uniqlo:
-            let urls = try defaultCase()
+            var urls = try defaultCase()
             let pattern = #"https://image.uniqlo.com/UQ/ST3/(jp|AsianCommon)/imagesgoods/\d+/item/(jpgoods|goods)_\d+_\d+.*\.jpg"#
-            let validUrls = urls.filter {
-                $0.range(of: pattern, options: .regularExpression) != nil
+            urls = urls.filter {
+                $0.imageUrl.range(of: pattern, options: .regularExpression) != nil
             }
-            return validUrls
+            return urls
 
         case .gu:
-            let urls = try defaultCase()
-            let urlsWoQueryParams = urls.map {
+            var urls = try defaultCase()
+            urls = urls.map {
                 // remove query params
-                $0.split(separator: "?").first.map(String.init) ?? $0
+                let imageUrl = $0.imageUrl.split(separator: "?").first.map(String.init) ?? $0.imageUrl
+                return (imageUrl: imageUrl, sourceUrl: $0.sourceUrl)
             }
 
             let pattern = #"https://image.uniqlo.com/GU/ST3/(jp|AsianCommon)/imagesgoods/\d+/item/(jpgoods|goods)_\d+_\d+.*\.jpg"#
             let pattern2 = #"https://image.uniqlo.com/GU/ST3/(jp|AsianCommon)/imagesgoods/\d+/sub/(jpgoods|goods)_\d+_sub\d+.*\.jpg"#
-            let validUrls = urlsWoQueryParams.filter {
-                $0.range(of: pattern, options: .regularExpression) != nil
-                    || $0.range(of: pattern2, options: .regularExpression) != nil
+            urls = urls.filter {
+                $0.imageUrl.range(of: pattern, options: .regularExpression) != nil
+                    || $0.imageUrl.range(of: pattern2, options: .regularExpression) != nil
             }
-            return validUrls
+            return urls
 
         default:
             return try defaultCase()
         }
     }
     
-    func imageURLs() async throws -> [String] {
-        let urls = try await _imageURLs()
-        let deduplicatedUrls = Array(Set(urls))
-        // TODO: サイズ順にする？それともサイズで足切りする？
-        let sortedUrls = deduplicatedUrls.sorted()
-        return sortedUrls
+    func imageAndSourceUrls() async throws -> [(imageUrl: String, sourceUrl: String)] {
+        var urls = try await _imageAndSourceUrls()
+        var uniqueImageUrls = Set<String>()
+        urls = urls.filter {
+            if uniqueImageUrls.contains($0.imageUrl) {
+                return false
+            } else {
+                uniqueImageUrls.insert($0.imageUrl)
+                return true
+            }
+        }
+        // TODO: サイズで足切りする？
+        return urls
     }
 }

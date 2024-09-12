@@ -12,26 +12,41 @@ private let logger = getLogger(#file)
 
 struct ImageImportWebView: HashableView {
     let url: String
-    var onSelected: ([String], String) -> Void = { _, _ in }
+    var onSelected: ([(imageUrl: String, sourceUrl: String)]) -> Void = { _ in }
 
     @StateObject private var manager = WebViewManager()
     @EnvironmentObject private var navigation: NavigationManager
 
     private func onButtonTapped(_ webView: WKWebView) {
-        let currentUrl = webView.url!.absoluteString
+        guard let currentUrl = webView.url?.absoluteString else {
+            logger.error("webView.url is nil")
+            return
+        }
 
         webView.evaluateJavaScript("document.documentElement.outerHTML.toString()") { html, _ in
 
             guard let html = html as? String else { return }
             guard let doc = try? SwiftSoupDocumentWrapper(html, url: currentUrl) else { return }
             Task {
-                guard let imageURLs = try? await doc.imageURLs() else { return }
+                do {
+                    let urls = try await doc.imageAndSourceUrls()
 
-                navigation.path.append(
-                    SelectWebImageScreen(imageURLs: imageURLs) { urls in
-                        onSelected(urls, currentUrl)
-                    }
-                )
+                    navigation.path.append(
+                        SelectWebImageScreen(imageURLs: urls.map(\.imageUrl)) { selectedImageUrls in
+                            let selectedUrls = selectedImageUrls.compactMap { imageUrl -> (imageUrl: String, sourceUrl: String)? in
+                                guard let sourceUrl = urls.first(where: { $0.imageUrl == imageUrl })?.sourceUrl else {
+                                    logger.error("no sourceUrl for \(imageUrl)")
+                                    return nil
+                                }
+
+                                return (imageUrl: imageUrl, sourceUrl: sourceUrl)
+                            }
+                            onSelected(selectedUrls)
+                        }
+                    )
+                } catch {
+                    logger.error("\(error)")
+                }
             }
         }
     }

@@ -1,5 +1,5 @@
 //
-//  Array+compactMapWithErrorLog.swift
+//  Sequence+compactMapWithErrorLog.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/09/10.
@@ -8,7 +8,7 @@
 import Foundation
 import os
 
-extension Array {
+extension Sequence {
     func compactMapWithErrorLog<T>(_ logger: Logger, _ transform: @escaping (Element) throws -> T) -> [T] {
         return compactMap {
             do {

@@ -27,8 +27,8 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         Calendar.current.component(.year, from: Date())
     }
 
-    private func passImagesToItemDetail(imageUrls: [String], sourceUrl: String) {
-        let items = imageUrls.map { Item(imageURL: $0, sourceUrl: sourceUrl) }
+    private func passImagesToItemDetail(urls: [(imageUrl: String, sourceUrl: String)]) {
+        let items = urls.map { Item(imageURL: $0.imageUrl, sourceUrl: $0.sourceUrl) }
         navigation.path = NavigationPath()
         navigation.path.append(
             ItemDetail(items: items)
