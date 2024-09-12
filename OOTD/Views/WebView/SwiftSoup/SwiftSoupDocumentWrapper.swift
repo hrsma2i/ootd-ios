@@ -121,29 +121,14 @@ struct SwiftSoupDocumentWrapper {
         return urls
     }
     
-    private func _imageAndSourceUrls() async throws -> [(imageUrl: String, sourceUrl: String)] {
-        func defaultCase() throws -> [(imageUrl: String, sourceUrl: String)] {
-            let imgs = try doc.select("img")
+    private func _items() async throws -> [Item] {
+        func defaultCase() async throws -> [Item] {
+            let imageUrls = try await imageUrls()
             
-            var imgUrls = imgs.compactMap {
-                try? $0.attr("src")
+            let items = imageUrls.map {
+                Item(imageURL: $0, sourceUrl: url)
             }
-            
-            imgUrls = imgUrls.map {
-                if $0.hasPrefix("//") {
-                    return "https:\($0)"
-                } else if $0.hasPrefix("/") {
-                    guard let host = URL(string: url)?.host else { return $0 }
-                    return "https://\(host)\($0)"
-                }
-                return $0
-            }
-            
-            let urls = imgUrls.map {
-                (imageUrl: $0, sourceUrl: url)
-            }
-            
-            return urls
+            return items
         }
         
         switch domain {
@@ -155,6 +140,7 @@ struct SwiftSoupDocumentWrapper {
 //                return try defaultCase()
 //            }
         case .zozo:
+            let args: [(imageUrl: String, sourceUrl: String)]
             if url.hasPrefix("https://zozo.jp/sp/_member/orderhistory/") {
                 let feedRows = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2) > ul > li > div")
                 
@@ -162,76 +148,81 @@ struct SwiftSoupDocumentWrapper {
                     throw "feedRows.count == 0"
                 }
                 
-                let urls = feedRows.compactMapWithErrorLog(logger) { row in
+                args = feedRows.compactMapWithErrorLog(logger) { row in
                     let img = try row.select("figure > div > div > a > img")
                     let link = try row.select("div > div > div.goodsH > a")
 
                     var imageUrl = try img.attr("src")
-                    // 画像サイズを500に変更
-                    let pattern = #"\d+(.jpg)"#
-                    imageUrl = imageUrl.replacingOccurrences(of: pattern, with: "500$1", options: .regularExpression)
+                    imageUrl = resize(imageUrl)
                     
                     var sourceUrl = try link.attr("href")
-                    sourceUrl = sourceUrl.replacingOccurrences(of: "goods-sale", with: "goods")
+                    sourceUrl = removeSale(sourceUrl)
 
                     return (imageUrl: imageUrl, sourceUrl: sourceUrl)
                 }
-                return urls
             } else {
-                var urls = try defaultCase()
-                urls = urls.compactMapWithErrorLog(logger) {
-                    // 画像サイズを500に変更
-                    let pattern = #"\d+(.jpg)"#
-                    let imageUrl = $0.imageUrl.replacingOccurrences(of: pattern, with: "500$1", options: .regularExpression)
+                let items = try await defaultCase()
+                args = items.compactMapWithErrorLog(logger) {
+                    guard let imageUrl = $0.imageURL, let sourceUrl = $0.sourceUrl else {
+                        throw "Item imageURL or sourceUrl is nil"
+                    }
                     
-                    let sourceUrl = $0.sourceUrl.replacingOccurrences(of: "goods-sale", with: "goods")
-                    
+                    // TODO: filter valid image urls like c.imgz.jp
+
                     return (imageUrl: imageUrl, sourceUrl: sourceUrl)
                 }
-                return urls
             }
             
-        case .uniqlo:
-            var urls = try defaultCase()
-            let pattern = #"https://image.uniqlo.com/UQ/ST3/(jp|AsianCommon)/imagesgoods/\d+/item/(jpgoods|goods)_\d+_\d+.*\.jpg"#
-            urls = urls.filter {
-                $0.imageUrl.range(of: pattern, options: .regularExpression) != nil
+            func resize(_ imageUrl: String, size: Int = 500) -> String {
+                imageUrl.replacingOccurrences(of: #"\d+(.jpg)"#, with: "\(size)$1", options: .regularExpression)
             }
-            return urls
+            
+            func removeSale(_ sourceUrl: String) -> String {
+                sourceUrl.replacingOccurrences(of: "goods-sale", with: "goods")
+            }
+            
+            let items = args.map {
+                let imageUrl = resize($0.imageUrl)
+                let sourceUrl = removeSale($0.sourceUrl)
+                return Item(imageURL: imageUrl, sourceUrl: sourceUrl)
+            }
+            
+            return items
+
+        case .uniqlo:
+            var items = try await defaultCase()
+            let pattern = #"https://image.uniqlo.com/UQ/ST3/(jp|AsianCommon)/imagesgoods/\d+/item/(jpgoods|goods)_\d+_\d+.*\.jpg"#
+            items = items.filter {
+                $0.imageURL?.range(of: pattern, options: .regularExpression) != nil
+            }
+            return items
 
         case .gu:
-            var urls = try defaultCase()
-            urls = urls.map {
+            var items = try await defaultCase()
+            items = items.map {
                 // remove query params
-                let imageUrl = $0.imageUrl.split(separator: "?").first.map(String.init) ?? $0.imageUrl
-                return (imageUrl: imageUrl, sourceUrl: $0.sourceUrl)
+                let imageUrl = $0.imageURL?.split(separator: "?").first.map(String.init) ?? $0.imageURL
+                return Item(imageURL: imageUrl, sourceUrl: $0.sourceUrl)
             }
 
             let pattern = #"https://image.uniqlo.com/GU/ST3/(jp|AsianCommon)/imagesgoods/\d+/item/(jpgoods|goods)_\d+_\d+.*\.jpg"#
             let pattern2 = #"https://image.uniqlo.com/GU/ST3/(jp|AsianCommon)/imagesgoods/\d+/sub/(jpgoods|goods)_\d+_sub\d+.*\.jpg"#
-            urls = urls.filter {
-                $0.imageUrl.range(of: pattern, options: .regularExpression) != nil
-                    || $0.imageUrl.range(of: pattern2, options: .regularExpression) != nil
+            items = items.filter {
+                $0.imageURL?.range(of: pattern, options: .regularExpression) != nil
+                    || $0.imageURL?.range(of: pattern2, options: .regularExpression) != nil
             }
-            return urls
+            return items
 
         default:
-            return try defaultCase()
+            return try await defaultCase()
         }
     }
     
-    func imageAndSourceUrls() async throws -> [(imageUrl: String, sourceUrl: String)] {
-        var urls = try await _imageAndSourceUrls()
-        var uniqueImageUrls = Set<String>()
-        urls = urls.filter {
-            if uniqueImageUrls.contains($0.imageUrl) {
-                return false
-            } else {
-                uniqueImageUrls.insert($0.imageUrl)
-                return true
-            }
-        }
+    func items() async throws -> [Item] {
+        var items = try await _items()
+        // deduplicate
+        items = Array(Set(items))
         // TODO: サイズで足切りする？
-        return urls
+        return items
     }
 }

@@ -72,16 +72,13 @@ struct ItemAddSelectWebSiteScreen: HashableView {
             guard let doc = try? SwiftSoupDocumentWrapper(html, url: currentUrl) else { return }
             Task {
                 do {
-                    let urls = try await doc.imageAndSourceUrls()
+                    let items = try await doc.items()
 
                     navigation.path.append(
                         SelectWebImageScreen(
-                            imageURLs: urls.map(\.imageUrl)
-                        ) { selectedImageUrls in
-                            let selectedUrls = urls.filter {
-                                selectedImageUrls.contains($0.imageUrl)
-                            }
-                            selectedItemsToItemDetail(selectedUrls)
+                            imageURLs: items.compactMap(\.imageURL)
+                        ) {
+                            selectedItemsToItemDetail($0, originalItems: items)
                         }
                     )
                 } catch {
@@ -91,14 +88,14 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         }
     }
 
-    private func selectedItemsToItemDetail(_ urls: [(imageUrl: String, sourceUrl: String)]) {
-        let items = urls.compactMap {
-            Item(imageURL: $0.imageUrl, sourceUrl: $0.sourceUrl)
+    private func selectedItemsToItemDetail(_ selectedImageUrls: [String], originalItems: [Item]) {
+        let selected = originalItems.filter {
+            guard let url = $0.imageURL else { return false }
+            return selectedImageUrls.contains(url)
         }
-
         navigation.path = NavigationPath()
         navigation.path.append(
-            ItemDetail(items: items)
+            ItemDetail(items: selected)
         )
     }
 
