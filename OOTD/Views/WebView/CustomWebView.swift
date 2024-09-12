@@ -10,7 +10,7 @@ import WebKit
 
 private let logger = getLogger(#file)
 
-struct ImageImportWebView: HashableView {
+struct CustomWebView: HashableView {
     let url: String
     var onSelected: ([(imageUrl: String, sourceUrl: String)]) -> Void = { _ in }
 
@@ -113,7 +113,7 @@ struct ImageImportWebView: HashableView {
 
 #Preview {
     DependencyInjector {
-        ImageImportWebView(
+        CustomWebView(
             url: "https://zozo.jp/shop/barnssohostreet/goods-sale/41708194/?did=84288054"
         )
     }

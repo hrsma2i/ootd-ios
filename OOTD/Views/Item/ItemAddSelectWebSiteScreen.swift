@@ -15,7 +15,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
     func siteButton(_ name: String, url: String) -> some View {
         return Button {
             navigation.path.append(
-                ImageImportWebView(url: url, onSelected: passImagesToItemDetail)
+                CustomWebView(url: url, onSelected: passImagesToItemDetail)
             )
         } label: {
             Text(name)
@@ -50,7 +50,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                         url = "https://www.google.com/search?q=\(searchQuery)"
                     }
                     navigation.path.append(
-                        ImageImportWebView(url: url, onSelected: passImagesToItemDetail)
+                        CustomWebView(url: url, onSelected: passImagesToItemDetail)
                     )
                 }
 
@@ -74,7 +74,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                 siteButton("Instagram", url: "https://www.instagram.com/")
             }
         }
-        .navigationDestination(for: ImageImportWebView.self) { $0 }
+        .navigationDestination(for: CustomWebView.self) { $0 }
         .navigationDestination(for: ItemDetail.self) { $0 }
     }
 }

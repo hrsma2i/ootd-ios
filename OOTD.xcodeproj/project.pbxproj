@@ -69,7 +69,7 @@
 		88CD55942C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55932C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift */; };
 		88CD559D2C8749E800A9B78A /* WebViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55972C8749E800A9B78A /* WebViewManager.swift */; };
 		88CD559E2C8749E800A9B78A /* WebViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55982C8749E800A9B78A /* WebViewRepresentable.swift */; };
-		88CD559F2C8749E800A9B78A /* ImageImportWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55992C8749E800A9B78A /* ImageImportWebView.swift */; };
+		88CD559F2C8749E800A9B78A /* CustomWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55992C8749E800A9B78A /* CustomWebView.swift */; };
 		88CD55A02C8749E800A9B78A /* WKWebView+getCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD559A2C8749E800A9B78A /* WKWebView+getCookie.swift */; };
 		88CD55A22C874E9800A9B78A /* SelectWebImageScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55A12C874E9800A9B78A /* SelectWebImageScreen.swift */; };
 		88CD55A42C8755CD00A9B78A /* SwiftSoupDocumentWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55A32C8755CD00A9B78A /* SwiftSoupDocumentWrapper.swift */; };
@@ -159,7 +159,7 @@
 		88CD55932C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemAddSelectWebSiteScreen.swift; sourceTree = "<group>"; };
 		88CD55972C8749E800A9B78A /* WebViewManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewManager.swift; sourceTree = "<group>"; };
 		88CD55982C8749E800A9B78A /* WebViewRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewRepresentable.swift; sourceTree = "<group>"; };
-		88CD55992C8749E800A9B78A /* ImageImportWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageImportWebView.swift; sourceTree = "<group>"; };
+		88CD55992C8749E800A9B78A /* CustomWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomWebView.swift; sourceTree = "<group>"; };
 		88CD559A2C8749E800A9B78A /* WKWebView+getCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+getCookie.swift"; sourceTree = "<group>"; };
 		88CD55A12C874E9800A9B78A /* SelectWebImageScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectWebImageScreen.swift; sourceTree = "<group>"; };
 		88CD55A32C8755CD00A9B78A /* SwiftSoupDocumentWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSoupDocumentWrapper.swift; sourceTree = "<group>"; };
@@ -423,7 +423,7 @@
 				88CD55972C8749E800A9B78A /* WebViewManager.swift */,
 				88CD55982C8749E800A9B78A /* WebViewRepresentable.swift */,
 				88CD55A12C874E9800A9B78A /* SelectWebImageScreen.swift */,
-				88CD55992C8749E800A9B78A /* ImageImportWebView.swift */,
+				88CD55992C8749E800A9B78A /* CustomWebView.swift */,
 				88CD559A2C8749E800A9B78A /* WKWebView+getCookie.swift */,
 			);
 			path = WebView;
@@ -589,7 +589,7 @@
 				8862326A2C7CC4D600A1802D /* DataSourceType.swift in Sources */,
 				8862329A2C7CC7A900A1802D /* CategorySelectSheet.swift in Sources */,
 				886232BD2C7CCC9100A1802D /* NavigationManager.swift in Sources */,
-				88CD559F2C8749E800A9B78A /* ImageImportWebView.swift in Sources */,
+				88CD559F2C8749E800A9B78A /* CustomWebView.swift in Sources */,
 				884CF6702C8201F900250026 /* AddButton.swift in Sources */,
 				88CD55A22C874E9800A9B78A /* SelectWebImageScreen.swift in Sources */,
 				886232A72C7CC7D100A1802D /* View+functionalModifier.swift in Sources */,
