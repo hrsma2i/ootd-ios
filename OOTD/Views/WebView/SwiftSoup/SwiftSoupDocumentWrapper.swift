@@ -97,6 +97,30 @@ struct SwiftSoupDocumentWrapper {
 //        }
 //    }
     
+    func imageUrls() async throws -> [String] {
+        let imgs = try doc.select("img")
+        
+        var urls = imgs.compactMap {
+            try? $0.attr("src")
+        }
+        
+        // relative path to absolute path
+        urls = urls.map {
+            if $0.hasPrefix("//") {
+                return "https:\($0)"
+            } else if $0.hasPrefix("/") {
+                guard let host = URL(string: url)?.host else { return $0 }
+                return "https://\(host)\($0)"
+            }
+            return $0
+        }
+        
+        // deduplicate
+        urls = Array(Set(urls))
+        
+        return urls
+    }
+    
     private func _imageAndSourceUrls() async throws -> [(imageUrl: String, sourceUrl: String)] {
         func defaultCase() throws -> [(imageUrl: String, sourceUrl: String)] {
             let imgs = try doc.select("img")
