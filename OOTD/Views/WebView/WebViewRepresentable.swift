@@ -22,6 +22,19 @@ public struct WebViewRepresentable: UIViewRepresentable {
         let webView = WKWebView()
         let request = URLRequest(url: URL(string: "https://example.com")!)
         webView.load(request)
+
+        for domain in URLDomain.allCases {
+            let key = cookiesKey(domain)
+            if let savedCookies = UserDefaults.standard.array(forKey: key) as? [[HTTPCookiePropertyKey: Any]] {
+                for cookieDict in savedCookies {
+                    if let cookie = HTTPCookie(properties: cookieDict) {
+                        webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
+                    }
+                }
+                logger.debug("load \(key) to WebView from UserDefaults")
+            }
+        }
+
         logger.debug("init webView to avoid first delay")
         return webView
     }

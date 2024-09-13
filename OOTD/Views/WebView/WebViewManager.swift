@@ -11,12 +11,17 @@ import WebKit
 
 private let logger = getLogger(#file)
 
+func cookiesKey(_ domain: URLDomain) -> String {
+    return "\(domain.rawValue)-cookies"
+}
+
 final class WebViewManager: ObservableObject {
     @Published var isLoading = false
     @Published var estimatedProgress = 0.0
     @Published var lastButtonTappedAt: Date? = nil
     @Published var currentUrl: URL? = nil
     var cancellable: Cancellable? = nil
+    var onUrlChanged: Cancellable? = nil
 
     func observeWebViewProperties(_ webView: WKWebView) {
         // Combine の .publisher を使って WKWebView のプロパティを監視し、自身の @Published なプロパティにバインドする
@@ -49,6 +54,21 @@ final class WebViewManager: ObservableObject {
             // 初回の発火を防ぐため、 Optional にして、 nil のときは発火しないようにした。
             if tappedAt != nil {
                 onButtonTapped(webView)
+            }
+        }
+
+        onUrlChanged = $currentUrl.sink { url in
+            if url?.host == URLDomain.zozo.rawValue {
+                Task {
+                    let cookies = await webView.configuration.websiteDataStore.httpCookieStore.allCookies()
+
+                    let cookieDicts = cookies.map { cookie in
+                        cookie.properties ?? [:]
+                    }
+                    let key = cookiesKey(.zozo)
+                    UserDefaults.standard.set(cookieDicts, forKey: key)
+                    logger.debug("save cookies to UserDefaults key=\(key) for \(url?.absoluteString)")
+                }
             }
         }
     }
