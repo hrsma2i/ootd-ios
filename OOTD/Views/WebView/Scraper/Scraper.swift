@@ -121,16 +121,16 @@ struct Scraper {
         return urls
     }
     
-    private func _items() async throws -> [Item] {
-        func defaultCase() async throws -> [Item] {
-            let imageUrls = try await imageUrls()
-            
-            let items = imageUrls.map {
-                Item(imageURL: $0, sourceUrl: url)
-            }
-            return items
-        }
+    func defaultItems() async throws -> [Item] {
+        let imageUrls = try await imageUrls()
         
+        let items = imageUrls.map {
+            Item(imageURL: $0, sourceUrl: url)
+        }
+        return items
+    }
+
+    private func _items() async throws -> [Item] {
         switch domain {
 //        case .instagram:
 //            do {
@@ -140,57 +140,10 @@ struct Scraper {
 //                return try defaultCase()
 //            }
         case .zozo:
-            let args: [(imageUrl: String, sourceUrl: String)]
-            if url.hasPrefix("https://zozo.jp/sp/_member/orderhistory/") {
-                let feedRows = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2) > ul > li > div")
-                
-                guard feedRows.count != 0 else {
-                    throw "feedRows.count == 0"
-                }
-                
-                args = feedRows.compactMapWithErrorLog(logger) { row in
-                    let img = try row.select("figure > div > div > a > img")
-                    let link = try row.select("div > div > div.goodsH > a")
-
-                    var imageUrl = try img.attr("src")
-                    imageUrl = resize(imageUrl)
-                    
-                    var sourceUrl = try link.attr("href")
-                    sourceUrl = removeSale(sourceUrl)
-
-                    return (imageUrl: imageUrl, sourceUrl: sourceUrl)
-                }
-            } else {
-                let items = try await defaultCase()
-                args = items.compactMapWithErrorLog(logger) {
-                    guard let imageUrl = $0.imageURL, let sourceUrl = $0.sourceUrl else {
-                        throw "Item imageURL or sourceUrl is nil"
-                    }
-                    
-                    // TODO: filter valid image urls like c.imgz.jp
-
-                    return (imageUrl: imageUrl, sourceUrl: sourceUrl)
-                }
-            }
-            
-            func resize(_ imageUrl: String, size: Int = 500) -> String {
-                imageUrl.replacingOccurrences(of: #"\d+(.jpg)"#, with: "\(size)$1", options: .regularExpression)
-            }
-            
-            func removeSale(_ sourceUrl: String) -> String {
-                sourceUrl.replacingOccurrences(of: "goods-sale", with: "goods")
-            }
-            
-            let items = args.map {
-                let imageUrl = resize($0.imageUrl)
-                let sourceUrl = removeSale($0.sourceUrl)
-                return Item(imageURL: imageUrl, sourceUrl: sourceUrl)
-            }
-            
-            return items
+            return try await itemsFromZOZO()
 
         case .uniqlo:
-            var items = try await defaultCase()
+            var items = try await defaultItems()
             let pattern = #"https://image.uniqlo.com/UQ/ST3/(jp|AsianCommon)/imagesgoods/\d+/item/(jpgoods|goods)_\d+_\d+.*\.jpg"#
             items = items.filter {
                 $0.imageURL?.range(of: pattern, options: .regularExpression) != nil
@@ -198,7 +151,7 @@ struct Scraper {
             return items
 
         case .gu:
-            var items = try await defaultCase()
+            var items = try await defaultItems()
             items = items.map {
                 // remove query params
                 let imageUrl = $0.imageURL?.split(separator: "?").first.map(String.init) ?? $0.imageURL
@@ -214,7 +167,7 @@ struct Scraper {
             return items
 
         default:
-            return try await defaultCase()
+            return try await defaultItems()
         }
     }
     
