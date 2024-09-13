@@ -69,7 +69,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         webView.evaluateJavaScript("document.documentElement.outerHTML.toString()") { html, _ in
 
             guard let html = html as? String else { return }
-            guard let doc = try? SwiftSoupDocumentWrapper(html, url: currentUrl) else { return }
+            guard let doc = try? Scraper(html, url: currentUrl) else { return }
             Task {
                 do {
                     let items = try await doc.items()

@@ -1,5 +1,5 @@
 //
-//  SwiftSoupDocumnet+.swift
+//  Scraper.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/07/24.
@@ -17,7 +17,7 @@ enum URLDomain: String, CaseIterable {
 //    case instagram = "instagram.com"
 }
 
-struct SwiftSoupDocumentWrapper {
+struct Scraper {
     let doc: SwiftSoup.Document
     let url: String
     let html: String
