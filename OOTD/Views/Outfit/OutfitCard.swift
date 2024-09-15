@@ -9,6 +9,12 @@ import SwiftUI
 
 private let logger = getLogger(#file)
 
+private extension NSError {
+    var isFileNotFoundError: Bool {
+        return domain == NSCocoaErrorDomain && code == 260
+    }
+}
+
 struct OutfitCard: View {
     let outfit: Outfit
     var isThumbnail: Bool = false
@@ -41,6 +47,9 @@ struct OutfitCard: View {
                 let image = try LocalStorage.loadImage(from: imagePath)
                 return image
             }
+        } catch let error as NSError where error.isFileNotFoundError {
+            // collage だけでスナップ画像がないことはよくあることなのでいちいち warning を吐かない
+            return nil
         } catch {
             logger.warning("\(error)")
             return nil
