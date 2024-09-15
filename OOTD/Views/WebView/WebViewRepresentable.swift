@@ -25,14 +25,13 @@ public struct WebViewRepresentable: UIViewRepresentable {
 
         for domain in URLDomain.allCases {
             let key = cookiesKey(domain)
-            if let savedCookies = UserDefaults.standard.array(forKey: key) as? [[HTTPCookiePropertyKey: Any]] {
-                for cookieDict in savedCookies {
-                    if let cookie = HTTPCookie(properties: cookieDict) {
-                        webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
-                    }
+            do {
+                let cookies = try KeyChainHelper.shared.loadCookies(key: key)
+                for cookie in cookies {
+                    webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
                 }
-                logger.debug("load \(key) to WebView from UserDefaults")
-            }
+                logger.debug("load \(key) to WebView")
+            } catch {}
         }
 
         logger.debug("init webView to avoid first delay")

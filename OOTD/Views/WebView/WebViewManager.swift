@@ -62,12 +62,8 @@ final class WebViewManager: ObservableObject {
                 Task {
                     let cookies = await webView.configuration.websiteDataStore.httpCookieStore.allCookies()
 
-                    let cookieDicts = cookies.map { cookie in
-                        cookie.properties ?? [:]
-                    }
                     let key = cookiesKey(.zozo)
-                    UserDefaults.standard.set(cookieDicts, forKey: key)
-                    logger.debug("save cookies to UserDefaults key=\(key) for \(url?.absoluteString)")
+                    try KeyChainHelper.shared.saveCookies(key: key, cookies: cookies)
                 }
             }
         }
