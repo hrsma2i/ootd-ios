@@ -105,8 +105,7 @@ struct Scraper {
             return $0
         }
         
-        // deduplicate
-        urls = Array(Set(urls))
+        urls = urls.unique()
         
         return urls
     }
@@ -126,12 +125,7 @@ struct Scraper {
             return try await itemsFromZOZO()
 
         case .uniqlo:
-            var items = try await defaultItems()
-            let pattern = #"https://image.uniqlo.com/UQ/ST3/(jp|AsianCommon)/imagesgoods/\d+/item/(jpgoods|goods)_\d+_\d+.*\.jpg"#
-            items = items.filter {
-                $0.imageURL?.range(of: pattern, options: .regularExpression) != nil
-            }
-            return items
+            return try await itemsFromUniqlo()
 
         case .gu:
             return try await itemsFromGu()

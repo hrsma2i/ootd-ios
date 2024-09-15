@@ -1,5 +1,5 @@
 //
-//  Scraper+GU.swift
+//  Scraper+Uniqlo.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/09/15.
@@ -10,11 +10,11 @@ import Foundation
 private let logger = getLogger(#file)
 
 extension Scraper {
-    private var isGuPurchaseHistory: Bool {
-        url.hasPrefix("https://www.gu-global.com/jp/ja/member/purchase/history")
+    private var isUniqloPurchaseHistory: Bool {
+        url.hasPrefix("https://www.uniqlo.com/jp/ja/member/purchase/history")
     }
 
-    private func itemsFromGuPurchaseHistory() async throws -> [Item] {
+    private func itemsFromUniqloPurchaseHistory() async throws -> [Item] {
         let anchors = try doc.select("#root > section > section > section > section.fr-ec-layout.fr-ec-layout--gutter-sm.fr-ec-layout--gutter-md.fr-ec-layout--gutter-lg.fr-ec-layout--span-4-sm.fr-ec-layout--span-12-md.fr-ec-layout--span-9-lg.fr-ec-template-information--min-height > ul > li > div.fr-ec-product-tile-resize-wrapper > a")
 
         guard anchors.count != 0 else {
@@ -34,13 +34,13 @@ extension Scraper {
     }
 
     private func isValidImageUrl(_ imageUrl: String) -> Bool {
-        return imageUrl.matches(#"https://image.uniqlo.com/GU/ST3/(jp|AsianCommon)/imagesgoods/\d+/(item|sub)/(jpgoods|goods)_\d+_(sub)?\d+.*\.jpg"#)
+        return imageUrl.matches(#"https://image.uniqlo.com/UQ/ST3/(jp|AsianCommon)/imagesgoods/\d+/(item|sub)/(jpgoods|goods)_\d+_(sub)?\d+.*\.jpg"#)
     }
 
-    func itemsFromGu() async throws -> [Item] {
+    func itemsFromUniqlo() async throws -> [Item] {
         var items: [Item]
-        if isGuPurchaseHistory {
-            items = try await itemsFromGuPurchaseHistory()
+        if isUniqloPurchaseHistory {
+            items = try await itemsFromUniqloPurchaseHistory()
         } else {
             items = try await defaultItems()
             items = items.compactMapWithErrorLog(logger) {
