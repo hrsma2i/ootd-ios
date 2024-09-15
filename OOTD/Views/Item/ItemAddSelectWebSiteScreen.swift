@@ -65,25 +65,21 @@ struct ItemAddSelectWebSiteScreen: HashableView {
             return
         }
 
-        // TODO: await にしてネストを浅くする
-        webView.evaluateJavaScript("document.documentElement.outerHTML.toString()") { html, _ in
+        Task {
+            do {
+                let html = try await webView.getHtml()
+                let doc = try Scraper(html, url: currentUrl)
+                let items = try await doc.items()
 
-            guard let html = html as? String else { return }
-            guard let doc = try? Scraper(html, url: currentUrl) else { return }
-            Task {
-                do {
-                    let items = try await doc.items()
-
-                    navigation.path.append(
-                        SelectWebImageScreen(
-                            imageURLs: items.compactMap(\.imageURL)
-                        ) {
-                            selectedItemsToItemDetail($0, originalItems: items)
-                        }
-                    )
-                } catch {
-                    logger.error("\(error)")
-                }
+                navigation.path.append(
+                    SelectWebImageScreen(
+                        imageURLs: items.compactMap(\.imageURL)
+                    ) {
+                        selectedItemsToItemDetail($0, originalItems: items)
+                    }
+                )
+            } catch {
+                logger.error("\(error)")
             }
         }
     }
