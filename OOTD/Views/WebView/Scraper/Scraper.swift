@@ -14,7 +14,6 @@ enum URLDomain: String, CaseIterable {
     case zozo = "zozo.jp"
     case uniqlo = "uniqlo.com"
     case gu = "gu-global.com"
-//    case instagram = "instagram.com"
 }
 
 struct Scraper {
@@ -88,15 +87,6 @@ struct Scraper {
         return faviconURL
     }
     
-//    var deeplink: String? {
-//        switch domain {
-//        case .instagram:
-//            return try? doc.select("meta[property=al:ios:url]").first()?.attr("content")
-//        default:
-//            return nil
-//        }
-//    }
-    
     func imageUrls() async throws -> [String] {
         let imgs = try doc.select("img")
         
@@ -132,13 +122,6 @@ struct Scraper {
 
     private func _items() async throws -> [Item] {
         switch domain {
-//        case .instagram:
-//            do {
-//                return try await Instagram.getImageURLsFromMediaURL(url)
-//            } catch {
-//                logger.error("\(error.localizedDescription)")
-//                return try defaultCase()
-//            }
         case .zozo:
             return try await itemsFromZOZO()
 
@@ -151,21 +134,8 @@ struct Scraper {
             return items
 
         case .gu:
-            var items = try await defaultItems()
-            items = items.map {
-                // remove query params
-                let imageUrl = $0.imageURL?.split(separator: "?").first.map(String.init) ?? $0.imageURL
-                return Item(imageURL: imageUrl, sourceUrl: $0.sourceUrl)
-            }
-
-            let pattern = #"https://image.uniqlo.com/GU/ST3/(jp|AsianCommon)/imagesgoods/\d+/item/(jpgoods|goods)_\d+_\d+.*\.jpg"#
-            let pattern2 = #"https://image.uniqlo.com/GU/ST3/(jp|AsianCommon)/imagesgoods/\d+/sub/(jpgoods|goods)_\d+_sub\d+.*\.jpg"#
-            items = items.filter {
-                $0.imageURL?.range(of: pattern, options: .regularExpression) != nil
-                    || $0.imageURL?.range(of: pattern2, options: .regularExpression) != nil
-            }
-            return items
-
+            return try await itemsFromGu()
+            
         default:
             return try await defaultItems()
         }
@@ -173,8 +143,7 @@ struct Scraper {
     
     func items() async throws -> [Item] {
         var items = try await _items()
-        // deduplicate
-        items = Array(Set(items))
+        items = items.unique()
         // TODO: サイズで足切りする？
         return items
     }

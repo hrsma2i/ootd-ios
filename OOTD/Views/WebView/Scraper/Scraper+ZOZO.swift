@@ -58,8 +58,6 @@ extension Scraper {
                     throw "Item imageURL or sourceUrl is nil"
                 }
 
-                // TODO: filter valid image urls like c.imgz.jp
-
                 return Item(imageURL: imageUrl, sourceUrl: sourceUrl)
             }
         }
