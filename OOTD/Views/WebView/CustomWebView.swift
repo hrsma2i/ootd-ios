@@ -83,14 +83,39 @@ struct CustomWebView: HashableView {
         .padding(.horizontal, 10)
     }
 
+    var goBackButton: some View {
+        Button {
+            manager.webView.goBack()
+        } label: {
+            Image(systemName: "chevron.left")
+                .font(.system(size: 25))
+        }
+        .disabled(!manager.webView.canGoBack)
+    }
+
+    var goForwardButton: some View {
+        Button {
+            manager.webView.goForward()
+        } label: {
+            Image(systemName: "chevron.right")
+                .font(.system(size: 25))
+        }
+        .disabled(!manager.webView.canGoForward)
+    }
+
     var footer: some View {
         VStack(spacing: 0) {
             Divider()
 
             searchBar
 
-            if isImportblePage {
+            HStack(spacing: 50) {
+                goBackButton
+
+                goForwardButton
+
                 button
+                    .disabled(!isImportblePage)
             }
         }
         .background(.thinMaterial)
