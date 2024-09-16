@@ -32,32 +32,6 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         }
     }
 
-    private var searchBar: some View {
-        let color = Color(red: 200/255, green: 200/255, blue: 200/255)
-        return HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(color)
-
-            TextField("Google で検索 / URL を入力", text: $searchQuery)
-                .onSubmit {
-                    let url: String
-                    if searchQuery.hasPrefix("https://") {
-                        url = searchQuery
-                    } else {
-                        url = "https://www.google.com/search?q=\(searchQuery)"
-                    }
-                    navigation.path.append(webView(url))
-                }
-
-            Button {
-                searchQuery = ""
-            } label: {
-                Image(systemName: "multiply")
-                    .foregroundColor(color)
-            }
-        }
-    }
-
     private func extractedItemsToSelectWebImageScreen(_ webView: WKWebView) {
         guard let url = webView.url?.absoluteString else {
             logger.error("webView.url is nil")
@@ -100,7 +74,9 @@ struct ItemAddSelectWebSiteScreen: HashableView {
 
     var body: some View {
         List {
-            searchBar
+            SearchBar(text: $searchQuery) { url in
+                navigation.path.append(webView(url))
+            }
 
             Section("以下からインポート") {
                 siteButton("ZOZOTOWN", url: "https://zozo.jp/sp/_member/orderhistory/?ohid=&ohtype=2&baship=2&ohterm=\(currentYear)")

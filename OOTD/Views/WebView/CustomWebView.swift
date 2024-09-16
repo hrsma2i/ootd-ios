@@ -22,6 +22,7 @@ struct CustomWebView: HashableView {
     let buttonText: String
     var onButtonTapped: (WKWebView) -> Void = { _ in }
 
+    @State private var searchBarText: String
     // シングルトンだが、 Published なプロパティの変化を検知して View を再描画する必要があるため StateObject として持たせている。
     @StateObject private var manager = WebViewManager.shared
     @EnvironmentObject private var navigation: NavigationManager
@@ -34,6 +35,7 @@ struct CustomWebView: HashableView {
         }
         self.buttonText = buttonText
         self.onButtonTapped = onButtonTapped
+        self.searchBarText = url
     }
 
     var isImportblePage: Bool {
@@ -57,6 +59,43 @@ struct CustomWebView: HashableView {
         .padding(7)
     }
 
+    var searchBar: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .frame(height: 50)
+                .foregroundColor(Color(red: 250/255, green: 250/255, blue: 250/255))
+                .shadow(color: Color(red: 200/255, green: 200/255, blue: 200/255), radius: 5)
+
+            SearchBar(text: $searchBarText) { newUrl in
+                do {
+                    try manager.load(url: newUrl)
+                } catch {
+                    logger.error("\(error)")
+                }
+            }
+            .onChange(of: manager.url) {
+                searchBarText = manager.url.absoluteString
+            }
+            .foregroundColor(Color(red: 130/255, green: 130/255, blue: 130/255))
+            .padding(10)
+        }
+        .padding(7)
+        .padding(.horizontal, 10)
+    }
+
+    var footer: some View {
+        VStack(spacing: 0) {
+            Divider()
+
+            searchBar
+
+            if isImportblePage {
+                button
+            }
+        }
+        .background(.thinMaterial)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             Divider()
@@ -65,12 +104,9 @@ struct CustomWebView: HashableView {
                 ProgressView(value: manager.progress).progressViewStyle(.linear)
             }
 
-            WebViewRepresentable()
-
-            Divider()
-
-            if isImportblePage {
-                button
+            ZStack(alignment: .bottom) {
+                WebViewRepresentable()
+                footer
             }
         }
     }
