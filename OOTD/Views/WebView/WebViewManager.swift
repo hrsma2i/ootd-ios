@@ -16,56 +16,62 @@ func cookiesKey(_ domain: URLDomain) -> String {
 }
 
 final class WebViewManager: ObservableObject {
-    @Published var isLoading = false
-    @Published var estimatedProgress = 0.0
-    @Published var lastButtonTappedAt: Date? = nil
-    @Published var currentUrl: URL? = nil
-    var cancellable: Cancellable? = nil
-    var onUrlChanged: Cancellable? = nil
+    static let shared = WebViewManager()
 
-    func observeWebViewProperties(_ webView: WKWebView) {
-        // Combine の .publisher を使って WKWebView のプロパティを監視し、自身の @Published なプロパティにバインドする
-        // なぜ DispatchQueue.main.async で囲むのか
-        // https://stackoverflow.com/questions/77140328/how-to-avoid-swiftui-warnings-about-publishing-changes-from-within-view-updates
-        DispatchQueue.main.async {
-            webView.publisher(for: \.isLoading)
-                .assign(to: &self.$isLoading)
+    private(set) var webView: WKWebView
+    @Published private(set) var isLoading = false
+    @Published private(set) var progress = 0.0
+    // 更新は load から webView.url 経由でのみ行う
+    @Published private(set) var url: URL = .init(string: "https://www.example.com")!
 
-            webView.publisher(for: \.estimatedProgress)
-                .assign(to: &self.$estimatedProgress)
+    private var cancellables: Set<AnyCancellable> = []
 
-            webView.publisher(for: \.url)
-                .assign(to: &self.$currentUrl)
-        }
-    }
+    private init() {
+        webView = WKWebView()
+        webView.load(URLRequest(url: url))
 
-    func recieveSaveButtonTapped() {
-        lastButtonTappedAt = Date()
-    }
-
-    func setCancellable(_ webView: WKWebView, onButtonTapped: @escaping (WKWebView) -> Void) {
-        // なぜ cancellable, subscriber を WebViewRepresentable.beforeLoad 内で定義しないか:
-        // cancellable が makeUIView のスコープでしか生きられず、 lastSaveButtonTappedAt を更新してもコールバックが実行されないから
-
-        // なぜ WebViewWithProgressBar ではなく ObservableObject に cancellable を持たせたか:
-        // WebViewWithProgressBar が再描画されまくって、 cancellable もろとも破棄されるから、View より寿命の長い ObservableObject に持たせた。
-        // なお、 WebViewManager を @StateObject ではなく @ObservedObject にしてしまうと、再描画のたびに WebViewManager も再生成され、同様のことが起きてしまうので注意。
-        cancellable = $lastButtonTappedAt.sink { tappedAt in
-            // 初回の発火を防ぐため、 Optional にして、 nil のときは発火しないようにした。
-            if tappedAt != nil {
-                onButtonTapped(webView)
-            }
+        for domain in URLDomain.allCases {
+            let key = cookiesKey(domain)
+            do {
+                let cookies = try KeyChainHelper.shared.loadCookies(key: key)
+                for cookie in cookies {
+                    webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
+                }
+                logger.debug("load \(key) to WebView")
+            } catch { continue }
         }
 
-        onUrlChanged = $currentUrl.sink { url in
-            if url?.host == URLDomain.zozo.rawValue {
-                Task {
-                    let cookies = await webView.configuration.websiteDataStore.httpCookieStore.allCookies()
+        webView.publisher(for: \.isLoading)
+            .assign(to: &$isLoading)
 
-                    let key = cookiesKey(.zozo)
-                    try KeyChainHelper.shared.saveCookies(key: key, cookies: cookies)
+        webView.publisher(for: \.estimatedProgress)
+            .assign(to: &$progress)
+
+        webView.publisher(for: \.url)
+            .compactMap { $0 }
+            .assign(to: &$url)
+
+        $url
+            .sink { [weak self] newUrl in
+                logger.debug("url has changed to \(newUrl.absoluteString)")
+                // save cookies
+                if newUrl.host == URLDomain.zozo.rawValue {
+                    Task { @MainActor [weak self] in
+                        guard let cookies = await self?.webView.configuration.websiteDataStore.httpCookieStore.allCookies() else { return }
+
+                        let key = cookiesKey(.zozo)
+                        try KeyChainHelper.shared.saveCookies(key: key, cookies: cookies)
+                    }
                 }
             }
+            .store(in: &cancellables)
+    }
+
+    func load(url: String) throws {
+        guard let url = URL(string: url) else {
+            throw "invalid url string: \(url)"
         }
+        // reload
+        webView.load(URLRequest(url: url))
     }
 }

@@ -10,50 +10,49 @@ import WebKit
 
 private let logger = getLogger(#file)
 
+struct WebViewRepresentable: UIViewRepresentable {
+    public func makeUIView(context: Context) -> WKWebView {
+        return WebViewManager.shared.webView
+    }
+
+    public func updateUIView(_ uiView: WKWebView, context: Context) {}
+}
+
 struct CustomWebView: HashableView {
-    let url: String
     let buttonText: String
     var onButtonTapped: (WKWebView) -> Void = { _ in }
 
-    @StateObject private var manager = WebViewManager()
+    // シングルトンだが、 Published なプロパティの変化を検知して View を再描画する必要があるため StateObject として持たせている。
+    @StateObject private var manager = WebViewManager.shared
     @EnvironmentObject private var navigation: NavigationManager
 
-    var webViewRepresentable: some View {
-        WebViewRepresentable(url: URL(string: url)!) { webView in
-            // WKKWebView の状態を監視し、この View の ProgressView に伝える
-            manager.observeWebViewProperties(webView)
-
-            // manager.recieveButtonTapped() が呼ばれたときに実行するコールバックをセット
-            manager.setCancellable(
-                webView,
-                onButtonTapped: onButtonTapped
-            )
+    init(url: String, buttonText: String, onButtonTapped: @escaping (WKWebView) -> Void = { _ in }) {
+        do {
+            try WebViewManager.shared.load(url: url)
+        } catch {
+            logger.warning("\(error)")
         }
+        self.buttonText = buttonText
+        self.onButtonTapped = onButtonTapped
     }
 
     var isImportblePage: Bool {
-        guard let currentUrl = manager.currentUrl?.absoluteString else {
-            return false
-        }
-
-        return !currentUrl.hasPrefix("https://zozo.jp") || isZOZOImportablePage
+        let url = manager.url.absoluteString
+        return !url.hasPrefix("https://zozo.jp") || isZOZOImportablePage
     }
 
     var isZOZOImportablePage: Bool {
-        guard let currentUrl = manager.currentUrl?.absoluteString else {
-            return false
-        }
-
+        let url = manager.url.absoluteString
         let goodsDetailPattern = #"https://zozo\.jp/sp/shop/[\w-]+/(goods-sale|goods)/\d+/"#
 
         return
-            currentUrl.hasPrefix("https://zozo.jp/sp/_member/orderhistory/")
-                || currentUrl.range(of: goodsDetailPattern, options: .regularExpression) != nil
+            url.hasPrefix("https://zozo.jp/sp/_member/orderhistory/")
+                || url.range(of: goodsDetailPattern, options: .regularExpression) != nil
     }
 
     var button: some View {
-        RoundRectangleButton(text: "画像を選ぶ", fontSize: 20) {
-            manager.recieveSaveButtonTapped()
+        RoundRectangleButton(text: buttonText, fontSize: 20) {
+            onButtonTapped(manager.webView)
         }
         .padding(7)
     }
@@ -63,10 +62,10 @@ struct CustomWebView: HashableView {
             Divider()
 
             if manager.isLoading {
-                ProgressView(value: manager.estimatedProgress).progressViewStyle(.linear)
+                ProgressView(value: manager.progress).progressViewStyle(.linear)
             }
 
-            webViewRepresentable
+            WebViewRepresentable()
 
             Divider()
 
@@ -74,15 +73,33 @@ struct CustomWebView: HashableView {
                 button
             }
         }
-        .navigationDestination(for: SelectWebImageScreen.self) { $0 }
     }
 }
 
 #Preview {
-    DependencyInjector {
-        CustomWebView(
-            url: "https://zozo.jp/shop/barnssohostreet/goods-sale/41708194/?did=84288054",
-            buttonText: "保存"
-        )
+    struct PreviewView: View {
+        @State var text: String = "<HTML>"
+        @State var isPresent: Bool = false
+
+        var body: some View {
+            DependencyInjector {
+                CustomWebView(
+                    url: "https://zozo.jp/shop/barnssohostreet/goods-sale/41708194/?did=84288054",
+                    buttonText: "HTMLを取得"
+                ) { webView in
+                    Task {
+                        let text = try await webView.getHtml()
+                        self.text = String(text.prefix(100))
+                    }
+                    // なぜか Task 内だと <HTML> のままになる
+                    isPresent = true
+                }
+            }
+            .sheet(isPresented: $isPresent) {
+                Text(text)
+            }
+        }
     }
+
+    return PreviewView()
 }

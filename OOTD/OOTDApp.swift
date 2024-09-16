@@ -14,7 +14,7 @@ struct OOTDApp: App {
             RootView()
                 .task {
                     // to avoid initial delay
-                    let _ = WebViewRepresentable.webView
+                    let _ = WebViewManager.shared
                 }
         }
     }

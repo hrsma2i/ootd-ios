@@ -59,8 +59,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
     }
 
     private func extractedItemsToSelectWebImageScreen(_ webView: WKWebView) {
-        // TODO: manager の方から取得できるならそれでいい
-        guard let currentUrl = webView.url?.absoluteString else {
+        guard let url = webView.url?.absoluteString else {
             logger.error("webView.url is nil")
             return
         }
@@ -68,7 +67,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         Task {
             do {
                 let html = try await webView.getHtml()
-                let doc = try Scraper(html, url: currentUrl)
+                let doc = try Scraper(html, url: url)
                 let items = try await doc.items()
 
                 navigation.path.append(
@@ -111,6 +110,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
             }
         }
         .navigationDestination(for: CustomWebView.self) { $0 }
+        .navigationDestination(for: SelectWebImageScreen.self) { $0 }
         .navigationDestination(for: ItemDetail.self) { $0 }
     }
 }
