@@ -146,6 +146,14 @@ struct ItemDetail: HashableView {
         }
     }
     
+    func backWithAlertIfChanged() {
+        if hasChanges {
+            isAlertPresented = true
+        } else {
+            navigation.path.removeLast()
+        }
+    }
+    
     var backButton: some View {
         ZStack(alignment: .topLeading) {
             LinearGradient(
@@ -156,11 +164,7 @@ struct ItemDetail: HashableView {
             .allowsHitTesting(false)
             
             Button {
-                if hasChanges {
-                    isAlertPresented = true
-                } else {
-                    navigation.path.removeLast()
-                }
+                backWithAlertIfChanged()
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 20))
@@ -256,6 +260,7 @@ struct ItemDetail: HashableView {
             }
         }
         .navigationBarHidden(true)
+        .edgeSwipe { backWithAlertIfChanged() }
         .sheet(item: $activeSheet) { item in
             switch item {
             case .categorySelect:
