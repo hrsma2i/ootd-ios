@@ -13,31 +13,31 @@ struct ItemDetail: HashableView {
     @State var items: [Item]
     @EnvironmentObject var itemStore: ItemStore
     @EnvironmentObject var navigation: NavigationManager
-
+    
     // MARK: - private
-
+    
     private let originalItems: [Item]
     @State private var isAlertPresented: Bool = false
-
+    
     private enum ActiveSheet: Int, Identifiable {
         case categorySelect
-
+        
         var id: Int {
             rawValue
         }
     }
-
+    
     @State private var activeSheet: ActiveSheet?
-
+    
     init(items: [Item]) {
         self.items = items
         self.originalItems = items
     }
-
+    
     var hasNewItems: Bool {
         items.contains { $0.id == nil }
     }
-
+    
     var hasChanges: Bool {
         if hasNewItems {
             return true
@@ -47,14 +47,14 @@ struct ItemDetail: HashableView {
             }
         }
     }
-
+    
     var categoryDisplayed: String {
         if let category = items.first?.category, items.allSatisfy({ $0.category == category }) {
             return category.rawValue
         }
         return "バラバラ"
     }
-
+    
     var saveButton: some View {
         VStack {
             Spacer()
@@ -66,7 +66,7 @@ struct ItemDetail: HashableView {
                 var newItems: [Item] = []
                 var existingItems: [Item] = []
                 var existingOriginalItems: [Item] = []
-
+                
                 for (i, item) in items.enumerated() {
                     if item.id == nil {
                         newItems.append(item)
@@ -75,23 +75,27 @@ struct ItemDetail: HashableView {
                         existingOriginalItems.append(originalItems[i])
                     }
                 }
-
+                
                 Task {
                     try await itemStore.create(newItems)
                 }
                 Task {
                     try await itemStore.update(existingItems, originalItems: existingOriginalItems)
                 }
-
+                
                 navigation.path.removeLast()
             }
         }
     }
-
-    func itemCard(_ item: Item, index: Int = 0) -> some View {
+    
+    func itemCard(_ item: Item, index: Int = 0, aspectRatio: CGFloat?) -> some View {
         ZStack(alignment: .bottomTrailing) {
-            ItemCard(item: item)
-
+            ItemCard(
+                item: item,
+                padding: 0,
+                aspectRatio: aspectRatio
+            )
+            
             Button {
                 Task {
                     let onCropped: (UIImage) -> Void = { uiImage in
@@ -99,10 +103,10 @@ struct ItemDetail: HashableView {
                         items[index] = item
                             .copyWith(\.imageURL, value: nil)
                             .copyWith(\.image, value: uiImage)
-
+                        
                         navigation.path.removeLast()
                     }
-
+                    
                     let view: ImageCropView
                     if let url = item.imageURL {
                         let data = try await downloadImage(url)
@@ -116,7 +120,7 @@ struct ItemDetail: HashableView {
                         logger.error("no item image")
                         return
                     }
-
+                    
                     navigation.path.append(view)
                 }
             } label: {
@@ -141,92 +145,123 @@ struct ItemDetail: HashableView {
             }
         }
     }
-
-    var body: some View {
-        ZStack {
-            Form {
-                Section {
-                    if items.count == 1, let item = items.first {
-                        itemCard(item)
-                            .listRowInsets(.init())
-                    } else {
-                        ScrollView(.horizontal) {
-                            HStack {
-                                ForEach(0 ..< items.count, id: \.self) { i in
-                                    itemCard(items[i], index: i)
-                                }
-                                .frame(height: 250)
-                            }
-                        }
-                    }
+    
+    var backButton: some View {
+        ZStack(alignment: .topLeading) {
+            LinearGradient(
+                gradient: Gradient(colors: [Color.black.opacity(0.15), Color.clear]),
+                startPoint: .init(x: 0.0, y: 0.0),
+                endPoint: .init(x: 0.0, y: 0.4)
+            )
+            .allowsHitTesting(false)
+            
+            Button {
+                if hasChanges {
+                    isAlertPresented = true
+                } else {
+                    navigation.path.removeLast()
                 }
-                // https://stackoverflow.com/questions/77211847/how-can-i-make-each-button-in-the-swiftui-form-clickable
-                .buttonStyle(.plain)
-                // https://www.reddit.com/r/SwiftUI/comments/k4lthn/swiftui_clear_background_of_form_section/
-                .listRowBackground(Color(UIColor.systemGroupedBackground))
-                // https://zenn.dev/yimajo/articles/f69a775648fc9d
-                .listRowInsets(.init())
-
-                Section {
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 20))
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+            }
+            .padding(20)
+        }
+    }
+    
+    @ViewBuilder
+    var imageArea: some View {
+        ZStack(alignment: .topLeading) {
+            if items.count == 1, let item = items.first {
+                itemCard(item, aspectRatio: nil)
+                    .listRowInsets(.init())
+            } else {
+                ScrollView(.horizontal) {
                     HStack {
-                        Text("カテゴリー")
-                        Spacer()
-                        Button {
-                            activeSheet = .categorySelect
-                        } label: {
-                            Text(categoryDisplayed)
+                        ForEach(0 ..< items.count, id: \.self) { i in
+                            itemCard(items[i], index: i, aspectRatio: 1)
                         }
-                    }
-                }
-
-                if items.count == 1, let item = items.first, let urlString = item.sourceUrl {
-                    Section("URL") {
-                        Button {
-                            if let url = URL(string: urlString) {
-                                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                            }
-                        } label: {
-                            HStack {
-                                Image(systemName: "link")
-                                Text(urlString)
-                                    .lineLimit(1)
-                            }
-                        }
+                        .frame(height: 300)
                     }
                 }
             }
-
+            
+            backButton
+        }
+    }
+    
+    func section(content: @escaping () -> some View) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundColor(Color(gray: 0.96))
+            
+            content()
+                .padding()
+        }
+    }
+    
+    func propertyRow(_ key: String, _ value: String, action: @escaping () -> Void = {}) -> some View {
+        HStack {
+            Text(key)
+            Spacer()
+            Button(action: action) {
+                Text(value)
+            }
+        }
+    }
+    
+    var categoryRow: some View {
+        propertyRow("カテゴリー", categoryDisplayed) {
+            activeSheet = .categorySelect
+        }
+    }
+    
+    func urlRow(_ urlString: String) -> some View {
+        Button {
+            if let url = URL(string: urlString) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        } label: {
+            HStack {
+                Image(systemName: "link")
+                Text(urlString)
+                    .lineLimit(1)
+            }
+        }
+    }
+    
+    var body: some View {
+        ZStack {
+            ScrollView {
+                imageArea
+                
+                VStack(spacing: 20) {
+                    section {
+                        categoryRow
+                    }
+                    
+                    if items.count == 1, let item = items.first, let urlString = item.sourceUrl {
+                        section {
+                            urlRow(urlString)
+                        }
+                    }
+                }
+                .padding(20)
+            }
+            
             if hasChanges {
                 saveButton
             }
         }
-        .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
-        .navigationTitle("アイテム詳細")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    if hasChanges {
-                        isAlertPresented = true
-                    } else {
-                        navigation.path.removeLast()
-                    }
-                } label: {
-                    HStack(spacing: 2) {
-                        Image(systemName: "chevron.left")
-                            .fontWeight(.bold)
-                        Text("Back")
-                    }
-                }
-            }
-        }
+        .navigationBarHidden(true)
         .sheet(item: $activeSheet) { item in
             switch item {
             case .categorySelect:
                 CategorySelectSheet { category in
                     activeSheet = nil
-
+                    
                     if let category {
                         // items の要素のプロパティを直接書き換えても再描画されなかったので
                         items = items.map {
@@ -250,22 +285,25 @@ struct ItemDetail: HashableView {
 
 #Preview {
     struct SwitchableView: View {
-        @State private var isSingle = true
+        @State private var isSingle = false
 
         var body: some View {
             DependencyInjector {
                 VStack {
-                    Button(action: { isSingle = !isSingle }) {
-                        Text("切り替え")
-                    }
                     if isSingle {
                         ItemDetail(
-                            items: [sampleItems.last!]
+                            items: [sampleItems.randomElement()!]
                         )
                     } else {
                         ItemDetail(
                             items: Array(sampleItems[0 ... 4])
                         )
+                    }
+                    
+                    Spacer()
+                    Divider()
+                    Button(action: { isSingle = !isSingle }) {
+                        Text("単体・複数切り替え")
                     }
                 }
             }

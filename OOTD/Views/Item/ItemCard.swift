@@ -14,6 +14,7 @@ struct ItemCard: View {
     let item: Item
     var isThumbnail: Bool = false
     var padding: CGFloat = 12
+    var aspectRatio: CGFloat? = 1.0
 
     var url: String? {
         isThumbnail ? item.thumbnailURL ?? item.imageURL : item.imageURL
@@ -49,7 +50,7 @@ struct ItemCard: View {
         ImageCard(
             uiImage: image,
             url: url,
-            aspectRatio: 1,
+            aspectRatio: aspectRatio,
             padding: padding
         )
     }

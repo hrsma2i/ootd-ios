@@ -18,6 +18,7 @@
 		883FCB392C9674060001DAAF /* Sequence+unique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883FCB382C9674060001DAAF /* Sequence+unique.swift */; };
 		883FCB3B2C970AA50001DAAF /* Scraper+Uniqlo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883FCB3A2C970AA50001DAAF /* Scraper+Uniqlo.swift */; };
 		883FCB3D2C986B060001DAAF /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883FCB3C2C986B060001DAAF /* SearchBar.swift */; };
+		883FCB3F2C99BB560001DAAF /* Color+gray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883FCB3E2C99BB560001DAAF /* Color+gray.swift */; };
 		884CF6562C7F670200250026 /* LocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6552C7F670200250026 /* LocalStorage.swift */; };
 		884CF65E2C82018400250026 /* RoundRectangleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF65D2C82018400250026 /* RoundRectangleButton.swift */; };
 		884CF66C2C8201F900250026 /* MasonryGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6602C8201F800250026 /* MasonryGrid.swift */; };
@@ -109,6 +110,7 @@
 		883FCB382C9674060001DAAF /* Sequence+unique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+unique.swift"; sourceTree = "<group>"; };
 		883FCB3A2C970AA50001DAAF /* Scraper+Uniqlo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Scraper+Uniqlo.swift"; sourceTree = "<group>"; };
 		883FCB3C2C986B060001DAAF /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		883FCB3E2C99BB560001DAAF /* Color+gray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+gray.swift"; sourceTree = "<group>"; };
 		884CF6522C7F597600250026 /* sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = sample.xcconfig; sourceTree = "<group>"; };
 		884CF6532C7F599300250026 /* swiftData.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swiftData.xcconfig; sourceTree = "<group>"; };
 		884CF6542C7F5F1800250026 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -358,6 +360,7 @@
 				886232452C7CC11700A1802D /* Logger.swift */,
 				884CF6552C7F670200250026 /* LocalStorage.swift */,
 				883FCB312C9489780001DAAF /* KeyChainHelper.swift */,
+				883FCB3E2C99BB560001DAAF /* Color+gray.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -639,6 +642,7 @@
 				8862325D2C7CC2FF00A1802D /* OutfitDataSource.swift in Sources */,
 				886232AD2C7CC9F500A1802D /* RootView.swift in Sources */,
 				886064112C906B45003C7001 /* SwiftDataOutfitDataSource.swift in Sources */,
+				883FCB3F2C99BB560001DAAF /* Color+gray.swift in Sources */,
 				884CF65E2C82018400250026 /* RoundRectangleButton.swift in Sources */,
 				883FCB372C9671870001DAAF /* String+matches.swift in Sources */,
 				886064132C90790D003C7001 /* Sequence+compactMapWithErrorLog.swift in Sources */,
