@@ -46,7 +46,12 @@ struct ItemAddSelectWebSiteScreen: HashableView {
 
                 navigation.path.append(
                     SelectWebImageScreen(
-                        imageURLs: items.compactMap(\.imageURL)
+                        imageURLs: items.compactMap {
+                            guard case let .url(imageUrl) = $0.imageSource else {
+                                return nil
+                            }
+                            return imageUrl
+                        }
                     ) {
                         selectedItemsToItemDetail($0, originalItems: items)
                     }
@@ -59,7 +64,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
 
     private func selectedItemsToItemDetail(_ selectedImageUrls: [String], originalItems: [Item]) {
         let selected = originalItems.filter {
-            guard let url = $0.imageURL else { return false }
+            guard case let .url(url) = $0.imageSource else { return false }
             return selectedImageUrls.contains(url)
         }
         navigation.path = NavigationPath()

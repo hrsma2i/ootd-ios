@@ -87,7 +87,10 @@ let sampleOutfits = [
             "Dr_Martens_3hole",
 
         ].compactMap { name in
-            sampleItems.filter { $0.id == name }.first
+            sampleItems.filter {
+                guard case let .url(url) = $0.imageSource else { return false }
+                return url.contains(name)
+            }.first
         }
     ),
     Outfit(
@@ -99,7 +102,10 @@ let sampleOutfits = [
             "black_cocoon_denim",
             "adadias_samba_naby",
         ].compactMap { name in
-            sampleItems.filter { $0.id == name }.first
+            sampleItems.filter {
+                guard case let .url(url) = $0.imageSource else { return false }
+                return url.contains(name)
+            }.first
         }
     ),
     Outfit(
@@ -112,7 +118,10 @@ let sampleOutfits = [
             "black_leather_pants",
             "clarks_black_wallabee_boots",
         ].compactMap { name in
-            sampleItems.filter { $0.id == name }.first
+            sampleItems.filter {
+                guard case let .url(url) = $0.imageSource else { return false }
+                return url.contains(name)
+            }.first
         }
     ),
     Outfit(

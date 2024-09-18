@@ -65,7 +65,7 @@ struct OutfitDetail: HashableView {
             // なぜか、そのまま Button の label としてラップすると画面が真っ白になってしまうので、しかたなく ZStack で透明な四角形のボタンを被せる
             if let image {
                 ImageCard(
-                    uiImage: image
+                    source: .uiImage(image)
                 )
             } else {
                 imageEmptyView

@@ -78,7 +78,7 @@ struct OutfitCard: View {
     var body: some View {
         if let image {
             ImageCard(
-                uiImage: image
+                source: .uiImage(image)
             )
         } else {
             collage

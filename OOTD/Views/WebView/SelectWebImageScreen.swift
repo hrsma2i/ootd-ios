@@ -37,7 +37,7 @@ struct SelectWebImageScreen: HashableView {
     func imageCard(_ url: String) -> some View {
         ZStack(alignment: .topTrailing) {
             ImageCard(
-                url: url,
+                source: .url(url),
                 aspectRatio: 1,
                 contentMode: .fill
             )
@@ -87,6 +87,11 @@ struct SelectWebImageScreen: HashableView {
 
 #Preview {
     SelectWebImageScreen(
-        imageURLs: sampleItems.compactMap { $0.imageURL }
+        imageURLs: sampleItems.compactMap {
+            guard case let .url(url) = $0.imageSource else {
+                return nil
+            }
+            return url
+        }
     )
 }

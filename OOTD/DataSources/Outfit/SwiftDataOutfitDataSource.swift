@@ -134,11 +134,7 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
         if let image_ = outfit.image {
             image = image_
         } else if let url = outfit.imageURL {
-            let data = try await downloadImage(url)
-            guard let image_ = UIImage(data: data) else {
-                throw "\(header) it failed to convert the downloaded data to UIImage"
-            }
-            image = image_
+            image = try await downloadImage(url)
         } else {
             throw "\(header) the outfit.image == nil or it failed to download the image from outfit.imageURL"
         }

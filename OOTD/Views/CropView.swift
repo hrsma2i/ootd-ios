@@ -15,12 +15,6 @@ struct ImageCropView: HashableView {
     let editingStack: EditingStack
     var onCropped: (UIImage) -> Void
 
-    init(data: Data, onCropped: @escaping (UIImage) -> Void = { _ in }) throws {
-        let imageProvider = try ImageProvider(data: data)
-        editingStack = EditingStack(imageProvider: imageProvider)
-        self.onCropped = onCropped
-    }
-
     init(uiImage: UIImage, onCropped: @escaping (UIImage) -> Void = { _ in }) {
         let imageProvider = ImageProvider(image: uiImage)
         editingStack = EditingStack(imageProvider: imageProvider)
@@ -58,8 +52,8 @@ struct ImageCropView: HashableView {
                 Button {
                     Task {
                         do {
-                            let data = try await downloadImage("https://gaijinpot.scdn3.secure.raxcdn.com/app/uploads/sites/6/2016/02/Mount-Fuji-New.jpg")
-                            let view = try ImageCropView(data: data) {
+                            let image = try await downloadImage("https://gaijinpot.scdn3.secure.raxcdn.com/app/uploads/sites/6/2016/02/Mount-Fuji-New.jpg")
+                            let view = ImageCropView(uiImage: image) {
                                 uiImage = $0
                                 navigation.path.removeLast()
                             }
@@ -71,7 +65,7 @@ struct ImageCropView: HashableView {
                 }
 
                 if let uiImage {
-                    ImageCard(uiImage: uiImage)
+                    ImageCard(source: .uiImage(uiImage))
                 }
             }
             .navigationDestination(for: ImageCropView.self) { $0 }

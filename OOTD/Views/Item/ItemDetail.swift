@@ -98,30 +98,17 @@ struct ItemDetail: HashableView {
             
             Button {
                 Task {
-                    let onCropped: (UIImage) -> Void = { uiImage in
-                        // 新規アイテムの id=nil なので、 Item.id ではなく index で特定する
-                        items[index] = item
-                            .copyWith(\.imageURL, value: nil)
-                            .copyWith(\.image, value: uiImage)
-                        
-                        navigation.path.removeLast()
-                    }
-                    
-                    let view: ImageCropView
-                    if let url = item.imageURL {
-                        let data = try await downloadImage(url)
-                        view = try ImageCropView(data: data, onCropped: onCropped)
-                    } else if let uiImage = item.image {
-                        view = ImageCropView(uiImage: uiImage, onCropped: onCropped)
-                    } else if let imagePath = item.imagePath {
-                        let uiImage = try LocalStorage.loadImage(from: imagePath)
-                        view = ImageCropView(uiImage: uiImage, onCropped: onCropped)
-                    } else {
-                        logger.error("no item image")
-                        return
-                    }
-                    
-                    navigation.path.append(view)
+                    let originalImage = try await item.getUiImage()
+
+                    navigation.path.append(
+                        ImageCropView(uiImage: originalImage) { editedImage in
+                            items[index] = item
+                                .copyWith(\.imageSource, value: .uiImage(editedImage))
+                                .copyWith(\.thumbnailSource, value: .uiImage(editedImage))
+
+                            navigation.path.removeLast()
+                        }
+                    )
                 }
             } label: {
                 var height: CGFloat = 40

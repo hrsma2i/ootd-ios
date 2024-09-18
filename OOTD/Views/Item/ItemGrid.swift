@@ -307,7 +307,7 @@ struct ItemGrid: HashableView {
                     }
 
                     let items = images.map {
-                        Item(image: $0)
+                        Item(imageSource: .uiImage($0))
                     }
 
                     navigation.path.append(ItemDetail(

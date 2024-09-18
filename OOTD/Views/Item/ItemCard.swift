@@ -11,45 +11,15 @@ import SwiftUI
 private let logger = getLogger(#file)
 
 struct ItemCard: View {
+    // TODO: 削除してよさそう。ImageCard で十分そう
     let item: Item
     var isThumbnail: Bool = false
     var padding: CGFloat = 12
     var aspectRatio: CGFloat? = 1.0
 
-    var url: String? {
-        isThumbnail ? item.thumbnailURL ?? item.imageURL : item.imageURL
-    }
-
-    // TODO: Image 内に image 取得メソッドを持たせ、描画時に取得したほうがいいか？Storage を protocol で抽象化して、 Firebase Storage にも切り替えられるようにする？
-    var image: UIImage? {
-        if let image = item.image {
-            return image
-        }
-
-        guard let imagePath = item.imagePath,
-              let thumbnailPath = item.thumbnailPath
-        else {
-            return nil
-        }
-
-        do {
-            if isThumbnail {
-                let thumbnail = try LocalStorage.loadImage(from: thumbnailPath)
-                return thumbnail
-            } else {
-                let image = try LocalStorage.loadImage(from: imagePath)
-                return image
-            }
-        } catch {
-            logger.warning("\(error)")
-            return nil
-        }
-    }
-
     var body: some View {
         ImageCard(
-            uiImage: image,
-            url: url,
+            source: isThumbnail ? item.thumbnailSource : item.imageSource,
             aspectRatio: aspectRatio,
             padding: padding
         )
@@ -58,10 +28,14 @@ struct ItemCard: View {
 
 #Preview {
     struct PreviewView: View {
-        @State var itemHasUIImage: Item = .init()
-        let itemHasURL: Item = sampleItems.filter { $0.id == "white_ma1" }.first!
+        @State var itemHasUIImage: Item?
+        let itemHasURL: Item = sampleItems.filter {
+            guard case let .url(imageUrl) = $0.imageSource else {
+                return false
+            }
+            return imageUrl.contains("white_ma1")
+        }.first!
         let spacing: CGFloat = 5
-        let itemBothNil: Item = .init()
 
         func row(_ title: String, content: @escaping () -> some View) -> some View {
             HStack {
@@ -73,20 +47,19 @@ struct ItemCard: View {
         }
 
         var body: some View {
-            let itemHasInvalidURL = itemHasURL.copyWith(\.imageURL, value: "error url")
+            let itemHasInvalidURL = itemHasURL.copyWith(\.imageSource, value: .url("error url"))
 
             return ScrollView {
-                row("UIImage") {
-                    ItemCard(item: itemHasUIImage)
+                if let itemHasUIImage {
+                    row("UIImage") {
+                        ItemCard(item: itemHasUIImage)
+                    }
                 }
                 row("URL") {
                     ItemCard(item: itemHasURL)
                 }
                 row("invalid URL") {
                     ItemCard(item: itemHasInvalidURL)
-                }
-                row("UIImage = nil && URL = nil") {
-                    ItemCard(item: itemBothNil)
                 }
                 row("loading") {
                     AspectRatioContainer(aspectRatio: 1) {
@@ -98,9 +71,8 @@ struct ItemCard: View {
             .padding(spacing)
             .background(.gray)
             .task {
-                let url = itemHasURL.imageURL!
-                let image = try! await downloadImage(url)
-                itemHasUIImage.image = UIImage(data: image)
+                let image = try! await itemHasURL.getUiImage()
+                itemHasUIImage = .init(imageSource: .uiImage(image))
             }
         }
     }

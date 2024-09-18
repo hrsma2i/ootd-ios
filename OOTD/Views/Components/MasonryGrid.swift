@@ -40,12 +40,14 @@ struct MasonryGrid<Data, Content>: View where Data: RandomAccessCollection, Cont
             MasonryGrid(
                 columns: 2,
                 data: sampleItems,
-                content: { item in
-                    AsyncImage(url: URL(string: item.imageURL!)) { phase in
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFit()
+                content: {
+                    if case let .url(imageUrl) = $0.imageSource {
+                        AsyncImage(url: URL(string: imageUrl)) { phase in
+                            if let image = phase.image {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                            }
                         }
                     }
                 }

@@ -10,61 +10,56 @@ import UIKit
 
 private let logger = getLogger(#file)
 
-struct Item: Hashable, Encodable {
+struct Item: Hashable {
     var id: String?
-
-    var image: UIImage?
-    var imageURL: String?
-    var thumbnailURL: String?
-    var resizedImageURL: String?
+    var imageSource: ImageSource
+    var thumbnailSource: ImageSource
     var category: Category = .uncategorized
     var sourceUrl: String?
 
     static let imageSize: CGFloat = 500
     static let thumbnailSize: CGFloat = 200
 
-    var imagePath: String? {
-        guard let id else { return nil }
-
-        return "dev/item_images_\(Int(Item.imageSize))/\(id).jpg"
+    // create
+    init(imageSource: ImageSource, category: Category = .uncategorized, sourceUrl: String? = nil) {
+        // TODO: UUID による id の生成もここでやったほうが良さそう。ただし、ItemDetail の create / update まわりを工夫する必要がある
+        self.imageSource = imageSource
+        thumbnailSource = self.imageSource
+        self.category = category
+        self.sourceUrl = sourceUrl
     }
 
-    var thumbnailPath: String? {
-        guard let id else { return nil }
+    // read
+    init(id: String, category: Category = .uncategorized, sourceUrl: String? = nil) {
+        self.id = id
+        imageSource = .localPath(Item.generateImagePath(id, size: Item.imageSize))
+        thumbnailSource = .localPath(Item.generateImagePath(id, size: Item.thumbnailSize))
+        self.category = category
+        self.sourceUrl = sourceUrl
+    }
 
-        return "dev/item_images_\(Int(Item.thumbnailSize))/\(id).jpg"
+    // 返り値を String? などにしたくないので、 id == nil の場合もあるため、 id は引数で受け取ることにした。
+    static func generateImagePath(_ id: String, size: CGFloat) -> String {
+        return "dev/item_images_\(Int(size))/\(id).jpg"
+    }
+
+    // 画像加工時に使う
+    func getUiImage() async throws -> UIImage {
+        switch imageSource {
+        case .uiImage(let image):
+            return image
+        case .url(let url):
+            let image = try await downloadImage(url)
+            return image
+        case .localPath(let path):
+            let image = try LocalStorage.loadImage(from: path)
+            return image
+        }
     }
 
     func copyWith<T>(_ keyPath: WritableKeyPath<Item, T>, value: T) -> Item {
         var clone = self
         clone[keyPath: keyPath] = value
         return clone
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case createdAimportUrlt
-        case updatedAt
-        case imageURL
-        case category
-    }
-
-    func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        // TODO: 特別な処理のいらないフィールドは自動化したい
-        try container.encode(id, forKey: .id)
-        try container.encode(category, forKey: .category)
-    }
-}
-
-extension Item: Decodable {
-    init(from decoder: Decoder) throws {
-        // TODO: 自動化難しそうだけどやりたい
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        // そのままデフォルト値を設定してもデコード時にエラーになるだけなので、わざわざ init(from decoder) を定義する必要がある
-        // https://sylvainchan.medium.com/swift-5-codable-with-default-value-519996b90c9f
-        category = try container.decodeIfPresent(Category.self, forKey: .category) ?? .uncategorized
     }
 }

@@ -12,8 +12,7 @@ import UIKit
 private let logger = getLogger(#file)
 
 struct ImageCard: View {
-    var uiImage: UIImage?
-    var url: String?
+    let source: ImageSource
     var aspectRatio: CGFloat?
     var padding: CGFloat = 0
     var contentMode: ContentMode = .fit
@@ -51,27 +50,46 @@ struct ImageCard: View {
         }
     }
 
+    var localImage: UIImage? {
+        guard case .localPath(let path) = source else {
+            return nil
+        }
+
+        do {
+            let image = try LocalStorage.loadImage(from: path)
+            return image
+        } catch {
+            logger.error("\(error)")
+            return nil
+        }
+    }
+
     var body: some View {
-        if let uiImage {
-            imageView(Image(uiImage: uiImage))
-        } else if let url {
-            CachedAsyncImage(url: URL(string: url)) { phase in
-                if let image = phase.image {
-                    imageView(image)
-                } else if let error = phase.error {
-                    errorView
-                        .task {
-                            logger.error("\(error.localizedDescription). url: \(url)")
-                        }
+        Group {
+            if case .localPath = source {
+                if let localImage {
+                    imageView(Image(uiImage: localImage))
                 } else {
-                    loadingView
+                    errorView
                 }
+            } else if case .uiImage(let image) = source {
+                imageView(Image(uiImage: image))
+            } else if case .url(let url) = source {
+                CachedAsyncImage(url: URL(string: url)) { phase in
+                    if let image = phase.image {
+                        imageView(image)
+                    } else if let error = phase.error {
+                        errorView
+                            .task {
+                                logger.error("\(error.localizedDescription). url: \(url)")
+                            }
+                    } else {
+                        loadingView
+                    }
+                }
+            } else {
+                loadingView
             }
-        } else {
-            errorView
-                .task {
-                    logger.error("uiImage == nil && url == nil")
-                }
         }
     }
 }
@@ -83,28 +101,24 @@ struct ImageCard: View {
         var body: some View {
             ScrollView {
                 if let uiImage {
-                    ImageCard(uiImage: uiImage)
+                    ImageCard(source: .uiImage(uiImage))
                         .frame(height: 200)
                 }
 
-                ImageCard(url: url)
+                ImageCard(source: .url(url))
                     .frame(height: 200)
 
-                ImageCard(url: url, aspectRatio: 1)
+                ImageCard(source: .url(url), aspectRatio: 1)
                     .frame(height: 200)
 
-                ImageCard(url: url, aspectRatio: 1, padding: 12)
+                ImageCard(source: .url(url), aspectRatio: 1, padding: 12)
                     .frame(height: 200)
 
-                ImageCard(url: url, aspectRatio: 1, contentMode: .fill)
-                    .frame(height: 200)
-
-                ImageCard()
+                ImageCard(source: .url(url), aspectRatio: 1, contentMode: .fill)
                     .frame(height: 200)
             }
             .task {
-                let imageData = try! await downloadImage(url)
-                uiImage = UIImage(data: imageData)
+                uiImage = try! await downloadImage(url)
             }
         }
     }

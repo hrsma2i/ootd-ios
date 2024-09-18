@@ -27,7 +27,7 @@ extension Scraper {
             let imageUrl = try img.attr("src")
             let sourceUrl = try anchor.attr("href")
 
-            return Item(imageURL: imageUrl, sourceUrl: sourceUrl)
+            return Item(imageSource: .url(imageUrl), sourceUrl: sourceUrl)
         }
 
         return items
@@ -44,17 +44,17 @@ extension Scraper {
         } else {
             items = try await defaultItems()
             items = items.compactMapWithErrorLog(logger) {
-                guard let imageUrl = $0.imageURL, let sourceUrl = $0.sourceUrl else {
-                    throw "Item imageURL or sourceUrl is nil"
+                guard let sourceUrl = $0.sourceUrl else {
+                    throw "Item.sourceUrl is nil"
                 }
 
-                return Item(imageURL: imageUrl, sourceUrl: sourceUrl)
+                return Item(imageSource: $0.imageSource, sourceUrl: sourceUrl)
             }
         }
 
         // common post process
-        items = items.filter { item in
-            guard let imageUrl = item.imageURL else {
+        items = items.filter {
+            guard case let .url(imageUrl) = $0.imageSource else {
                 return false
             }
 

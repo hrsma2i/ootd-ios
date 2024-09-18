@@ -86,12 +86,17 @@ struct AspectRatioContainer<Content: View>: View {
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3)) {
                             ForEach(Array(sampleItems.prefix(7)), id: \.self) { item in
                                 AspectRatioContainer(aspectRatio: 1) {
-                                    AsyncImage(url: URL(string: item.imageURL!)) { phase in
-                                        if let image = phase.image {
-                                            image
-                                                .resizable()
-                                                .scaledToFit()
+                                    switch item.imageSource {
+                                    case .url(let imageUrl):
+                                        AsyncImage(url: URL(string: imageUrl)) { phase in
+                                            if let image = phase.image {
+                                                image
+                                                    .resizable()
+                                                    .scaledToFit()
+                                            }
                                         }
+                                    default:
+                                        EmptyView()
                                     }
                                 }
                             }

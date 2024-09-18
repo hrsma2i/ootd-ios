@@ -123,24 +123,14 @@ final class SwiftDataItemDataSource: ItemDataSource {
     func saveImage(_ item: Item) async throws {
         let header = "failed to save an item image to the local storage because"
 
-        guard let imagePath = item.imagePath,
-              let thumbnailPath = item.thumbnailPath
-        else {
-            throw "\(header) either imagePath or thumbnailPath is nil"
+        let image = try await item.getUiImage()
+
+        guard let id = item.id else {
+            throw "\(header) Item.id is nil"
         }
 
-        let image: UIImage
-        if let image_ = item.image {
-            image = image_
-        } else if let url = item.imageURL {
-            let data = try await downloadImage(url)
-            guard let image_ = UIImage(data: data) else {
-                throw "\(header) it failed to convert the downloaded data to UIImage"
-            }
-            image = image_
-        } else {
-            throw "\(header) the item.image == nil or it failed to download the image from item.imageURL"
-        }
+        let imagePath = Item.generateImagePath(id, size: Item.imageSize)
+        let thumbnailPath = Item.generateImagePath(id, size: Item.thumbnailSize)
 
         try LocalStorage.save(image: image.resized(to: Item.imageSize), to: imagePath)
         try LocalStorage.save(image: image.resized(to: Item.thumbnailSize), to: thumbnailPath)
@@ -171,11 +161,11 @@ final class SwiftDataItemDataSource: ItemDataSource {
                 logger.debug("[SwiftData] delete item id=\(dto.id)")
                 context.delete(dto)
 
-                guard let imagePath = item.imagePath,
-                      let thumbnailPath = item.thumbnailPath
-                else {
-                    throw "[SwiftData] either imagePath or thumbnailPath is nil"
-                }
+                // Item.imageSource が .localPath のときだけ削除するのはダメ
+                // create したばかりのアイテムをすぐ削除しようとすると imageSource = .uiImage | .url となり、
+                // LocalStorage に保存した画像が削除されなくなる
+                let imagePath = Item.generateImagePath(dto.id, size: Item.imageSize)
+                let thumbnailPath = Item.generateImagePath(dto.id, size: Item.thumbnailSize)
 
                 try LocalStorage.remove(at: imagePath)
                 try LocalStorage.remove(at: thumbnailPath)

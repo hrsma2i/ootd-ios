@@ -28,7 +28,7 @@ extension Scraper {
             let imageUrl = try img.attr("src")
             let sourceUrl = try link.attr("href")
 
-            return Item(imageURL: imageUrl, sourceUrl: sourceUrl)
+            return Item(imageSource: .url(imageUrl), sourceUrl: sourceUrl)
         }
 
         return items
@@ -54,18 +54,18 @@ extension Scraper {
         } else {
             items = try await defaultItems()
             items = items.compactMapWithErrorLog(logger) {
-                guard let imageUrl = $0.imageURL, let sourceUrl = $0.sourceUrl else {
-                    throw "Item imageURL or sourceUrl is nil"
+                guard let sourceUrl = $0.sourceUrl else {
+                    throw "Item.sourceUrl is nil"
                 }
 
-                return Item(imageURL: imageUrl, sourceUrl: sourceUrl)
+                return Item(imageSource: $0.imageSource, sourceUrl: sourceUrl)
             }
         }
 
         // common post process
         items = items.compactMapWithErrorLog(logger) { item in
-            guard var imageUrl = item.imageURL else {
-                throw "imageUrl is nil"
+            guard case var .url(imageUrl) = item.imageSource else {
+                throw "imageSource is not url"
             }
 
             guard isValidImageUrl(imageUrl) else {
@@ -78,7 +78,7 @@ extension Scraper {
 
             imageUrl = resize(imageUrl)
             sourceUrl = removeSale(sourceUrl)
-            return Item(imageURL: imageUrl, sourceUrl: sourceUrl)
+            return Item(imageSource: .url(imageUrl), sourceUrl: sourceUrl)
         }
 
         return items

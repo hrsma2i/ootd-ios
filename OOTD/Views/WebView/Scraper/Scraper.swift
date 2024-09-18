@@ -113,8 +113,8 @@ struct Scraper {
     func defaultItems() async throws -> [Item] {
         let imageUrls = try await imageUrls()
         
-        let items = imageUrls.map {
-            Item(imageURL: $0, sourceUrl: url)
+        let items = imageUrls.map { imageUrl in
+            Item(imageSource: .url(imageUrl), sourceUrl: url)
         }
         return items
     }
