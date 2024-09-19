@@ -12,9 +12,7 @@ class SampleItemDataSource: ItemDataSource {
         sampleItems
     }
 
-    func create(_ items: [Item]) -> [Item] {
-        items
-    }
+    func create(_: [Item]) {}
 
     func update(_: [Item]) {}
 

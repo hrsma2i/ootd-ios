@@ -30,14 +30,13 @@ class ItemStore: ObservableObject {
         items = try await dataSource.fetch()
     }
 
-    @MainActor
     func create(_ items: [Item]) async throws {
         Task {
-            let itemsWithID = try await dataSource.create(items)
+            try await dataSource.create(items)
+        }
 
-            DispatchQueue.main.async {
-                self.items.append(contentsOf: itemsWithID)
-            }
+        await MainActor.run {
+            self.items.append(contentsOf: items)
         }
     }
 

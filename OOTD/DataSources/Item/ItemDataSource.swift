@@ -10,7 +10,7 @@ import Foundation
 protocol ItemDataSource {
     func fetch() async throws -> [Item]
 
-    func create(_ items: [Item]) async throws -> [Item]
+    func create(_ items: [Item]) async throws
 
     func update(_ items: [Item]) async throws
 

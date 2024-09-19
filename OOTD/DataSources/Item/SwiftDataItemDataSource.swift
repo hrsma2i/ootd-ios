@@ -89,10 +89,7 @@ final class SwiftDataItemDataSource: ItemDataSource {
         return dto
     }
 
-    func create(_ items: [Item]) async throws -> [Item] {
-        // TODO: Item.id が not null になったので [Item] を返す必要がなくなった
-        var itemsWithId = [Item]()
-
+    func create(_ items: [Item]) async throws {
         for item in items {
             do {
                 try await saveImage(item)
@@ -101,15 +98,12 @@ final class SwiftDataItemDataSource: ItemDataSource {
                 context.insert(dto)
                 logger.debug("[SwiftData] insert new item id=\(dto.id)")
 
-                itemsWithId.append(item)
             } catch {
                 logger.error("\(error)")
             }
         }
         try context.save()
         logger.debug("[SwiftData] save")
-
-        return itemsWithId
     }
 
     func saveImage(_ item: Item) async throws {
