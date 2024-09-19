@@ -38,8 +38,16 @@ struct Item: Hashable, Identifiable {
         self.sourceUrl = sourceUrl
     }
 
-    // 返り値を String? などにしたくないので、 id == nil の場合もあるため、 id は引数で受け取ることにした。
-    static func generateImagePath(_ id: String, size: CGFloat) -> String {
+    var imagePath: String {
+        Item.generateImagePath(id, size: Item.imageSize)
+    }
+
+    var thumbnailPath: String {
+        Item.generateImagePath(id, size: Item.thumbnailSize)
+    }
+
+    // init 内でも使うので id は引数として受け取る
+    private static func generateImagePath(_ id: String, size: CGFloat) -> String {
         return "dev/item_images_\(Int(size))/\(id).jpg"
     }
 

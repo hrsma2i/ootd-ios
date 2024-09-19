@@ -109,12 +109,8 @@ final class SwiftDataItemDataSource: ItemDataSource {
     func saveImage(_ item: Item) async throws {
         let image = try await item.getUiImage()
 
-        // TODO: id が not nil になったので、 Item.imagePath みたいに取りたい
-        let imagePath = Item.generateImagePath(item.id, size: Item.imageSize)
-        let thumbnailPath = Item.generateImagePath(item.id, size: Item.thumbnailSize)
-
-        try LocalStorage.save(image: image.resized(to: Item.imageSize), to: imagePath)
-        try LocalStorage.save(image: image.resized(to: Item.thumbnailSize), to: thumbnailPath)
+        try LocalStorage.save(image: image.resized(to: Item.imageSize), to: item.imagePath)
+        try LocalStorage.save(image: image.resized(to: Item.thumbnailSize), to: item.thumbnailPath)
     }
 
     func update(_ items: [Item]) async throws {
@@ -143,13 +139,11 @@ final class SwiftDataItemDataSource: ItemDataSource {
         for item in items {
             do {
                 let dto = try fetchSingle(item: item)
-                // Item.imageSource が .localPath のときだけ削除するのはダメ
+                // Item.imageSource == .localPath のときだけ削除するのはダメ
                 // create したばかりのアイテムをすぐ削除しようとすると imageSource = .uiImage | .url となり、
                 // LocalStorage に保存した画像が削除されなくなる
-                let imagePath = Item.generateImagePath(item.id, size: Item.imageSize)
-                let thumbnailPath = Item.generateImagePath(item.id, size: Item.thumbnailSize)
-                try LocalStorage.remove(at: imagePath)
-                try LocalStorage.remove(at: thumbnailPath)
+                try LocalStorage.remove(at: item.imagePath)
+                try LocalStorage.remove(at: item.thumbnailPath)
 
                 context.delete(dto)
                 logger.debug("[SwiftData] delete item id=\(item.id)")
