@@ -11,6 +11,7 @@ private let logger = getLogger(#file)
 
 struct ItemDetail: HashableView {
     @State var items: [Item]
+    let mode: DetailMode
     @EnvironmentObject var itemStore: ItemStore
     @EnvironmentObject var navigation: NavigationManager
     
@@ -29,17 +30,14 @@ struct ItemDetail: HashableView {
     
     @State private var activeSheet: ActiveSheet?
     
-    init(items: [Item]) {
+    init(items: [Item], mode: DetailMode) {
         self.items = items
         self.originalItems = items
-    }
-    
-    var hasNewItems: Bool {
-        items.contains { $0.id == nil }
+        self.mode = mode
     }
     
     var hasChanges: Bool {
-        if hasNewItems {
+        if mode == .create {
             return true
         } else {
             return zip(items, originalItems).contains { item, originalItem in
@@ -63,24 +61,13 @@ struct ItemDetail: HashableView {
                 systemName: "checkmark",
                 fontSize: 20
             ) {
-                var newItems: [Item] = []
-                var existingItems: [Item] = []
-                var existingOriginalItems: [Item] = []
-                
-                for (i, item) in items.enumerated() {
-                    if item.id == nil {
-                        newItems.append(item)
-                    } else {
-                        existingItems.append(item)
-                        existingOriginalItems.append(originalItems[i])
+                Task {
+                    switch mode {
+                    case .create:
+                        try await itemStore.create(items)
+                    case .update:
+                        try await itemStore.update(items, originalItems: originalItems)
                     }
-                }
-                
-                Task {
-                    try await itemStore.create(newItems)
-                }
-                Task {
-                    try await itemStore.update(existingItems, originalItems: existingOriginalItems)
                 }
                 
                 navigation.path.removeLast()
@@ -284,11 +271,13 @@ struct ItemDetail: HashableView {
                 VStack {
                     if isSingle {
                         ItemDetail(
-                            items: [sampleItems.randomElement()!]
+                            items: [sampleItems.randomElement()!],
+                            mode: .update
                         )
                     } else {
                         ItemDetail(
-                            items: Array(sampleItems[0 ... 4])
+                            items: Array(sampleItems[0 ... 4]),
+                            mode: .update
                         )
                     }
                     

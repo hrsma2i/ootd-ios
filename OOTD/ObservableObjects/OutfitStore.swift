@@ -57,12 +57,12 @@ class OutfitStore: ObservableObject {
                 original outfit:
                     id: \(original.id ?? "nil")
                     items:
-                    - \(original.items.map { $0.id ?? "nil" }.joined(separator: "\n    - "))
+                    - \(original.items.map(\.id).joined(separator: "\n    - "))
 
                 edited outfit:
                     id: \(edited.id ?? "nil")
                     items:
-                    - \(edited.items.map { $0.id ?? "nil" }.joined(separator: "\n    - "))
+                    - \(edited.items.map(\.id).joined(separator: "\n    - "))
                 """)
 
                 return edited

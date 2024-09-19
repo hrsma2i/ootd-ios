@@ -10,8 +10,8 @@ import UIKit
 
 private let logger = getLogger(#file)
 
-struct Item: Hashable {
-    var id: String?
+struct Item: Hashable, Identifiable {
+    let id: String
     var imageSource: ImageSource
     var thumbnailSource: ImageSource
     var category: Category = .uncategorized
@@ -22,7 +22,7 @@ struct Item: Hashable {
 
     // create
     init(imageSource: ImageSource, category: Category = .uncategorized, sourceUrl: String? = nil) {
-        // TODO: UUID による id の生成もここでやったほうが良さそう。ただし、ItemDetail の create / update まわりを工夫する必要がある
+        id = UUID().uuidString
         self.imageSource = imageSource
         thumbnailSource = self.imageSource
         self.category = category

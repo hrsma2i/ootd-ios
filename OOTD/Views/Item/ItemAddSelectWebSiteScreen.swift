@@ -69,7 +69,10 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         }
         navigation.path = NavigationPath()
         navigation.path.append(
-            ItemDetail(items: selected)
+            ItemDetail(
+                items: selected,
+                mode: .create
+            )
         )
     }
 

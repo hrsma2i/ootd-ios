@@ -57,11 +57,11 @@ class ItemStore: ObservableObject {
 
                 logger.debug("""
                 original item:
-                    id: \(original.id ?? "nil")
+                    id: \(original.id)
                     category: \(original.category.rawValue)
 
                 edited item:
-                    id: \(edited.id ?? "nil")
+                    id: \(edited.id)
                     category: \(edited.category.rawValue)
                 """)
 

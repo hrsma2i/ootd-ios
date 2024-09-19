@@ -16,8 +16,8 @@ final class SwiftDataItemDataSource: ItemDataSource {
     class ItemDTO {
         typealias OutfitDTO = SwiftDataOutfitDataSource.OutfitDTO
 
-        init(id: String? = nil, category: String = Category.uncategorized.rawValue, sourceUrl: String? = nil, outfits: [OutfitDTO] = []) {
-            self.id = id ?? UUID().uuidString
+        init(id: String, category: String = Category.uncategorized.rawValue, sourceUrl: String? = nil, outfits: [OutfitDTO] = []) {
+            self.id = id
             self.category = category
             self.sourceUrl = sourceUrl
             self.outfits = outfits
@@ -40,20 +40,19 @@ final class SwiftDataItemDataSource: ItemDataSource {
             )
         }
 
+        // TODO: create と update で関数わけて良さそう。 create 時に余計なオーバーヘッドあるし
         static func from(item: Item, context: ModelContext) throws -> ItemDTO {
             func toDTO(_ item: Item) -> ItemDTO {
                 return ItemDTO(
-                    id: item.id ?? UUID().uuidString,
+                    id: item.id,
                     category: item.category.rawValue,
                     sourceUrl: item.sourceUrl
                 )
             }
 
-            guard let id = item.id else {
-                logger.debug("[ItemDTO.from(Item)] item.id == nil, so create new ItemDTO")
-                return toDTO(item)
-            }
-
+            // dto.id == item.id としてしまうと、以下のエラーになるので、いったん String だけの変数にしてる
+            // Cannot convert value of type 'PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<SwiftDataItemDataSource.ItemDTO>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Value<Item>, String>>' to closure result type 'any StandardPredicateExpression<Bool>'
+            let id = item.id
             let descriptor = FetchDescriptor<ItemDTO>(predicate: #Predicate { dto in
                 dto.id == id
             })
@@ -98,6 +97,7 @@ final class SwiftDataItemDataSource: ItemDataSource {
     }
 
     func create(_ items: [Item]) async throws -> [Item] {
+        // TODO: Item.id が not null になったので [Item] を返す必要がなくなった
         var itemsWithId = [Item]()
 
         for item in items {
@@ -106,10 +106,9 @@ final class SwiftDataItemDataSource: ItemDataSource {
                 context.insert(dto)
                 logger.debug("[SwiftData] insert new item id=\(dto.id)")
 
-                let itemWithId = item.copyWith(\.id, value: dto.id)
-                try await saveImage(itemWithId)
+                try await saveImage(item)
 
-                itemsWithId.append(itemWithId)
+                itemsWithId.append(item)
             } catch {
                 logger.error("\(error)")
             }
@@ -121,16 +120,11 @@ final class SwiftDataItemDataSource: ItemDataSource {
     }
 
     func saveImage(_ item: Item) async throws {
-        let header = "failed to save an item image to the local storage because"
-
         let image = try await item.getUiImage()
 
-        guard let id = item.id else {
-            throw "\(header) Item.id is nil"
-        }
-
-        let imagePath = Item.generateImagePath(id, size: Item.imageSize)
-        let thumbnailPath = Item.generateImagePath(id, size: Item.thumbnailSize)
+        // TODO: id が not nil になったので、 Item.imagePath みたいに取りたい
+        let imagePath = Item.generateImagePath(item.id, size: Item.imageSize)
+        let thumbnailPath = Item.generateImagePath(item.id, size: Item.thumbnailSize)
 
         try LocalStorage.save(image: image.resized(to: Item.imageSize), to: imagePath)
         try LocalStorage.save(image: image.resized(to: Item.thumbnailSize), to: thumbnailPath)
@@ -158,17 +152,16 @@ final class SwiftDataItemDataSource: ItemDataSource {
         for item in items {
             do {
                 let dto = try ItemDTO.from(item: item, context: context)
-                logger.debug("[SwiftData] delete item id=\(dto.id)")
-                context.delete(dto)
-
                 // Item.imageSource が .localPath のときだけ削除するのはダメ
                 // create したばかりのアイテムをすぐ削除しようとすると imageSource = .uiImage | .url となり、
                 // LocalStorage に保存した画像が削除されなくなる
-                let imagePath = Item.generateImagePath(dto.id, size: Item.imageSize)
-                let thumbnailPath = Item.generateImagePath(dto.id, size: Item.thumbnailSize)
-
+                let imagePath = Item.generateImagePath(item.id, size: Item.imageSize)
+                let thumbnailPath = Item.generateImagePath(item.id, size: Item.thumbnailSize)
                 try LocalStorage.remove(at: imagePath)
                 try LocalStorage.remove(at: thumbnailPath)
+
+                context.delete(dto)
+                logger.debug("[SwiftData] delete item id=\(item.id)")
             } catch {
                 logger.error("\(error)")
             }

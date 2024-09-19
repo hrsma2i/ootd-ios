@@ -10,7 +10,7 @@ import UIKit
 
 private let logger = getLogger(#file)
 
-struct Outfit: Hashable, Encodable {
+struct Outfit: Hashable {
     var id: String?
 
     var image: UIImage?
@@ -34,45 +34,10 @@ struct Outfit: Hashable, Encodable {
         return "dev/outfit_images_\(Int(Item.thumbnailSize))/\(id).jpg"
     }
 
-    enum CodingKeys: String, CodingKey {
-        case id
-        case item_ids
-        case created_at
-        case updated_at
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        if items.isEmpty, itemIDs.isEmpty {
-            throw EncodingError.invalidValue(self, EncodingError.Context(codingPath: [], debugDescription: "Both items and itemIDs are empty"))
-        }
-
-        // TODO: 特別な処理のいらないフィールドは自動化したい
-        try container.encode(id, forKey: .id)
-
-        if !items.isEmpty {
-            let ids = items.compactMap(\.id)
-            try container.encode(ids, forKey: .item_ids)
-        } else {
-            try container.encode(itemIDs, forKey: .item_ids)
-        }
-    }
-
     func copyWith<T>(_ keyPath: WritableKeyPath<Outfit, T>, value: T) -> Outfit {
         var clone = self
         clone[keyPath: keyPath] = value
         return clone
-    }
-}
-
-extension Outfit: Decodable {
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        // TODO: 自動化したい
-        id = try container.decode(String.self, forKey: .id)
-        itemIDs = try container.decode([String].self, forKey: .item_ids)
     }
 }
 

@@ -98,7 +98,8 @@ struct ItemGrid: HashableView {
             systemName: "pencil"
         ) {
             navigation.path.append(ItemDetail(
-                items: selected
+                items: selected,
+                mode: .update
             ))
 
             isSelectable = false
@@ -173,7 +174,8 @@ struct ItemGrid: HashableView {
         } else {
             navigation.path.append(
                 ItemDetail(
-                    items: [item]
+                    items: [item],
+                    mode: .update
                 )
             )
         }
@@ -311,7 +313,8 @@ struct ItemGrid: HashableView {
                     }
 
                     navigation.path.append(ItemDetail(
-                        items: items
+                        items: items,
+                        mode: .create
                     ))
 
                     activeSheet = nil
@@ -342,7 +345,7 @@ struct ItemGrid: HashableView {
                         Text("isOnlySelectable = \(isOnlySelectable)")
                     }
 
-                    Text(selected.compactMap(\.id).joined(separator: ","))
+                    Text(selected.map(\.id).joined(separator: ","))
 
                     if isOnlySelectable {
                         ItemGrid(
