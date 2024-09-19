@@ -28,6 +28,16 @@ final class SwiftDataItemDataSource: ItemDataSource {
         var sourceUrl: String?
         @Relationship(inverse: \OutfitDTO.items) var outfits: [OutfitDTO]
 
+        // create 時のみ使う。 update, delete 時は SwiftDataItemDataSource.fetch(item) を使う。
+        // なぜなら、すでに container 内に保存済みのDTOと同じ id のDTOを生成すると、 DTO.id の参照時に EXC_BREAKPOINT のエラーが発生してしまうから。
+        // この原因は id に @Attribute(.unique) 制約があるから。なので、すでに保存済み（update, delete）の場合は container から取得する。
+        init(item: Item) {
+            id = item.id
+            category = item.category.rawValue
+            sourceUrl = item.sourceUrl
+            outfits = []
+        }
+
         func toItem() throws -> Item {
             guard let category = Category(rawValue: category) else {
                 throw "[ItemDTO.toItem] failed to convert ItemDTO to Item. unknown category: \(category)"
@@ -39,46 +49,14 @@ final class SwiftDataItemDataSource: ItemDataSource {
                 sourceUrl: sourceUrl
             )
         }
-
-        // TODO: create と update で関数わけて良さそう。 create 時に余計なオーバーヘッドあるし
-        static func from(item: Item, context: ModelContext) throws -> ItemDTO {
-            func toDTO(_ item: Item) -> ItemDTO {
-                return ItemDTO(
-                    id: item.id,
-                    category: item.category.rawValue,
-                    sourceUrl: item.sourceUrl
-                )
-            }
-
-            // dto.id == item.id としてしまうと、以下のエラーになるので、いったん String だけの変数にしてる
-            // Cannot convert value of type 'PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<SwiftDataItemDataSource.ItemDTO>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Value<Item>, String>>' to closure result type 'any StandardPredicateExpression<Bool>'
-            let id = item.id
-            let descriptor = FetchDescriptor<ItemDTO>(predicate: #Predicate { dto in
-                dto.id == id
-            })
-
-            // すでに container 内に保存済みのDTOと同じ id のDTOを生成すると、 DTO.id の参照時に EXC_BREAKPOINT のエラーが発生してしまう。
-            // id に @Attribute(.unique) 制約があるため起こる。
-            // なので、すでに保存済みの場合は container から取得する
-            if let dto = try context.fetch(descriptor).first {
-                logger.debug("[ItemDTO.from(Item)] ItemDTO with id=\(id) has alraedy exists, so get it from the container")
-                dto.category = item.category.rawValue
-                return dto
-            } else {
-                logger.debug("[ItemDTO.from(Item)] create new ItemDTO with id=\(id)")
-                return toDTO(item)
-            }
-        }
     }
 
     var context: ModelContext
 
-    @MainActor
     static let shared = SwiftDataItemDataSource()
 
-    @MainActor
     private init() {
-        self.context = SwiftDataManager.shared.context
+        context = SwiftDataManager.shared.context
     }
 
     func fetch() async throws -> [Item] {
@@ -96,17 +74,32 @@ final class SwiftDataItemDataSource: ItemDataSource {
         return items
     }
 
+    func fetchSingle(item: Item) throws -> ItemDTO {
+        // dto.id == item.id としてしまうと、以下のエラーになるので、いったん String だけの変数にしてる
+        // Cannot convert value of type 'PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<SwiftDataItemDataSource.ItemDTO>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Value<Item>, String>>' to closure result type 'any StandardPredicateExpression<Bool>'
+        let id = item.id
+        let descriptor = FetchDescriptor<ItemDTO>(predicate: #Predicate { dto in
+            dto.id == id
+        })
+
+        guard let dto = try context.fetch(descriptor).first else {
+            throw "[ItemDTO.fetch(item)] there is no ItemDTO with id=\(id) in container"
+        }
+        logger.debug("[ItemDTO.from(Item)] ItemDTO with id=\(id) has alraedy exists, so get it from the container")
+        return dto
+    }
+
     func create(_ items: [Item]) async throws -> [Item] {
         // TODO: Item.id が not null になったので [Item] を返す必要がなくなった
         var itemsWithId = [Item]()
 
         for item in items {
             do {
-                let dto = try ItemDTO.from(item: item, context: context)
+                try await saveImage(item)
+
+                let dto = ItemDTO(item: item)
                 context.insert(dto)
                 logger.debug("[SwiftData] insert new item id=\(dto.id)")
-
-                try await saveImage(item)
 
                 itemsWithId.append(item)
             } catch {
@@ -134,7 +127,11 @@ final class SwiftDataItemDataSource: ItemDataSource {
         // SwiftData は context に同一idのオブジェクトが複数存在する場合、 save 時点の最後のオブジェクトが採用されるので、 insert でよい。
         for item in items {
             do {
-                let dto = try ItemDTO.from(item: item, context: context)
+                let dto = try fetchSingle(item: item)
+
+                dto.category = item.category.rawValue
+                dto.sourceUrl = item.sourceUrl
+
                 context.insert(dto)
                 logger.debug("[SwiftData] insert updated item id=\(dto.id)")
 
@@ -151,7 +148,7 @@ final class SwiftDataItemDataSource: ItemDataSource {
     func delete(_ items: [Item]) async throws {
         for item in items {
             do {
-                let dto = try ItemDTO.from(item: item, context: context)
+                let dto = try fetchSingle(item: item)
                 // Item.imageSource が .localPath のときだけ削除するのはダメ
                 // create したばかりのアイテムをすぐ削除しようとすると imageSource = .uiImage | .url となり、
                 // LocalStorage に保存した画像が削除されなくなる

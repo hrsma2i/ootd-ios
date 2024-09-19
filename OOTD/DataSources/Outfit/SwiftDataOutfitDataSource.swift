@@ -35,9 +35,10 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
         }
 
         static func from(outfit: Outfit, context: ModelContext) throws -> OutfitDTO {
+            // TODO: SwiftDataItemDataSource.fetch(items: [Item]) として移動したほうがよさそう
             func itemsToItemDTOs(_ items: [Item]) -> [ItemDTO] {
                 return items.compactMapWithErrorLog(logger) {
-                    try ItemDTO.from(item: $0, context: context)
+                    try SwiftDataItemDataSource.shared.fetchSingle(item: $0)
                 }
             }
 
