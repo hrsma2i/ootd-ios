@@ -11,6 +11,7 @@ private let logger = getLogger(#file)
 
 struct OutfitDetail: HashableView {
     @State var outfit: Outfit
+    let mode: DetailMode
     @EnvironmentObject var outfitStore: OutfitStore
     @EnvironmentObject var navigation: NavigationManager
 
@@ -20,13 +21,18 @@ struct OutfitDetail: HashableView {
     @State private var isImagePickerPresented = false
     private let originalOutfit: Outfit
 
-    init(outfit: Outfit) {
+    init(outfit: Outfit, mode: DetailMode) {
         self.outfit = outfit
         self.originalOutfit = outfit
+        self.mode = mode
     }
 
     var hasChanges: Bool {
-        outfit != originalOutfit
+        if mode == .create {
+            return true
+        } else {
+            return outfit != originalOutfit
+        }
     }
 
     var imageEmptyView: some View {
@@ -41,31 +47,12 @@ struct OutfitDetail: HashableView {
         }
     }
 
-    // TODO: Image 内に image 取得メソッドを持たせ、描画時に取得したほうがいいか？Storage を protocol で抽象化して、 Firebase Storage にも切り替えられるようにする？
-    var image: UIImage? {
-        if let image = outfit.image {
-            return image
-        }
-
-        guard let imagePath = outfit.imagePath else {
-            return nil
-        }
-
-        do {
-            let image = try LocalStorage.loadImage(from: imagePath)
-            return image
-        } catch {
-            logger.warning("\(error)")
-            return nil
-        }
-    }
-
     var snapImage: some View {
         ZStack {
             // なぜか、そのまま Button の label としてラップすると画面が真っ白になってしまうので、しかたなく ZStack で透明な四角形のボタンを被せる
-            if let image {
+            if let imageSource = outfit.imageSource {
                 ImageCard(
-                    source: .uiImage(image)
+                    source: imageSource
                 )
             } else {
                 imageEmptyView
@@ -99,19 +86,20 @@ struct OutfitDetail: HashableView {
                         systemName: "checkmark",
                         fontSize: 20
                     ) {
-                        navigation.path.removeLast()
-
                         Task {
                             do {
-                                if outfit.id != nil {
-                                    try await outfitStore.update([outfit], originalOutfits: [originalOutfit])
-                                } else {
+                                switch mode {
+                                case .create:
                                     try await outfitStore.create([outfit])
+                                case .update:
+                                    try await outfitStore.update([outfit], originalOutfits: [originalOutfit])
                                 }
                             } catch {
                                 logger.error("\(error)")
                             }
                         }
+
+                        navigation.path.removeLast()
                     }
                 }
             }
@@ -152,7 +140,7 @@ struct OutfitDetail: HashableView {
                 }
 
                 if let image = images.first {
-                    outfit.image = image
+                    outfit.imageSource = .uiImage(image)
                 }
 
                 isImagePickerPresented = false
@@ -164,24 +152,26 @@ struct OutfitDetail: HashableView {
 
 #Preview {
     struct PreviewView: View {
-        @State private var isImageURLNil: Bool = true
+        @State private var isImageSourceNil: Bool = true
 
         var body: some View {
             DependencyInjector {
                 VStack {
                     Button {
-                        isImageURLNil.toggle()
+                        isImageSourceNil.toggle()
                     } label: {
-                        Text("imageURL 有/無 切り替え")
+                        Text("imageSource 有/無 切り替え")
                     }
 
-                    if isImageURLNil {
+                    if isImageSourceNil {
                         OutfitDetail(
-                            outfit: sampleOutfits.filter { $0.imageURL == nil }.first!
+                            outfit: sampleOutfits.filter { $0.imageSource == nil }.first!,
+                            mode: .update
                         )
                     } else {
                         OutfitDetail(
-                            outfit: sampleOutfits.filter { $0.imageURL != nil }.first!
+                            outfit: sampleOutfits.filter { $0.imageSource != nil }.first!,
+                            mode: .update
                         )
                     }
                 }

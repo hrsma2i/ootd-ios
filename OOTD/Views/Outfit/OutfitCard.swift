@@ -27,35 +27,6 @@ struct OutfitCard: View {
         outfit.items.isEmpty ? 1 : nil
     }
 
-    // TODO: Image 内に image 取得メソッドを持たせ、描画時に取得したほうがいいか？Storage を protocol で抽象化して、 Firebase Storage にも切り替えられるようにする？
-    var image: UIImage? {
-        if let image = outfit.image {
-            return image
-        }
-
-        guard let imagePath = outfit.imagePath,
-              let thumbnailPath = outfit.thumbnailPath
-        else {
-            return nil
-        }
-
-        do {
-            if isThumbnail {
-                let thumbnail = try LocalStorage.loadImage(from: thumbnailPath)
-                return thumbnail
-            } else {
-                let image = try LocalStorage.loadImage(from: imagePath)
-                return image
-            }
-        } catch let error as NSError where error.isFileNotFoundError {
-            // collage だけでスナップ画像がないことはよくあることなのでいちいち warning を吐かない
-            return nil
-        } catch {
-            logger.warning("\(error)")
-            return nil
-        }
-    }
-
     var collage: some View {
         AspectRatioContainer(aspectRatio: collageAspectRatio) {
             LazyVGrid(
@@ -76,9 +47,9 @@ struct OutfitCard: View {
     }
 
     var body: some View {
-        if let image {
+        if let imageSource = outfit.imageSource {
             ImageCard(
-                source: .uiImage(image)
+                source: imageSource
             )
         } else {
             collage

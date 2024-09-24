@@ -12,15 +12,7 @@ class SampleOutfitDataSource: OutfitDataSource {
         sampleOutfits
     }
 
-    func create(_ outfits: [Outfit]) -> [Outfit] {
-        outfits.map { outfit in
-            if outfit.id != nil {
-                return outfit
-            }
-
-            return outfit.copyWith(\.id, value: UUID().uuidString)
-        }
-    }
+    func create(_: [Outfit]) {}
 
     func update(_: [Outfit]) async throws {}
 

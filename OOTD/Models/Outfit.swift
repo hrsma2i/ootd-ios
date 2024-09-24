@@ -11,27 +11,62 @@ import UIKit
 private let logger = getLogger(#file)
 
 struct Outfit: Hashable {
-    var id: String?
+    let id: String
 
-    var image: UIImage?
-    var imageURL: String?
-    var thumbnailURL: String?
-    var items: [Item] = []
-    var itemIDs: [String] = []
+    var items: [Item]
+    var itemIDs: [String]
+    var imageSource: ImageSource?
+    var thumbnailSource: ImageSource?
+
+    // create
+    init(items: [Item], imageSource: ImageSource? = nil) {
+        id = UUID().uuidString
+        self.items = items
+        itemIDs = []
+        self.imageSource = imageSource
+        thumbnailSource = self.imageSource
+    }
+
+    // read
+    // Item と異なり、imageSource が nil になることもあるため
+    init(id: String, itemIds: [String], imageSource: ImageSource?, thumbnailSource: ImageSource?) {
+        self.id = id
+        itemIDs = itemIds
+        items = []
+        self.imageSource = imageSource
+        self.thumbnailSource = thumbnailSource
+    }
 
     static let imageSize: CGFloat = 500
     static let thumbnailSize: CGFloat = 200
 
-    var imagePath: String? {
-        guard let id else { return nil }
-
-        return "dev/outfit_images_\(Int(Item.imageSize))/\(id).jpg"
+    var imagePath: String {
+        return Outfit.generateImagePath(id, size: Outfit.imageSize)
     }
 
-    var thumbnailPath: String? {
-        guard let id else { return nil }
+    var thumbnailPath: String {
+        return Outfit.generateImagePath(id, size: Outfit.thumbnailSize)
+    }
 
-        return "dev/outfit_images_\(Int(Item.thumbnailSize))/\(id).jpg"
+    // init や DataSource.read 内でも使うので id は引数として受け取る
+    static func generateImagePath(_ id: String, size: CGFloat) -> String {
+        return "dev/outfit_images_\(Int(size))/\(id).jpg"
+    }
+
+    // 画像加工時に使う
+    func getUiImage() async throws -> UIImage {
+        switch imageSource {
+        case let .uiImage(image):
+            return image
+        case let .url(url):
+            let image = try await downloadImage(url)
+            return image
+        case let .localPath(path):
+            let image = try LocalStorage.loadImage(from: path)
+            return image
+        default:
+            throw "Outfit.imageSource is nil"
+        }
     }
 
     func copyWith<T>(_ keyPath: WritableKeyPath<Outfit, T>, value: T) -> Outfit {
@@ -43,7 +78,6 @@ struct Outfit: Hashable {
 
 let sampleOutfits = [
     Outfit(
-        id: "outfit-0",
         items: [
             "thurmont_glasses",
             "gu_suede_touch_jacket_cb_camel",
@@ -59,7 +93,6 @@ let sampleOutfits = [
         }
     ),
     Outfit(
-        id: "outfit-1",
         items: [
             "wellington_glasses",
             "purple_cap",
@@ -74,9 +107,6 @@ let sampleOutfits = [
         }
     ),
     Outfit(
-        id: "outfit-2",
-        imageURL: "https://images.wear2.jp/coordinate/rliwyvYY/0r5BWoTz/1679204559_500.jpg",
-        thumbnailURL: "https://images.wear2.jp/coordinate/rliwyvYY/0r5BWoTz/1679204559_200.jpg",
         items: [
             "white_ma1",
             "3d_knit",
@@ -87,11 +117,11 @@ let sampleOutfits = [
                 guard case let .url(url) = $0.imageSource else { return false }
                 return url.contains(name)
             }.first
-        }
+        },
+        imageSource: .url("https://images.wear2.jp/coordinate/rliwyvYY/0r5BWoTz/1679204559_500.jpg")
     ),
     Outfit(
-        id: "outfit-3",
-        imageURL: "https://images.wear2.jp/coordinate/rliwyvYY/G9xK97Yi/1682324037_500.jpg",
-        thumbnailURL: "https://images.wear2.jp/coordinate/rliwyvYY/G9xK97Yi/1682324037_200.jpg"
+        items: [],
+        imageSource: .url("https://images.wear2.jp/coordinate/rliwyvYY/G9xK97Yi/1682324037_500.jpg")
     ),
 ]

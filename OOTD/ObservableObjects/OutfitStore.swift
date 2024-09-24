@@ -31,11 +31,11 @@ class OutfitStore: ObservableObject {
 
     func create(_ outfits: [Outfit]) async throws {
         Task {
-            let outfitsWithID = try await dataSource.create(outfits)
+            try await dataSource.create(outfits)
+        }
 
-            DispatchQueue.main.async {
-                self.outfits.append(contentsOf: outfitsWithID)
-            }
+        await MainActor.run {
+            self.outfits.append(contentsOf: outfits)
         }
     }
 
@@ -55,12 +55,12 @@ class OutfitStore: ObservableObject {
 
                 logger.debug("""
                 original outfit:
-                    id: \(original.id ?? "nil")
+                    id: \(original.id)
                     items:
                     - \(original.items.map(\.id).joined(separator: "\n    - "))
 
                 edited outfit:
-                    id: \(edited.id ?? "nil")
+                    id: \(edited.id)
                     items:
                     - \(edited.items.map(\.id).joined(separator: "\n    - "))
                 """)

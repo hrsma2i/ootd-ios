@@ -17,62 +17,59 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
     class OutfitDTO {
         typealias ItemDTO = SwiftDataItemDataSource.ItemDTO
 
-        init(id: String? = nil, items: [ItemDTO]) {
-            self.id = id ?? UUID().uuidString
+        init(id: String, items: [ItemDTO]) {
+            self.id = id
             self.items = items
         }
 
         @Attribute(.unique) var id: String
         var items: [ItemDTO]
 
-        func toOutfit() throws -> Outfit {
-            return Outfit(
-                id: id,
-                items: items.compactMapWithErrorLog(logger) {
-                    try $0.toItem()
+        // create 時のみ使う。 update, delete 時は .fetchSingle() を使う
+        // なぜなら、すでに container 内に保存済みのDTOと同じ id のDTOを生成すると、 DTO.id の参照時に EXC_BREAKPOINT のエラーが発生してしまうから。
+        // この原因は id に @Attribute(.unique) 制約があるから。なので、すでに保存済み（update, delete）の場合は container から取得する。
+        init(outfit: Outfit) {
+            id = outfit.id
+
+            // SwiftData で fetch した ItemDTO を直接 items に入れるため map を使わない
+            // map を使うと Illegal attempt to establish a relationship 'items' between objects in different contexts が起きる
+            items = []
+            for item in outfit.items {
+                do {
+                    let dto = try SwiftDataItemDataSource.shared.fetchSingle(item: item)
+                    items.append(dto)
+                } catch {
+                    logger.error("\(error)")
                 }
-            )
+            }
         }
 
-        static func from(outfit: Outfit, context: ModelContext) throws -> OutfitDTO {
-            // TODO: SwiftDataItemDataSource.fetch(items: [Item]) として移動したほうがよさそう
-            func itemsToItemDTOs(_ items: [Item]) -> [ItemDTO] {
-                return items.compactMapWithErrorLog(logger) {
-                    try SwiftDataItemDataSource.shared.fetchSingle(item: $0)
-                }
+        func toOutfit() throws -> Outfit {
+            let imagePath = Outfit.generateImagePath(id, size: Outfit.imageSize)
+            let thumbnailPath = Outfit.generateImagePath(id, size: Outfit.thumbnailSize)
+
+            let imageSource: ImageSource?
+            let thumbnailSource: ImageSource?
+            do {
+                // check there are images in the storage
+                let _ = try LocalStorage.loadImage(from: imagePath)
+                let _ = try LocalStorage.loadImage(from: thumbnailPath)
+                imageSource = .localPath(imagePath)
+                thumbnailSource = .localPath(thumbnailPath)
+            } catch {
+                imageSource = nil
+                thumbnailSource = nil
             }
 
-            func toDTO(_ outfit: Outfit) -> OutfitDTO {
-                // to avoid “illegal attempt to establish a relationship between objects in different contexts"
-                // https://www.hackingwithswift.com/quick-start/swiftdata/how-to-create-many-to-many-relationships
-                let dto = OutfitDTO(
-                    id: outfit.id,
-                    items: []
-                )
-                dto.items.append(contentsOf: itemsToItemDTOs(outfit.items))
-                return dto
-            }
-
-            guard let id = outfit.id else {
-                logger.debug("[OutfitDTO.from(Outfit)] outfit.id == nil, so create new OutfitDTO")
-                return toDTO(outfit)
-            }
-
-            let descriptor = FetchDescriptor<OutfitDTO>(predicate: #Predicate { dto in
-                dto.id == id
-            })
-
-            // すでに container 内に保存済みのDTOと同じ id のDTOを生成すると、 DTO.id の参照時に EXC_BREAKPOINT のエラーが発生してしまう。
-            // id に @Attribute(.unique) 制約があるため起こる。
-            // なので、すでに保存済みの場合は container から取得する
-            if let dto = try context.fetch(descriptor).first {
-                logger.debug("[OutfitDTO.from(Outfit)] OutfitDTO with id=\(id) has alraedy exists, so get it from the container")
-                dto.items = itemsToItemDTOs(outfit.items)
-                return dto
-            } else {
-                logger.debug("[OutfitDTO.from(Outfit)] create new OutfitDTO with id=\(id)")
-                return toDTO(outfit)
-            }
+            return Outfit(
+                id: id,
+                // そのまま toItem による [Item] を items に渡したい
+                itemIds: items.compactMapWithErrorLog(logger) { itemDto in
+                    try itemDto.toItem().id
+                },
+                imageSource: imageSource,
+                thumbnailSource: thumbnailSource
+            )
         }
     }
 
@@ -83,7 +80,22 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
 
     @MainActor
     private init() {
-        self.context = SwiftDataManager.shared.context
+        context = SwiftDataManager.shared.context
+    }
+
+    func fetchSingle(outfit: Outfit) throws -> OutfitDTO {
+        // dto.id == outfit.id としてしまうと、以下のエラーになるので、いったん String だけの変数にしてる
+        // Cannot convert value of type 'PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<SwiftDataOutfitDataSource.OutfitDTO>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Value<Outfit>, String>>' to closure result type 'any StandardPredicateExpression<Bool>'
+        let id = outfit.id
+        let descriptor = FetchDescriptor<OutfitDTO>(predicate: #Predicate { dto in
+            dto.id == id
+        })
+
+        guard let dto = try context.fetch(descriptor).first else {
+            throw "[OutfitDTO.fetch(outfit)] there is no OutfitDTO with id=\(id) in container"
+        }
+        logger.debug("[OutfitDTO.from(Outfit)] OutfitDTO with id=\(id) has alraedy exists, so get it from the container")
+        return dto
     }
 
     func fetch() async throws -> [Outfit] {
@@ -96,64 +108,44 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
         return outfits
     }
 
-    func create(_ outfits: [Outfit]) async throws -> [Outfit] {
-        var outfitsWithId = [Outfit]()
-
+    func create(_ outfits: [Outfit]) async throws {
         for outfit in outfits {
             do {
-                let dto = try OutfitDTO.from(outfit: outfit, context: context)
-                context.insert(dto)
-                logger.debug("[SwiftData] insert new outfit id=\(dto.id)")
-
-                let outfitWithId = outfit.copyWith(\.id, value: dto.id)
-                // Item と異なり、画像が無くても保存できるようにする
-                if outfit.image != nil, outfit.imageURL != nil {
-                    try await saveImage(outfitWithId)
+                // Item と異なり、 imageSource = nil はよくあることなので、 Outfit 自体の保存は中断されないようにする
+                if outfit.imageSource != nil {
+                    try await saveImage(outfit)
                 }
 
-                outfitsWithId.append(outfitWithId)
+                let dto = OutfitDTO(outfit: outfit)
+                context.insert(dto)
+                logger.debug("[SwiftData] insert new outfit id=\(dto.id)")
             } catch {
                 logger.error("\(error)")
             }
         }
         try context.save()
         logger.debug("[SwiftData] save")
-
-        return outfitsWithId
     }
 
     func saveImage(_ outfit: Outfit) async throws {
-        let header = "failed to save an outfit image to the local storage because"
+        let image = try await outfit.getUiImage()
 
-        guard let imagePath = outfit.imagePath,
-              let thumbnailPath = outfit.thumbnailPath
-        else {
-            throw "\(header) either imagePath or thumbnailPath is nil"
-        }
-
-        let image: UIImage
-        if let image_ = outfit.image {
-            image = image_
-        } else if let url = outfit.imageURL {
-            image = try await downloadImage(url)
-        } else {
-            throw "\(header) the outfit.image == nil or it failed to download the image from outfit.imageURL"
-        }
-
-        try LocalStorage.save(image: image.resized(to: Outfit.imageSize), to: imagePath)
-        try LocalStorage.save(image: image.resized(to: Outfit.thumbnailSize), to: thumbnailPath)
+        try LocalStorage.save(image: image.resized(to: Outfit.imageSize), to: outfit.imagePath)
+        try LocalStorage.save(image: image.resized(to: Outfit.thumbnailSize), to: outfit.thumbnailPath)
     }
 
     func update(_ outfits: [Outfit]) async throws {
         // SwiftData は context に同一idのオブジェクトが複数存在する場合、 save 時点の最後のオブジェクトが採用されるので、 insert でよい。
         for outfit in outfits {
             do {
-                let dto = try OutfitDTO.from(outfit: outfit, context: context)
+                let dto = try fetchSingle(outfit: outfit)
                 context.insert(dto)
                 logger.debug("[SwiftData] insert updated outfit id=\(dto.id)")
 
                 // TODO: 画像を編集したときだけ更新したい
-                try await saveImage(outfit)
+                if outfit.imageSource != nil {
+                    try await saveImage(outfit)
+                }
             } catch {
                 logger.error("\(error)")
             }
@@ -165,18 +157,16 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
     func delete(_ outfits: [Outfit]) async throws {
         for outfit in outfits {
             do {
-                let dto = try OutfitDTO.from(outfit: outfit, context: context)
-                logger.debug("[SwiftData] delete outfit id=\(dto.id)")
+                let dto = try fetchSingle(outfit: outfit)
+
+                // .imageSource == .localPath のときだけ削除するのはダメ
+                // create したばかりのものをすぐ削除しようとすると imageSource = .uiImage | .url となり、
+                // LocalStorage に保存した画像が削除されなくなる
+                try LocalStorage.remove(at: outfit.imagePath)
+                try LocalStorage.remove(at: outfit.thumbnailPath)
+
                 context.delete(dto)
-
-                guard let imagePath = outfit.imagePath,
-                      let thumbnailPath = outfit.thumbnailPath
-                else {
-                    throw "[SwiftData] either imagePath or thumbnailPath is nil"
-                }
-
-                try LocalStorage.remove(at: imagePath)
-                try LocalStorage.remove(at: thumbnailPath)
+                logger.debug("[SwiftData] delete outfit id=\(outfit.id)")
             } catch {
                 logger.error("\(error)")
             }

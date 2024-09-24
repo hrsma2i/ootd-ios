@@ -26,7 +26,7 @@ struct OutfitGrid: View {
     var addButton: some View {
         AddButton {
             navigation.path.append(OutfitDetail(
-                outfit: Outfit(items: [])
+                outfit: Outfit(items: []), mode: .create
             ))
         }
     }
@@ -41,7 +41,8 @@ struct OutfitGrid: View {
                 }
             } else {
                 navigation.path.append(OutfitDetail(
-                    outfit: outfit
+                    outfit: outfit,
+                    mode: .update
                 ))
             }
         } label: {

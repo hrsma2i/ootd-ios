@@ -10,7 +10,7 @@ import Foundation
 protocol OutfitDataSource {
     func fetch() async throws -> [Outfit]
 
-    func create(_ outfits: [Outfit]) async throws -> [Outfit]
+    func create(_ outfits: [Outfit]) async throws
 
     func update(_ outfits: [Outfit]) async throws
 
