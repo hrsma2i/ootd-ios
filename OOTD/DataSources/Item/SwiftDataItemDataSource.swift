@@ -45,8 +45,10 @@ final class SwiftDataItemDataSource: ItemDataSource {
 
             return Item(
                 id: id,
-                category: category,
-                sourceUrl: sourceUrl
+                option: .init(
+                    category: category,
+                    sourceUrl: sourceUrl
+                )
             )
         }
     }

@@ -22,7 +22,9 @@ class SampleItemDataSource: ItemDataSource {
 let sampleItems = [
     Item(
         imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/thurmont_glasses.png?alt=media&token=bb7eab8b-0bd1-49a4-839c-b387a5dc9ea8"),
-        category: .others
+        option: .init(
+            category: .others
+        )
     ),
     Item(
         imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/gu_suede_touch_jacket_cb_camel.png?alt=media&token=2106309a-0ac2-4e7f-8f3e-0665a6fe9190")
@@ -38,7 +40,9 @@ let sampleItems = [
     ),
     Item(
         imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/wellington_glasses.png?alt=media&token=2623f778-c888-4f5e-90b2-0f30c4a44015"),
-        category: .others
+        option: .init(
+            category: .others
+        )
     ),
     Item(
         imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/purple_cap.jpeg?alt=media&token=ba2eab47-fed3-4db6-bc3d-790e288813ee")
@@ -60,6 +64,8 @@ let sampleItems = [
     ),
     Item(
         imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/clarks_black_wallabee_boots.jpeg?alt=media&token=13f736b1-1053-4430-ac93-e96ce2872c5e"),
-        sourceUrl: "https://www.clarks.co.jp/commodity/SCKS0472G/CL915BM14109/"
+        option: .init(
+            sourceUrl: "https://www.clarks.co.jp/commodity/SCKS0472G/CL915BM14109/"
+        )
     ),
 ]

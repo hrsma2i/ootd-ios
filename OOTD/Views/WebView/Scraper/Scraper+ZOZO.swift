@@ -28,7 +28,12 @@ extension Scraper {
             let imageUrl = try img.attr("src")
             let sourceUrl = try link.attr("href")
 
-            return Item(imageSource: .url(imageUrl), sourceUrl: sourceUrl)
+            return Item(
+                imageSource: .url(imageUrl),
+                option: .init(
+                    sourceUrl: sourceUrl
+                )
+            )
         }
 
         return items
@@ -58,7 +63,12 @@ extension Scraper {
                     throw "Item.sourceUrl is nil"
                 }
 
-                return Item(imageSource: $0.imageSource, sourceUrl: sourceUrl)
+                return Item(
+                    imageSource: $0.imageSource,
+                    option: .init(
+                        sourceUrl: sourceUrl
+                    )
+                )
             }
         }
 
@@ -78,7 +88,12 @@ extension Scraper {
 
             imageUrl = resize(imageUrl)
             sourceUrl = removeSale(sourceUrl)
-            return Item(imageSource: .url(imageUrl), sourceUrl: sourceUrl)
+            return Item(
+                imageSource: .url(imageUrl),
+                option: .init(
+                    sourceUrl: sourceUrl
+                )
+            )
         }
 
         return items

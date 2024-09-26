@@ -114,7 +114,12 @@ struct Scraper {
         let imageUrls = try await imageUrls()
         
         let items = imageUrls.map { imageUrl in
-            Item(imageSource: .url(imageUrl), sourceUrl: url)
+            Item(
+                imageSource: .url(imageUrl),
+                option: .init(
+                    sourceUrl: url
+                )
+            )
         }
         return items
     }

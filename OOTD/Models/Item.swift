@@ -20,22 +20,30 @@ struct Item: Hashable, Identifiable {
     static let imageSize: CGFloat = 500
     static let thumbnailSize: CGFloat = 200
 
+    struct Option {
+        var category: Category = .uncategorized
+        var sourceUrl: String? = nil
+    }
+
+    private mutating func setProperties(_ option: Option) {
+        category = option.category
+        sourceUrl = option.sourceUrl
+    }
+
     // create
-    init(imageSource: ImageSource, category: Category = .uncategorized, sourceUrl: String? = nil) {
+    init(imageSource: ImageSource, option: Option = .init()) {
         id = UUID().uuidString
         self.imageSource = imageSource
         thumbnailSource = self.imageSource
-        self.category = category
-        self.sourceUrl = sourceUrl
+        setProperties(option)
     }
 
     // read
-    init(id: String, category: Category = .uncategorized, sourceUrl: String? = nil) {
+    init(id: String, option: Option = .init()) {
         self.id = id
         imageSource = .localPath(Item.generateImagePath(id, size: Item.imageSize))
         thumbnailSource = .localPath(Item.generateImagePath(id, size: Item.thumbnailSize))
-        self.category = category
-        self.sourceUrl = sourceUrl
+        setProperties(option)
     }
 
     var imagePath: String {
