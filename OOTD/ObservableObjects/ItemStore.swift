@@ -48,7 +48,7 @@ class ItemStore: ObservableObject {
         if originalItems.isEmpty {
             itemsToUpdate = editedItems
         } else if editedItems.count == originalItems.count {
-            itemsToUpdate = zip(originalItems, editedItems).compactMap { original, edited in
+            itemsToUpdate = zip(originalItems, editedItems).compactMap { original, edited -> Item? in
 
                 if original == edited {
                     return nil
@@ -57,10 +57,12 @@ class ItemStore: ObservableObject {
                 logger.debug("""
                 original item:
                     id: \(original.id)
+                    name: \(original.name)
                     category: \(original.category.rawValue)
 
                 edited item:
                     id: \(edited.id)
+                    name: \(edited.name)
                     category: \(edited.category.rawValue)
                 """)
 

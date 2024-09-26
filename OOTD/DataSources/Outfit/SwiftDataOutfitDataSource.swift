@@ -15,8 +15,6 @@ private let logger = getLogger(#file)
 final class SwiftDataOutfitDataSource: OutfitDataSource {
     @Model
     class OutfitDTO {
-        typealias ItemDTO = SwiftDataItemDataSource.ItemDTO
-
         init(id: String, items: [ItemDTO]) {
             self.id = id
             self.items = items

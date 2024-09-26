@@ -19,7 +19,7 @@ struct ItemDetail: HashableView {
     
     private let originalItems: [Item]
     @State private var isAlertPresented: Bool = false
-    
+        
     private enum ActiveSheet: Int, Identifiable {
         case categorySelect
         
@@ -210,12 +210,46 @@ struct ItemDetail: HashableView {
         }
     }
     
+    struct NameRow: View {
+        @State var text: String
+        var onSubmit: (String) -> Void = { _ in }
+        
+        var body: some View {
+            TextField("アイテム名を入力...", text: $text) {
+                onSubmit(text)
+            }
+            .bold()
+            .font(.title2)
+        }
+    }
+    
+    @ViewBuilder
+    var nameRow: some View {
+        if items.count == 1, let item = items.first {
+            NameRow(text: item.name) { newName in
+                update(\.name, newName, only: item)
+            }
+        }
+    }
+    
+    func update<T>(_ key: WritableKeyPath<Item, T>, _ value: T, only item: Item? = nil) {
+        // items から取り出したものを直接更新しても再描画されないので items まるごと更新する
+        items = items.map { item_ in
+            if let item, item_.id != item.id {
+                return item_
+            }
+            return item_.copyWith(key, value: value)
+        }
+    }
+    
     var body: some View {
         ZStack {
             ScrollView {
                 imageArea
                 
                 VStack(spacing: 20) {
+                    nameRow
+                    
                     section {
                         categoryRow
                     }
@@ -242,10 +276,7 @@ struct ItemDetail: HashableView {
                     activeSheet = nil
                     
                     if let category {
-                        // items の要素のプロパティを直接書き換えても再描画されなかったので
-                        items = items.map {
-                            $0.copyWith(\.category, value: category)
-                        }
+                        update(\.category, category)
                     }
                 }
             }
@@ -264,7 +295,7 @@ struct ItemDetail: HashableView {
 
 #Preview {
     struct SwitchableView: View {
-        @State private var isSingle = false
+        @State private var isSingle = true
 
         var body: some View {
             DependencyInjector {

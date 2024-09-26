@@ -23,6 +23,7 @@ let sampleItems = [
     Item(
         imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/thurmont_glasses.png?alt=media&token=bb7eab8b-0bd1-49a4-839c-b387a5dc9ea8"),
         option: .init(
+            name: "サーモントメガネ",
             category: .others
         )
     ),

@@ -15,9 +15,12 @@ class SwiftDataManager {
     static let shared = SwiftDataManager()
 
     private init() {
-        container = try! ModelContainer(for:
-            SwiftDataItemDataSource.ItemDTO.self,
-            SwiftDataOutfitDataSource.OutfitDTO.self)
+        container = try! ModelContainer(
+            for:
+            ItemDTO.self,
+            SwiftDataOutfitDataSource.OutfitDTO.self,
+            migrationPlan: MigrationPlan.self
+        )
 
         // background context
         // https://www.hackingwithswift.com/quick-start/swiftdata/how-to-create-a-background-context

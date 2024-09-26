@@ -14,6 +14,7 @@ struct Item: Hashable, Identifiable {
     let id: String
     var imageSource: ImageSource
     var thumbnailSource: ImageSource
+    var name: String
     var category: Category = .uncategorized
     var sourceUrl: String?
 
@@ -21,13 +22,9 @@ struct Item: Hashable, Identifiable {
     static let thumbnailSize: CGFloat = 200
 
     struct Option {
+        var name: String = ""
         var category: Category = .uncategorized
         var sourceUrl: String? = nil
-    }
-
-    private mutating func setProperties(_ option: Option) {
-        category = option.category
-        sourceUrl = option.sourceUrl
     }
 
     // create
@@ -35,7 +32,10 @@ struct Item: Hashable, Identifiable {
         id = UUID().uuidString
         self.imageSource = imageSource
         thumbnailSource = self.imageSource
-        setProperties(option)
+
+        name = option.name
+        category = option.category
+        sourceUrl = option.sourceUrl
     }
 
     // read
@@ -43,7 +43,10 @@ struct Item: Hashable, Identifiable {
         self.id = id
         imageSource = .localPath(Item.generateImagePath(id, size: Item.imageSize))
         thumbnailSource = .localPath(Item.generateImagePath(id, size: Item.thumbnailSize))
-        setProperties(option)
+
+        name = option.name
+        category = option.category
+        sourceUrl = option.sourceUrl
     }
 
     var imagePath: String {
