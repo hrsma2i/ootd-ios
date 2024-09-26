@@ -11,7 +11,7 @@ import UIKit
 
 private let logger = getLogger(#file)
 
-typealias ItemDTO = SchemaV2.ItemDTO
+typealias ItemDTO = SchemaV3.ItemDTO
 
 final class SwiftDataItemDataSource: ItemDataSource {
     var context: ModelContext
@@ -85,6 +85,7 @@ final class SwiftDataItemDataSource: ItemDataSource {
                 dto.name = item.name
                 dto.category = item.category.rawValue
                 dto.sourceUrl = item.sourceUrl
+                dto.updatedAt = item.updatedAt!
 
                 context.insert(dto)
                 logger.debug("[SwiftData] insert updated item id=\(dto.id)")

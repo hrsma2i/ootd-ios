@@ -31,6 +31,13 @@ class ItemStore: ObservableObject {
     }
 
     func create(_ items: [Item]) async throws {
+        let now = Date()
+        let items = items.map {
+            $0
+                .copyWith(\.createdAt, value: now)
+                .copyWith(\.updatedAt, value: now)
+        }
+
         Task {
             try await dataSource.create(items)
         }
@@ -73,7 +80,13 @@ class ItemStore: ObservableObject {
             return
         }
 
-        for item in itemsToUpdate {
+        let now = Date()
+        let updatedItems = itemsToUpdate.map {
+            $0
+                .copyWith(\.updatedAt, value: now)
+        }
+
+        for item in updatedItems {
             if let index = items.firstIndex(where: { $0.id == item.id }) {
                 logger.debug("update local item at index=\(index)")
                 DispatchQueue.main.async {
@@ -83,7 +96,7 @@ class ItemStore: ObservableObject {
         }
 
         Task {
-            try await dataSource.update(itemsToUpdate)
+            try await dataSource.update(updatedItems)
         }
     }
 

@@ -170,22 +170,29 @@ struct ItemDetail: HashableView {
         }
     }
     
-    func section(content: @escaping () -> some View) -> some View {
+    func section(@ViewBuilder content: @escaping () -> some View) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .foregroundColor(Color(gray: 0.96))
             
-            content()
-                .padding()
+            VStack {
+                content()
+            }
+            .padding()
         }
     }
     
-    func propertyRow(_ key: String, _ value: String, action: @escaping () -> Void = {}) -> some View {
+    func propertyRow(_ key: String, _ value: String, action: (() -> Void)? = nil) -> some View {
         HStack {
             Text(key)
             Spacer()
-            Button(action: action) {
+            if let action {
+                Button(action: action) {
+                    Text(value)
+                }
+            } else {
                 Text(value)
+                    .foregroundColor(.init(gray: 0.75))
             }
         }
     }
@@ -254,6 +261,14 @@ struct ItemDetail: HashableView {
                         categoryRow
                     }
                     
+                    if items.count == 1, let item = items.first {
+                        section {
+                            propertyRow("作成日時", item.createdAt?.toString() ?? "----/--/-- --:--:--")
+                            Divider()
+                            propertyRow("更新日時", item.updatedAt?.toString() ?? "----/--/-- --:--:--")
+                        }
+                    }
+
                     if items.count == 1, let item = items.first, let urlString = item.sourceUrl {
                         section {
                             urlRow(urlString)

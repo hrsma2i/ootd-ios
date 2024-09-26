@@ -29,20 +29,5 @@ extension SchemaV2 {
             sourceUrl = item.sourceUrl
             outfits = []
         }
-
-        func toItem() throws -> Item {
-            guard let category = Category(rawValue: category) else {
-                throw "[ItemDTO.toItem] failed to convert ItemDTO to Item. unknown category: \(category)"
-            }
-
-            return Item(
-                id: id,
-                option: .init(
-                    name: name,
-                    category: category,
-                    sourceUrl: sourceUrl
-                )
-            )
-        }
     }
 }

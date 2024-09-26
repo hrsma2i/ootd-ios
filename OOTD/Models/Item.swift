@@ -17,6 +17,8 @@ struct Item: Hashable, Identifiable {
     var name: String
     var category: Category = .uncategorized
     var sourceUrl: String?
+    var createdAt: Date?
+    var updatedAt: Date?
 
     static let imageSize: CGFloat = 500
     static let thumbnailSize: CGFloat = 200
@@ -36,10 +38,11 @@ struct Item: Hashable, Identifiable {
         name = option.name
         category = option.category
         sourceUrl = option.sourceUrl
+        // createdAt, updatedAt は ItemStore で書き込み時にセットする
     }
 
     // read
-    init(id: String, option: Option = .init()) {
+    init(id: String, createdAt: Date, updatedAt: Date, option: Option = .init()) {
         self.id = id
         imageSource = .localPath(Item.generateImagePath(id, size: Item.imageSize))
         thumbnailSource = .localPath(Item.generateImagePath(id, size: Item.thumbnailSize))
@@ -47,6 +50,8 @@ struct Item: Hashable, Identifiable {
         name = option.name
         category = option.category
         sourceUrl = option.sourceUrl
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 
     var imagePath: String {
