@@ -32,7 +32,7 @@ struct ItemDetail: HashableView {
     
     init(items: [Item], mode: DetailMode) {
         self.items = items
-        self.originalItems = items
+        originalItems = items
         self.mode = mode
     }
     
@@ -185,14 +185,16 @@ struct ItemDetail: HashableView {
     func propertyRow(_ key: String, _ value: String, action: (() -> Void)? = nil) -> some View {
         HStack {
             Text(key)
+                .foregroundColor(.init(gray: 0.5))
             Spacer()
             if let action {
                 Button(action: action) {
                     Text(value)
+                        .bold()
                 }
             } else {
                 Text(value)
-                    .foregroundColor(.init(gray: 0.75))
+                    .bold()
             }
         }
     }
@@ -212,20 +214,50 @@ struct ItemDetail: HashableView {
             HStack {
                 Image(systemName: "link")
                 Text(urlString)
-                    .lineLimit(1)
+                    .multilineTextAlignment(.leading)
+                    .bold()
+                Spacer()
             }
         }
     }
     
     struct NameRow: View {
         @State var text: String
-        var onSubmit: (String) -> Void = { _ in }
+        @State var isEditing: Bool
+        var onSubmit: (String) -> Void
+        
+        init(text: String, onSubmit: @escaping (String) -> Void = { _ in }) {
+            self.text = text
+            isEditing = text == ""
+            self.onSubmit = onSubmit
+        }
         
         var body: some View {
-            TextField("アイテム名を入力...", text: $text) {
-                onSubmit(text)
+            Group {
+                if isEditing {
+                    TextField("アイテム名を入力...", text: $text) {
+                        onSubmit(text)
+                        if text != "" {
+                            isEditing = false
+                        }
+                    }
+                    .textFieldStyle(.roundedBorder)
+                } else {
+                    HStack {
+                        Text(text)
+                            .foregroundColor(.black)
+                            .bold()
+
+                        Button {
+                            isEditing = true
+                        } label: {
+                            Image(systemName: "pencil")
+                        }
+                        
+                        Spacer()
+                    }
+                }
             }
-            .bold()
             .font(.title2)
         }
     }
@@ -236,6 +268,36 @@ struct ItemDetail: HashableView {
             NameRow(text: item.name) { newName in
                 update(\.name, newName, only: item)
             }
+        }
+    }
+    
+    func priceRow(_ item: Item) -> some View {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencySymbol = "¥"
+        formatter.maximumFractionDigits = 0
+
+        let value: String
+        if let price = item.purchasedPrice,
+           let formattedPrice = formatter.string(from: NSNumber(value: price))
+        {
+            value = formattedPrice
+        } else {
+            value = "¥ -"
+        }
+
+        return propertyRow("購入金額", value) {}
+    }
+    
+    func descriptionRow(_ description: String) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("説明")
+                    .foregroundColor(.init(gray: 0.5))
+
+                Text(description)
+            }
+            Spacer()
         }
     }
     
@@ -263,15 +325,33 @@ struct ItemDetail: HashableView {
                     
                     if items.count == 1, let item = items.first {
                         section {
+                            priceRow(item)
+                        }
+                        
+                        section {
+                            propertyRow("購入日", item.purchasedOn?.toString(hasTime: false) ?? "----/--/--") {}
+                            Divider()
                             propertyRow("作成日時", item.createdAt?.toString() ?? "----/--/-- --:--:--")
                             Divider()
                             propertyRow("更新日時", item.updatedAt?.toString() ?? "----/--/-- --:--:--")
                         }
-                    }
+                    
+                        if let urlString = item.sourceUrl {
+                            section {
+                                urlRow(urlString)
+                            }
+                        }
 
-                    if items.count == 1, let item = items.first, let urlString = item.sourceUrl {
                         section {
-                            urlRow(urlString)
+                            propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
+                            Divider()
+                            propertyRow("カラー", item.originalColor ?? "-")
+                            Divider()
+                            propertyRow("ブランド", item.originalBrand ?? "-")
+                            Divider()
+                            propertyRow("サイズ", item.originalSize ?? "-")
+                            Divider()
+                            descriptionRow(item.originalDescription ?? "")
                         }
                     }
                 }
@@ -309,18 +389,30 @@ struct ItemDetail: HashableView {
 }
 
 #Preview {
+    enum Pattern {
+        case singleNil
+        case singleFilled
+        case multiple
+    }
+    
     struct SwitchableView: View {
-        @State private var isSingle = true
+        @State private var pattern: Pattern = .singleFilled
 
         var body: some View {
             DependencyInjector {
                 VStack {
-                    if isSingle {
+                    switch pattern {
+                    case .singleFilled:
                         ItemDetail(
-                            items: [sampleItems.randomElement()!],
+                            items: [sampleItems.first { $0.name != "" }!],
                             mode: .update
                         )
-                    } else {
+                    case .singleNil:
+                        ItemDetail(
+                            items: [sampleItems.filter { $0.name == "" }.randomElement()!],
+                            mode: .update
+                        )
+                    case .multiple:
                         ItemDetail(
                             items: Array(sampleItems[0 ... 4]),
                             mode: .update
@@ -329,9 +421,24 @@ struct ItemDetail: HashableView {
                     
                     Spacer()
                     Divider()
-                    Button(action: { isSingle = !isSingle }) {
-                        Text("単体・複数切り替え")
+                    HStack {
+                        Button(action: { pattern = .singleFilled }) {
+                            Text("単体")
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: { pattern = .singleNil }) {
+                            Text("単体（nil）")
+                        }
+                        
+                        Spacer()
+
+                        Button(action: { pattern = .multiple }) {
+                            Text("複数")
+                        }
                     }
+                    .padding()
                 }
             }
         }

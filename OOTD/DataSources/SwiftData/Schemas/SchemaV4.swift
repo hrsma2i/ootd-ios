@@ -1,5 +1,5 @@
 //
-//  SchemaV3.swift
+//  SchemaV4.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/09/27.
@@ -8,9 +8,9 @@
 import Foundation
 import SwiftData
 
-struct SchemaV3: VersionedSchema {
-    static var versionIdentifier = Schema.Version(3, 0, 0)
+struct SchemaV4: VersionedSchema {
+    static var versionIdentifier = Schema.Version(4, 0, 0)
     static var models: [any PersistentModel.Type] {
-        [SchemaV3.ItemDTO.self]
+        [SchemaV4.ItemDTO.self]
     }
 }

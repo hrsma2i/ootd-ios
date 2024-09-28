@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 struct SchemaV2: VersionedSchema {
-    static var versionIdentifier = Schema.Version(1, 0, 0)
+    static var versionIdentifier = Schema.Version(2, 0, 0)
     static var models: [any PersistentModel.Type] {
         [SchemaV2.ItemDTO.self]
     }

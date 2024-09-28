@@ -40,7 +40,9 @@ struct Scraper {
     }
 
     static func from(url urlString: String) async throws -> Self {
-        let url = URL(string: urlString)!
+        guard let url = URL(string: urlString) else {
+            throw "url is invalid: \(urlString)"
+        }
         // 429 Too Many Requests にならないよう、キャッシュを有効化
         let request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad)
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -49,7 +51,12 @@ struct Scraper {
             throw "network error: invalid response for \(urlString)"
         }
         
-        guard let html = String(data: data, encoding: .utf8) else {
+        let html: String
+        if let html_ = String(data: data, encoding: .utf8) {
+            html = html_
+        } else if let html_ = String(data: data, encoding: .shiftJIS) {
+            html = html_
+        } else {
             throw "network error: invalid data for \(urlString)"
         }
         

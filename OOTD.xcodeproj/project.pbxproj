@@ -10,6 +10,9 @@
 		881B6B5A2CA5BAC7008274FF /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B592CA5BAC7008274FF /* SchemaV3.swift */; };
 		881B6B5C2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B5B2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift */; };
 		881B6B5E2CA5C250008274FF /* Date+toString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B5D2CA5C250008274FF /* Date+toString.swift */; };
+		881B6B602CA650A7008274FF /* SchemaV4+ItemDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B5F2CA650A7008274FF /* SchemaV4+ItemDTO.swift */; };
+		881B6B622CA650B1008274FF /* SchemaV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B612CA650B1008274FF /* SchemaV4.swift */; };
+		881B6B642CA6D49A008274FF /* Date+initYMD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B632CA6D49A008274FF /* Date+initYMD.swift */; };
 		883B54452C8DD547007DB1E8 /* BrightroomEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 883B54442C8DD547007DB1E8 /* BrightroomEngine */; };
 		883B54472C8DD547007DB1E8 /* BrightroomUI in Frameworks */ = {isa = PBXBuildFile; productRef = 883B54462C8DD547007DB1E8 /* BrightroomUI */; };
 		883B54492C8DD5B8007DB1E8 /* CropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883B54482C8DD5B8007DB1E8 /* CropView.swift */; };
@@ -115,6 +118,9 @@
 		881B6B592CA5BAC7008274FF /* SchemaV3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV3.swift; sourceTree = "<group>"; };
 		881B6B5B2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SchemaV3+ItemDTO.swift"; sourceTree = "<group>"; };
 		881B6B5D2CA5C250008274FF /* Date+toString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+toString.swift"; sourceTree = "<group>"; };
+		881B6B5F2CA650A7008274FF /* SchemaV4+ItemDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SchemaV4+ItemDTO.swift"; sourceTree = "<group>"; };
+		881B6B612CA650B1008274FF /* SchemaV4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV4.swift; sourceTree = "<group>"; };
+		881B6B632CA6D49A008274FF /* Date+initYMD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+initYMD.swift"; sourceTree = "<group>"; };
 		883B54482C8DD5B8007DB1E8 /* CropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropView.swift; sourceTree = "<group>"; };
 		883FCB2D2C90815F0001DAAF /* SwiftDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataManager.swift; sourceTree = "<group>"; };
 		883FCB2F2C946FE20001DAAF /* Scraper+ZOZO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Scraper+ZOZO.swift"; sourceTree = "<group>"; };
@@ -247,6 +253,7 @@
 				883FCB4A2CA5A8BE0001DAAF /* SchemaV1.swift */,
 				883FCB522CA5AA340001DAAF /* SchemaV2.swift */,
 				881B6B592CA5BAC7008274FF /* SchemaV3.swift */,
+				881B6B612CA650B1008274FF /* SchemaV4.swift */,
 			);
 			path = Schemas;
 			sourceTree = "<group>";
@@ -257,6 +264,7 @@
 				883FCB502CA5A9A20001DAAF /* SchemaV1+ItemDTO.swift */,
 				883FCB542CA5AA720001DAAF /* SchemaV2+ItemDTO.swift */,
 				881B6B5B2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift */,
+				881B6B5F2CA650A7008274FF /* SchemaV4+ItemDTO.swift */,
 			);
 			path = Item;
 			sourceTree = "<group>";
@@ -465,6 +473,7 @@
 				883FCB382C9674060001DAAF /* Sequence+unique.swift */,
 				883FCB402C99C82E0001DAAF /* View+edgeSwipe.swift */,
 				881B6B5D2CA5C250008274FF /* Date+toString.swift */,
+				881B6B632CA6D49A008274FF /* Date+initYMD.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -659,6 +668,7 @@
 				8862324D2C7CC23100A1802D /* SampleItemDataSource.swift in Sources */,
 				8862324E2C7CC23100A1802D /* ItemDataSource.swift in Sources */,
 				886232462C7CC11700A1802D /* Logger.swift in Sources */,
+				881B6B602CA650A7008274FF /* SchemaV4+ItemDTO.swift in Sources */,
 				886232432C7CC0E900A1802D /* HashableView.swift in Sources */,
 				881B6B5C2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift in Sources */,
 				886232642C7CC32900A1802D /* ItemFilter.swift in Sources */,
@@ -699,6 +709,7 @@
 				883FCB3B2C970AA50001DAAF /* Scraper+Uniqlo.swift in Sources */,
 				88CD559D2C8749E800A9B78A /* WebViewManager.swift in Sources */,
 				884CF66C2C8201F900250026 /* MasonryGrid.swift in Sources */,
+				881B6B642CA6D49A008274FF /* Date+initYMD.swift in Sources */,
 				883B54492C8DD5B8007DB1E8 /* CropView.swift in Sources */,
 				883FCB552CA5AA720001DAAF /* SchemaV2+ItemDTO.swift in Sources */,
 				886232722C7CC65200A1802D /* ItemDetail.swift in Sources */,
@@ -721,6 +732,7 @@
 				8862326C2C7CC53C00A1802D /* DependencyInjector.swift in Sources */,
 				886232572C7CC2EE00A1802D /* OutfitStore.swift in Sources */,
 				8862328B2C7CC71F00A1802D /* OutfitCard.swift in Sources */,
+				881B6B622CA650B1008274FF /* SchemaV4.swift in Sources */,
 				88CD55A42C8755CD00A9B78A /* Scraper.swift in Sources */,
 				883FCB322C9489780001DAAF /* KeyChainHelper.swift in Sources */,
 				883FCB452C9C5F4C0001DAAF /* DetailMode.swift in Sources */,

@@ -14,29 +14,132 @@ extension Scraper {
         url.hasPrefix("https://zozo.jp/sp/_member/orderhistory/")
     }
 
+    private var isZozoGoodsDetail: Bool {
+        return url.matches(#"https://zozo\.jp/(sp/)?shop/[\w-]+/(goods-sale|goods)/\d+/(\?.*)?"#)
+    }
+
     private func itemsFromZOZOPurchaseHistory() async throws -> [Item] {
-        let feedRows = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2) > ul > li > div")
+        let orders = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2)")
 
-        guard feedRows.count != 0 else {
-            throw "feedRows.count == 0"
-        }
+        var items: [Item] = []
 
-        let items = feedRows.compactMapWithErrorLog(logger) { row in
-            let img = try row.select("figure > div > div > a > img")
-            let link = try row.select("div > div > div.goodsH > a")
+        for order in orders {
+            let purchasedOnString = try order.select("div > dl:nth-child(1) > dd").text()
+            let f = DateFormatter()
+            f.dateFormat = "yyyy.MM.dd"
+            let purchasedOn = f.date(from: purchasedOnString)
 
-            let imageUrl = try img.attr("src")
-            let sourceUrl = try link.attr("href")
+            let feedRows = try order.select("ul > li > div")
 
-            return Item(
-                imageSource: .url(imageUrl),
-                option: .init(
-                    sourceUrl: sourceUrl
+            guard feedRows.count != 0 else {
+                throw "feedRows.count == 0"
+            }
+
+            let itemsInOrder = await feedRows.asyncCompactMapWithErrorLog(logger) { row -> Item in
+                let img = try row.select("figure > div > div > a > img")
+                let imageUrl = try img.attr("src")
+
+                let goodsOutline = try row.select("div > div")
+
+                let priceString = try goodsOutline.select("div.goodsPrice > span.goodsPriceAmount").text()
+                let price = Int(priceString.replacingOccurrences(of: "¥", with: "")
+                    .replacingOccurrences(of: ",", with: ""))
+
+                let link = try goodsOutline.select("div.goodsH > a")
+                let sourceUrl = try link.attr("href")
+
+                let name = try link.text()
+
+                let colorAndSize = try? goodsOutline.select("div.goodsKind").text()
+                let components = colorAndSize?.split(separator: "/")
+                let color: String?
+                let size: String?
+                if let components, components.count == 2 {
+                    color = components[0].trimmingCharacters(in: .whitespaces)
+                    size = components[1].trimmingCharacters(in: .whitespaces)
+                } else {
+                    color = nil
+                    size = nil
+                }
+
+                let brand = try? goodsOutline.select("div.goodsBrand").text()
+
+                // TODO: 商品詳細まで遷移するのは重すぎるから、 SelectWebImageScreen で選ばれた Item を ItemDetail に渡すときに fetch する
+                func fetchRedirectedURL(_ urlString: String) async throws -> String {
+                    guard let url = URL(string: urlString) else {
+                        throw "url is invalid : \(url)"
+                    }
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "GET"
+
+                    // URLSessionを使って非同期でリクエストを送信
+                    let (_, response) = try await URLSession.shared.data(for: request)
+
+                    // HTTPURLResponseをキャストしてリダイレクト先のURLを取得
+                    guard let httpResponse = response as? HTTPURLResponse,
+                          let redirectedUrl = httpResponse.url
+                    else {
+                        throw "HTTP response is invalid"
+                    }
+
+                    let redirectedUrlString = redirectedUrl.absoluteString
+
+                    logger.debug("redirect to \(redirectedUrlString)")
+
+                    return redirectedUrlString
+                }
+                let redirectedUrl = try await fetchRedirectedURL(sourceUrl)
+                let goodsDetailPage = try await Scraper.from(url: redirectedUrl)
+                let categoryPath = try goodsDetailPage.categoryPathFromZozoGoodsDetail()
+
+                return Item(
+                    imageSource: .url(imageUrl),
+                    option: .init(
+                        name: name,
+                        purchasedPrice: price,
+                        purchasedOn: purchasedOn,
+                        sourceUrl: redirectedUrl,
+                        originalCategoryPath: categoryPath,
+                        originalColor: color,
+                        originalBrand: brand,
+                        originalSize: size
+                        // TODO: originalDescription
+                    )
                 )
-            )
+            }
+
+            items.append(contentsOf: itemsInOrder)
         }
 
         return items
+    }
+
+    private func categoryPathFromZozoGoodsDetail() throws -> [String] {
+        guard isZozoGoodsDetail else {
+            throw "not ZOZO goods detail page: \(url)"
+        }
+
+        // PC 版に限る
+        let infoSpecList = try doc.select("#tabItemInfo > div > div.p-goods-information-spec > div:nth-child(1) > dl")
+
+        guard let categoryList = infoSpecList.first(where: {
+            guard let dt = try? $0.select("dt"),
+                  let key = try? dt.text()
+            else {
+                return false
+            }
+            return key.contains("カテゴリー")
+        }) else {
+            throw "no category info in zozo goods detail page"
+        }
+
+        let anchors = try categoryList.select("dd > ol > li > a")
+
+        let categoryPath = anchors.compactMapWithErrorLog(logger) {
+            try $0.text()
+        }
+
+        return categoryPath
     }
 
     private func resize(_ imageUrl: String, size: Int = 500) -> String {
@@ -88,12 +191,8 @@ extension Scraper {
 
             imageUrl = resize(imageUrl)
             sourceUrl = removeSale(sourceUrl)
-            return Item(
-                imageSource: .url(imageUrl),
-                option: .init(
-                    sourceUrl: sourceUrl
-                )
-            )
+            return item.copyWith(\.imageSource, value: .url(imageUrl))
+                .copyWith(\.sourceUrl, value: sourceUrl)
         }
 
         return items

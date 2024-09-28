@@ -16,9 +16,17 @@ struct Item: Hashable, Identifiable {
     var thumbnailSource: ImageSource
     var name: String
     var category: Category = .uncategorized
-    var sourceUrl: String?
+    var purchasedPrice: Int?
+    var purchasedOn: Date?
     var createdAt: Date?
     var updatedAt: Date?
+    var sourceUrl: String?
+    // original* は web からインポートした際の無加工の情報
+    var originalCategoryPath: [String]?
+    var originalColor: String?
+    var originalBrand: String?
+    var originalSize: String?
+    var originalDescription: String?
 
     static let imageSize: CGFloat = 500
     static let thumbnailSize: CGFloat = 200
@@ -26,7 +34,14 @@ struct Item: Hashable, Identifiable {
     struct Option {
         var name: String = ""
         var category: Category = .uncategorized
+        var purchasedPrice: Int?
+        var purchasedOn: Date?
         var sourceUrl: String? = nil
+        var originalCategoryPath: [String]?
+        var originalColor: String?
+        var originalBrand: String?
+        var originalSize: String?
+        var originalDescription: String?
     }
 
     // create
@@ -37,8 +52,15 @@ struct Item: Hashable, Identifiable {
 
         name = option.name
         category = option.category
-        sourceUrl = option.sourceUrl
+        purchasedPrice = option.purchasedPrice
+        purchasedOn = option.purchasedOn
         // createdAt, updatedAt は ItemStore で書き込み時にセットする
+        sourceUrl = option.sourceUrl
+        originalCategoryPath = option.originalCategoryPath
+        originalColor = option.originalColor
+        originalBrand = option.originalBrand
+        originalSize = option.originalSize
+        originalDescription = option.originalDescription
     }
 
     // read
@@ -49,9 +71,16 @@ struct Item: Hashable, Identifiable {
 
         name = option.name
         category = option.category
-        sourceUrl = option.sourceUrl
+        purchasedPrice = option.purchasedPrice
+        purchasedOn = option.purchasedOn
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        sourceUrl = option.sourceUrl
+        originalCategoryPath = option.originalCategoryPath
+        originalColor = option.originalColor
+        originalBrand = option.originalBrand
+        originalSize = option.originalSize
+        originalDescription = option.originalDescription
     }
 
     var imagePath: String {
