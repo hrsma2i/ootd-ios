@@ -15,11 +15,11 @@ extension Scraper {
     }
 
     private var isZozoGoodsDetail: Bool {
-        return url.matches(#"https://zozo\.jp/(sp/)?shop/[\w-]+/(goods-sale|goods)/\d+/(\?.*)?"#)
+        return url.matches(#"https://zozo\.jp/(sp/)?shop/[\w-]+/(goods-sale|goods)/\d+/(\?.*)?"#) || url.matches(#"https://zozo\.jp/(sp/)?\?c=gr&did=\d+"#)
     }
 
     private func itemsFromZOZOPurchaseHistory() async throws -> [Item] {
-        let orders = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:nth-child(2)")
+        let orders = try doc.select("#gArticle > div.gridIsland.gridIslandAdjacent.gridIslandBottomPadded > div:has(ul)")
 
         var items: [Item] = []
 
@@ -64,46 +64,16 @@ extension Scraper {
 
                 let brand = try? goodsOutline.select("div.goodsBrand").text()
 
-                // TODO: 商品詳細まで遷移するのは重すぎるから、 SelectWebImageScreen で選ばれた Item を ItemDetail に渡すときに fetch する
-                func fetchRedirectedURL(_ urlString: String) async throws -> String {
-                    guard let url = URL(string: urlString) else {
-                        throw "url is invalid : \(url)"
-                    }
-                    var request = URLRequest(url: url)
-                    request.httpMethod = "GET"
-
-                    // URLSessionを使って非同期でリクエストを送信
-                    let (_, response) = try await URLSession.shared.data(for: request)
-
-                    // HTTPURLResponseをキャストしてリダイレクト先のURLを取得
-                    guard let httpResponse = response as? HTTPURLResponse,
-                          let redirectedUrl = httpResponse.url
-                    else {
-                        throw "HTTP response is invalid"
-                    }
-
-                    let redirectedUrlString = redirectedUrl.absoluteString
-
-                    logger.debug("redirect to \(redirectedUrlString)")
-
-                    return redirectedUrlString
-                }
-                let redirectedUrl = try await fetchRedirectedURL(sourceUrl)
-                let goodsDetailPage = try await Scraper.from(url: redirectedUrl)
-                let categoryPath = try goodsDetailPage.categoryPathFromZozoGoodsDetail()
-
                 return Item(
                     imageSource: .url(imageUrl),
                     option: .init(
                         name: name,
                         purchasedPrice: price,
                         purchasedOn: purchasedOn,
-                        sourceUrl: redirectedUrl,
-                        originalCategoryPath: categoryPath,
+                        sourceUrl: sourceUrl,
                         originalColor: color,
                         originalBrand: brand,
                         originalSize: size
-                        // TODO: originalDescription
                     )
                 )
             }
@@ -114,7 +84,7 @@ extension Scraper {
         return items
     }
 
-    private func categoryPathFromZozoGoodsDetail() throws -> [String] {
+    func categoryPathFromZozoGoodsDetail() throws -> [String] {
         guard isZozoGoodsDetail else {
             throw "not ZOZO goods detail page: \(url)"
         }
@@ -140,6 +110,36 @@ extension Scraper {
         }
 
         return categoryPath
+    }
+
+    func descriptionFromZozoGoodsDetail() throws -> String {
+        guard isZozoGoodsDetail else {
+            throw "not ZOZO goods detail page: \(url)"
+        }
+
+        // PC 版に限る
+        let description = try doc.select("#tabItemInfo > div > div.p-goods-information-note > div").text()
+
+        return description
+    }
+
+    func imageUrlsFromZozoGoodsDetail() throws -> [String] {
+        guard isZozoGoodsDetail else {
+            throw "not ZOZO goods detail page: \(url)"
+        }
+
+        // PC 版に限る
+        let imgs = try doc.select("#photoThimb > li.p-goods-thumbnail-list__item > div > span.p-goods-photograph__image-container > img")
+        let imageUrls = imgs.compactMapWithErrorLog(logger) {
+            var url = try $0.attr("data-main-image-src")
+            guard isValidImageUrl(url) else {
+                throw "image url is invalid \(url)"
+            }
+            url = resize(url)
+            return url
+        }
+
+        return imageUrls
     }
 
     private func resize(_ imageUrl: String, size: Int = 500) -> String {

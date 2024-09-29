@@ -45,35 +45,12 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                 let items = try await doc.items()
 
                 navigation.path.append(
-                    SelectWebImageScreen(
-                        imageURLs: items.compactMap {
-                            guard case let .url(imageUrl) = $0.imageSource else {
-                                return nil
-                            }
-                            return imageUrl
-                        }
-                    ) {
-                        selectedItemsToItemDetail($0, originalItems: items)
-                    }
+                    SelectWebItemScreen(items: items)
                 )
             } catch {
                 logger.error("\(error)")
             }
         }
-    }
-
-    private func selectedItemsToItemDetail(_ selectedImageUrls: [String], originalItems: [Item]) {
-        let selected = originalItems.filter {
-            guard case let .url(url) = $0.imageSource else { return false }
-            return selectedImageUrls.contains(url)
-        }
-        navigation.path = NavigationPath()
-        navigation.path.append(
-            ItemDetail(
-                items: selected,
-                mode: .create
-            )
-        )
     }
 
     private var currentYear: Int {
@@ -94,8 +71,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
             }
         }
         .navigationDestination(for: CustomWebView.self) { $0 }
-        .navigationDestination(for: SelectWebImageScreen.self) { $0 }
-        .navigationDestination(for: ItemDetail.self) { $0 }
+        .navigationDestination(for: SelectWebItemScreen.self) { $0 }
     }
 }
 

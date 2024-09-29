@@ -87,4 +87,16 @@ let sampleItems = [
             sourceUrl: "https://www.clarks.co.jp/commodity/SCKS0472G/CL915BM14109/"
         )
     ),
+    Item(
+        imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/Dr_Martens_3hole.jpg?alt=media&token=044e31d3-0cfd-436f-95df-e7b7ad0956a9"),
+        option: .init(
+            name: "from zozo purchased history",
+            purchasedPrice: 25_300,
+            purchasedOn: Date(year: 2024, month: 9, day: 28),
+            sourceUrl: "https://zozo.jp/sp/?c=gr&did=113101990",
+            originalColor: "ブラック",
+            originalBrand: "Dr. Martens",
+            originalSize: "26"
+        )
+    ),
 ]

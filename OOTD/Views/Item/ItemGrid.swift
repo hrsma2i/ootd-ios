@@ -265,15 +265,15 @@ struct ItemGrid: HashableView {
         .alert("本当に削除しますか？", isPresented: $isAlertPresented) {
             Button(role: .cancel) {} label: { Text("戻る") }
             Button(role: .destructive) {
-                isSelectable = false
-
                 Task {
                     do {
                         try await itemStore.delete(selected)
+                        selected = []
                     } catch {
                         logger.error("\(error)")
                     }
                 }
+                isSelectable = false
             } label: { Text("削除する") }
         } message: {
             Text("選択中のアイテムが削除されます。")

@@ -9,56 +9,76 @@ import SwiftUI
 
 struct SelectWebImageScreen: HashableView {
     let imageURLs: [String]
-    let spacing: CGFloat = 3
+    var limit: Int = .max
     var onSelected: ([String]) -> Void = { _ in }
 
+    private let spacing: CGFloat = 3
     @State private var selected: [String] = []
 
     var header: some View {
         HStack {
-            Text("追加するアイテムを選ぶ")
+            Text("画像を選ぶ")
                 .font(.headline)
                 .padding(7)
             Spacer()
         }
     }
 
+    @ViewBuilder
     var footer: some View {
-        RoundRectangleButton(
-            text: "決定",
-            fontSize: 20,
-            radius: 5
-        ) {
-            onSelected(selected)
+        if limit != 1, selected.count > 0 {
+            RoundRectangleButton(
+                text: "決定",
+                fontSize: 20,
+                radius: 5
+            ) {
+                onSelected(selected)
+            }
+            .padding(7)
         }
-        .padding(7)
     }
 
-    func imageCard(_ url: String) -> some View {
-        ZStack(alignment: .topTrailing) {
-            ImageCard(
-                source: .url(url),
-                aspectRatio: 1,
-                contentMode: .fill
-            )
+    func imageCard_(_ url: String) -> some View {
+        ImageCard(
+            source: .url(url),
+            aspectRatio: 1,
+            contentMode: .fill
+        )
+    }
 
+    @ViewBuilder
+    func imageCard(_ url: String) -> some View {
+        if limit == 1 {
             Button {
-                if selected.contains(url) {
-                    selected.removeAll { $0 == url }
-                } else {
-                    selected.append(url)
-                }
+                onSelected([url])
             } label: {
-                if selected.contains(url) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.accentColor)
-                        .font(.system(size: 25))
-                        .padding(5)
-                } else {
-                    Image(systemName: "checkmark.circle")
-                        .foregroundColor(.gray)
-                        .font(.system(size: 25))
-                        .padding(5)
+                imageCard_(url)
+            }
+        } else {
+            ZStack(alignment: .topTrailing) {
+                imageCard_(url)
+
+                Button {
+                    if selected.contains(url) {
+                        selected.removeAll { $0 == url }
+                    } else {
+                        if selected.count >= limit {
+                            selected.removeFirst()
+                        }
+                        selected.append(url)
+                    }
+                } label: {
+                    if selected.contains(url) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.accentColor)
+                            .font(.system(size: 25))
+                            .padding(5)
+                    } else {
+                        Image(systemName: "checkmark.circle")
+                            .foregroundColor(.gray)
+                            .font(.system(size: 25))
+                            .padding(5)
+                    }
                 }
             }
         }

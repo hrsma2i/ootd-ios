@@ -115,4 +115,21 @@ struct Item: Hashable, Identifiable {
         clone[keyPath: keyPath] = value
         return clone
     }
+
+    func copyWithPropertiesFromSourceUrl() async throws -> Item {
+        guard let sourceUrl else {
+            throw "Item.sourceUrl is nil"
+        }
+
+        let doc = try await Scraper.from(url: sourceUrl)
+        let redirectedUrl = doc.url
+        let originalCategoryPath = try doc.categoryPathFromZozoGoodsDetail()
+        let originalDescription = try doc.descriptionFromZozoGoodsDetail()
+
+        let updatedItem = copyWith(\.sourceUrl, value: redirectedUrl)
+            .copyWith(\.originalCategoryPath, value: originalCategoryPath)
+            .copyWith(\.originalDescription, value: originalDescription)
+
+        return updatedItem
+    }
 }

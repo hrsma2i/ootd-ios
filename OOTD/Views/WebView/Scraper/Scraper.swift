@@ -60,7 +60,9 @@ struct Scraper {
             throw "network error: invalid data for \(urlString)"
         }
         
-        return try .init(html, url: urlString)
+        let redirectedUrl = httpResponse.url
+        
+        return try .init(html, url: redirectedUrl?.absoluteString ?? urlString)
     }
     
     func ogImageURL() throws -> String {

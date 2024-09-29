@@ -170,7 +170,7 @@ struct ItemDetail: HashableView {
         }
     }
     
-    func section(@ViewBuilder content: @escaping () -> some View) -> some View {
+    static func section(@ViewBuilder content: @escaping () -> some View) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .foregroundColor(Color(gray: 0.96))
@@ -182,7 +182,11 @@ struct ItemDetail: HashableView {
         }
     }
     
-    func propertyRow(_ key: String, _ value: String, action: (() -> Void)? = nil) -> some View {
+    func section(@ViewBuilder content: @escaping () -> some View) -> some View {
+        Self.section(content: content)
+    }
+
+    static func propertyRow(_ key: String, _ value: String, action: (() -> Void)? = nil) -> some View {
         HStack {
             Text(key)
                 .foregroundColor(.init(gray: 0.5))
@@ -199,6 +203,10 @@ struct ItemDetail: HashableView {
         }
     }
     
+    func propertyRow(_ key: String, _ value: String, action: (() -> Void)? = nil) -> some View {
+        Self.propertyRow(key, value, action: action)
+    }
+
     var categoryRow: some View {
         propertyRow("カテゴリー", categoryDisplayed) {
             activeSheet = .categorySelect
@@ -271,7 +279,7 @@ struct ItemDetail: HashableView {
         }
     }
     
-    func priceRow(_ item: Item) -> some View {
+    static func priceRow(_ item: Item, action: (() -> Void)? = nil) -> some View {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencySymbol = "¥"
@@ -286,10 +294,14 @@ struct ItemDetail: HashableView {
             value = "¥ -"
         }
 
-        return propertyRow("購入金額", value) {}
+        return propertyRow("購入金額", value, action: action)
     }
     
-    func descriptionRow(_ description: String) -> some View {
+    func priceRow(_ item: Item) -> some View {
+        Self.priceRow(item) {}
+    }
+
+    static func descriptionRow(_ description: String) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 20) {
                 Text("説明")
@@ -301,6 +313,10 @@ struct ItemDetail: HashableView {
         }
     }
     
+    func descriptionRow(_ description: String) -> some View {
+        Self.descriptionRow(description)
+    }
+
     func update<T>(_ key: WritableKeyPath<Item, T>, _ value: T, only item: Item? = nil) {
         // items から取り出したものを直接更新しても再描画されないので items まるごと更新する
         items = items.map { item_ in
