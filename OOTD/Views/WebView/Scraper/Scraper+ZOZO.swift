@@ -24,61 +24,65 @@ extension Scraper {
         var items: [Item] = []
 
         for order in orders {
-            let purchasedOnString = try order.select("div > dl:nth-child(1) > dd").text()
-            let f = DateFormatter()
-            f.dateFormat = "yyyy.MM.dd"
-            let purchasedOn = f.date(from: purchasedOnString)
+            do {
+                let purchasedOnString = try order.select("div > dl:nth-child(1) > dd").text()
+                let f = DateFormatter()
+                f.dateFormat = "yyyy.MM.dd"
+                let purchasedOn = f.date(from: purchasedOnString)
 
-            let feedRows = try order.select("ul > li > div")
+                let feedRows = try order.select("ul > li > div")
 
-            guard feedRows.count != 0 else {
-                throw "feedRows.count == 0"
-            }
-
-            let itemsInOrder = await feedRows.asyncCompactMapWithErrorLog(logger) { row -> Item in
-                let img = try row.select("figure > div > div > a > img")
-                let imageUrl = try img.attr("src")
-
-                let goodsOutline = try row.select("div > div")
-
-                let priceString = try goodsOutline.select("div.goodsPrice > span.goodsPriceAmount").text()
-                let price = Int(priceString.replacingOccurrences(of: "¥", with: "")
-                    .replacingOccurrences(of: ",", with: ""))
-
-                let link = try goodsOutline.select("div.goodsH > a")
-                let sourceUrl = try link.attr("href")
-
-                let name = try link.text()
-
-                let colorAndSize = try? goodsOutline.select("div.goodsKind").text()
-                let components = colorAndSize?.split(separator: "/")
-                let color: String?
-                let size: String?
-                if let components, components.count == 2 {
-                    color = components[0].trimmingCharacters(in: .whitespaces)
-                    size = components[1].trimmingCharacters(in: .whitespaces)
-                } else {
-                    color = nil
-                    size = nil
+                guard feedRows.count != 0 else {
+                    throw "feedRows.count == 0"
                 }
 
-                let brand = try? goodsOutline.select("div.goodsBrand").text()
+                let itemsInOrder = await feedRows.asyncCompactMapWithErrorLog(logger) { row -> Item in
+                    let img = try row.select("figure > div > div > a > img")
+                    let imageUrl = try img.attr("src")
 
-                return Item(
-                    imageSource: .url(imageUrl),
-                    option: .init(
-                        name: name,
-                        purchasedPrice: price,
-                        purchasedOn: purchasedOn,
-                        sourceUrl: sourceUrl,
-                        originalColor: color,
-                        originalBrand: brand,
-                        originalSize: size
+                    let goodsOutline = try row.select("div > div")
+
+                    let priceString = try goodsOutline.select("div.goodsPrice > span.goodsPriceAmount").text()
+                    let price = Int(priceString.replacingOccurrences(of: "¥", with: "")
+                        .replacingOccurrences(of: ",", with: ""))
+
+                    let link = try goodsOutline.select("div.goodsH > a")
+                    let sourceUrl = try link.attr("href")
+
+                    let name = try link.text()
+
+                    let colorAndSize = try? goodsOutline.select("div.goodsKind").text()
+                    let components = colorAndSize?.split(separator: "/")
+                    let color: String?
+                    let size: String?
+                    if let components, components.count == 2 {
+                        color = components[0].trimmingCharacters(in: .whitespaces)
+                        size = components[1].trimmingCharacters(in: .whitespaces)
+                    } else {
+                        color = nil
+                        size = nil
+                    }
+
+                    let brand = try? goodsOutline.select("div.goodsBrand").text()
+
+                    return Item(
+                        imageSource: .url(imageUrl),
+                        option: .init(
+                            name: name,
+                            purchasedPrice: price,
+                            purchasedOn: purchasedOn,
+                            sourceUrl: sourceUrl,
+                            originalColor: color,
+                            originalBrand: brand,
+                            originalSize: size
+                        )
                     )
-                )
-            }
+                }
 
-            items.append(contentsOf: itemsInOrder)
+                items.append(contentsOf: itemsInOrder)
+            } catch {
+                logger.warning("\(error)")
+            }
         }
 
         return items
