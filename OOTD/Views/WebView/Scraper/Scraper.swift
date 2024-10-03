@@ -99,12 +99,16 @@ struct Scraper {
     func imageUrls() async throws -> [String] {
         if isZozoGoodsDetail {
             return try imageUrlsFromZozoGoodsDetail()
+        } else if isGuDetail {
+            return try await GuApi.imageUrlsFromDetail(detailUrl: url)
         }
         
         return try await defaultImageUrls()
     }
     
     func defaultImageUrls() async throws -> [String] {
+        logger.debug("defaultImageUrls is used")
+        
         let imgs = try doc.select("img")
         
         var urls = imgs.compactMap {

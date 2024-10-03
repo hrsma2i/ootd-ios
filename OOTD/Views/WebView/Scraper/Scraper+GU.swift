@@ -14,6 +14,10 @@ extension Scraper {
         url.hasPrefix("https://www.gu-global.com/jp/ja/member/purchase/history")
     }
 
+    var isGuDetail: Bool {
+        return url.matches(#"https://www\.gu-global\.com/jp/ja/products/[A-Za-z0-9-]+/\d+(\?.*)?"#)
+    }
+
     private func itemsFromGuPurchaseHistory() async throws -> [Item] {
         let anchors = try doc.select("#root > section > section > section > section.fr-ec-layout.fr-ec-layout--gutter-sm.fr-ec-layout--gutter-md.fr-ec-layout--gutter-lg.fr-ec-layout--span-4-sm.fr-ec-layout--span-12-md.fr-ec-layout--span-9-lg.fr-ec-template-information--min-height > ul > li > div.fr-ec-product-tile-resize-wrapper > a")
 
