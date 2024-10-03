@@ -27,10 +27,43 @@ extension Scraper {
             let imageUrl = try img.attr("src")
             let sourceUrl = try anchor.attr("href")
 
+            let divProductTileEnd = try anchor.select("div.fr-ec-product-tile__end.fr-ec-product-tile__end--padding-horizontal-small")
+
+            let name = try divProductTileEnd.select("h3").text()
+
+            let paragraphs = try divProductTileEnd.select("div > div > p")
+
+            // CSS セレクタで取得しようとすると、カラーと購入日の<p>が同一のパスとみなされてしまうため、 text で判定する
+            var color: String?
+            var size: String?
+            var purchasedOn: Date?
+            for p in paragraphs {
+                guard let text = try? p.text() else {
+                    continue
+                }
+
+                if text.hasPrefix("カラー") {
+                    color = text.replacingOccurrences(of: "カラー: ", with: "")
+                } else if text.hasPrefix("サイズ") {
+                    size = text.replacingOccurrences(of: "サイズ: ", with: "")
+                } else if text.hasPrefix("購入日") {
+                    let purchasedOnString = text
+                        .replacingOccurrences(of: "購入日: ", with: "")
+                    let f = DateFormatter()
+                    f.dateFormat = "yyyy/MM/dd"
+                    purchasedOn = f.date(from: purchasedOnString)
+                }
+            }
+
             return Item(
                 imageSource: .url(imageUrl),
                 option: .init(
-                    sourceUrl: sourceUrl
+                    name: name,
+                    purchasedOn: purchasedOn,
+                    sourceUrl: sourceUrl,
+                    originalColor: color,
+                    originalBrand: "UNIQLO",
+                    originalSize: size
                 )
             )
         }
