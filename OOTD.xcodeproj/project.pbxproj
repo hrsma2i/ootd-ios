@@ -90,6 +90,7 @@
 		886232BD2C7CCC9100A1802D /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232BC2C7CCC9100A1802D /* NavigationManager.swift */; };
 		88A350032CA86DD300021FBF /* SelectWebItemScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A350022CA86DD300021FBF /* SelectWebItemScreen.swift */; };
 		88B2BCE92C7E0E89008F45B7 /* SwiftDataItemDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B2BCE82C7E0E89008F45B7 /* SwiftDataItemDataSource.swift */; };
+		88C00C3E2CAD7DF9007D83FF /* ACarousel in Frameworks */ = {isa = PBXBuildFile; productRef = 88C00C3D2CAD7DF9007D83FF /* ACarousel */; };
 		88CD55942C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55932C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift */; };
 		88CD559D2C8749E800A9B78A /* WebViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55972C8749E800A9B78A /* WebViewManager.swift */; };
 		88CD559F2C8749E800A9B78A /* CustomWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55992C8749E800A9B78A /* CustomWebView.swift */; };
@@ -220,6 +221,7 @@
 				886232772C7CC6CD00A1802D /* CachedAsyncImage in Frameworks */,
 				88CD55A72C8755E700A9B78A /* SwiftSoup in Frameworks */,
 				883B54472C8DD547007DB1E8 /* BrightroomUI in Frameworks */,
+				88C00C3E2CAD7DF9007D83FF /* ACarousel in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -551,6 +553,7 @@
 				88CD55A62C8755E700A9B78A /* SwiftSoup */,
 				883B54442C8DD547007DB1E8 /* BrightroomEngine */,
 				883B54462C8DD547007DB1E8 /* BrightroomUI */,
+				88C00C3D2CAD7DF9007D83FF /* ACarousel */,
 			);
 			productName = OOTD;
 			productReference = 8862320C2C7CBDD900A1802D /* OOTD.app */;
@@ -628,6 +631,7 @@
 				886232752C7CC6CD00A1802D /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
 				88CD55A52C8755E700A9B78A /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				883B54432C8DD547007DB1E8 /* XCRemoteSwiftPackageReference "Brightroom" */,
+				88C00C3C2CAD7DF9007D83FF /* XCRemoteSwiftPackageReference "ACarousel" */,
 			);
 			productRefGroup = 8862320D2C7CBDD900A1802D /* Products */;
 			projectDirPath = "";
@@ -1106,6 +1110,14 @@
 				minimumVersion = 2.1.1;
 			};
 		};
+		88C00C3C2CAD7DF9007D83FF /* XCRemoteSwiftPackageReference "ACarousel" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JWAutumn/ACarousel";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
 		88CD55A52C8755E700A9B78A /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/scinfu/SwiftSoup";
@@ -1131,6 +1143,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 886232752C7CC6CD00A1802D /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
 			productName = CachedAsyncImage;
+		};
+		88C00C3D2CAD7DF9007D83FF /* ACarousel */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 88C00C3C2CAD7DF9007D83FF /* XCRemoteSwiftPackageReference "ACarousel" */;
+			productName = ACarousel;
 		};
 		88CD55A62C8755E700A9B78A /* SwiftSoup */ = {
 			isa = XCSwiftPackageProductDependency;

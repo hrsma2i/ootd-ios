@@ -193,13 +193,15 @@ struct WebItemDetail: HashableView {
         .navigationDestination(for: SelectWebImageScreen.self) { $0 }
         .confirmationDialog("画像を編集する", isPresented: $isImageEditDialogPresented, titleVisibility: .visible) {
             cropImageButton
-            changeImageButton
+            if !imageUrlOptions.isEmpty {
+                changeImageButton
+            }
         }
         .task {
             do {
                 if let sourceUrl = item.sourceUrl {
                     let doc = try await Scraper.from(url: sourceUrl)
-                    imageUrlOptions = try doc.imageUrlsFromZozoGoodsDetail()
+                    imageUrlOptions = try await doc.imageUrls()
                 }
             } catch {
                 logger.error("\(error)")
@@ -219,7 +221,7 @@ struct WebItemDetail: HashableView {
 
 #Preview {
     struct PreviewView: View {
-        @State var item = sampleItems.first { $0.name == "from zozo purchased history" }!
+        @State var item = sampleItems.first { $0.name == "from gu purchased history" }!
 
         var body: some View {
             DependencyInjector {

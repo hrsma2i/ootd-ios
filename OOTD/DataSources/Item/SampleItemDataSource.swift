@@ -99,4 +99,15 @@ let sampleItems = [
             originalSize: "26"
         )
     ),
+    Item(
+        imageSource: .url("https://image.uniqlo.com/GU/ST3/AsianCommon/imagesgoods/352152/item/goods_67_352152_3x4.jpg?width=400"),
+        option: .init(
+            name: "from gu purchased history",
+            purchasedOn: Date(year: 2024, month: 9, day: 28),
+            sourceUrl: "https://www.gu-global.com/jp/ja/products/E352152-000/00",
+            originalColor: "67 BLUE",
+            originalBrand: "GU",
+            originalSize: "WOMEN XL"
+        )
+    ),
 ]

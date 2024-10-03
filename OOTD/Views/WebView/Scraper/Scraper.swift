@@ -97,6 +97,14 @@ struct Scraper {
     }
     
     func imageUrls() async throws -> [String] {
+        if isZozoGoodsDetail {
+            return try imageUrlsFromZozoGoodsDetail()
+        }
+        
+        return try await defaultImageUrls()
+    }
+    
+    func defaultImageUrls() async throws -> [String] {
         let imgs = try doc.select("img")
         
         var urls = imgs.compactMap {
@@ -120,7 +128,7 @@ struct Scraper {
     }
     
     func defaultItems() async throws -> [Item] {
-        let imageUrls = try await imageUrls()
+        let imageUrls = try await defaultImageUrls()
         
         let items = imageUrls.map { imageUrl in
             Item(

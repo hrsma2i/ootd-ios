@@ -14,7 +14,7 @@ extension Scraper {
         url.hasPrefix("https://zozo.jp/sp/_member/orderhistory/")
     }
 
-    private var isZozoGoodsDetail: Bool {
+    var isZozoGoodsDetail: Bool {
         return url.matches(#"https://zozo\.jp/(sp/)?shop/[\w-]+/(goods-sale|goods)/\d+/(\?.*)?"#) || url.matches(#"https://zozo\.jp/(sp/)?\?c=gr&did=\d+"#)
     }
 
