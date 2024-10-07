@@ -121,11 +121,11 @@ struct Item: Hashable, Identifiable {
             throw "Item.sourceUrl is nil"
         }
 
-        let doc = try await Scraper.from(url: sourceUrl)
-        let redirectedUrl = doc.url
-        let price = try? doc.price()
-        let originalCategoryPath = try? doc.categoryPath()
-        let originalDescription = try? doc.description()
+        let detail = try await generateEcItemDetail(url: sourceUrl)
+        let redirectedUrl = detail.url
+        let price = try? detail.price()
+        let originalCategoryPath = try? detail.categoryPath()
+        let originalDescription = try? detail.description()
 
         let updatedItem = copyWith(\.sourceUrl, value: redirectedUrl)
             .copyWith(\.originalCategoryPath, value: originalCategoryPath ?? self.originalCategoryPath)

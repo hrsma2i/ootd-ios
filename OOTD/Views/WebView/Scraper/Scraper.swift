@@ -10,37 +10,17 @@ import SwiftSoup
 
 private let logger = getLogger(#file)
 
-enum URLDomain: String, CaseIterable {
-    case zozo = "zozo.jp"
-    case uniqlo = "uniqlo.com"
-    case gu = "gu-global.com"
-}
-
 struct Scraper {
     let doc: SwiftSoup.Document
     let url: String
     let html: String
-    let guDetail: GuProductDetail?
     
-    init(_ html: String, url: String, guDetail: GuProductDetail? = nil) throws {
+    init(_ html: String, url: String, guDetail: GuItemDetail? = nil) throws {
         self.html = html
         doc = try SwiftSoup.parse(html)
         self.url = url
-        self.guDetail = guDetail
     }
     
-    var domain: URLDomain? {
-        guard let host = URL(string: url)?.host else { return nil }
-        
-        for domain in URLDomain.allCases {
-            if host.contains(domain.rawValue) {
-                return domain
-            }
-        }
-
-        return nil
-    }
-
     static func from(url urlString: String) async throws -> Self {
         guard let url = URL(string: urlString) else {
             throw "url is invalid: \(urlString)"
@@ -64,14 +44,7 @@ struct Scraper {
         
         let redirectedUrl = httpResponse.url
         
-        let guDetail: GuProductDetail?
-        if isGuDetail(url.absoluteString) {
-            guDetail = try await GuProductDetail.from(detailUrl: url.absoluteString)
-        } else {
-            guDetail = nil
-        }
-        
-        return try .init(html, url: redirectedUrl?.absoluteString ?? urlString, guDetail: guDetail)
+        return try .init(html, url: redirectedUrl?.absoluteString ?? urlString)
     }
     
     func ogImageURL() throws -> String {
@@ -105,19 +78,7 @@ struct Scraper {
         return faviconURL
     }
     
-    func imageUrls() async throws -> [String] {
-        if isZozoGoodsDetail {
-            return try imageUrlsFromZozoGoodsDetail()
-        } else if Self.isGuDetail(url) {
-            return try await guDetail!.imageUrls()
-        }
-        
-        return try await defaultImageUrls()
-    }
-    
-    func defaultImageUrls() async throws -> [String] {
-        logger.debug("defaultImageUrls is used")
-        
+    func imageUrls() throws -> [String] {
         let imgs = try doc.select("img")
         
         var urls = imgs.compactMap {
@@ -138,70 +99,5 @@ struct Scraper {
         urls = urls.unique()
         
         return urls
-    }
-    
-    func defaultItems() async throws -> [Item] {
-        let imageUrls = try await defaultImageUrls()
-        
-        let items = imageUrls.map { imageUrl in
-            Item(
-                imageSource: .url(imageUrl),
-                option: .init(
-                    sourceUrl: url
-                )
-            )
-        }
-        return items
-    }
-
-    private func _items() async throws -> [Item] {
-        switch domain {
-        case .zozo:
-            return try await itemsFromZOZO()
-
-        case .uniqlo:
-            return try await itemsFromUniqlo()
-
-        case .gu:
-            return try await itemsFromGu()
-            
-        default:
-            return try await defaultItems()
-        }
-    }
-    
-    func items() async throws -> [Item] {
-        var items = try await _items()
-        items = items.unique()
-        // TODO: サイズで足切りする？
-        return items
-    }
-    
-    func categoryPath() throws -> [String] {
-        if isZozoGoodsDetail {
-            return try categoryPathFromZozoGoodsDetail()
-        } else if Self.isGuDetail(url) {
-            return guDetail!.categoryPath()
-        }
-        
-        throw "no categoryPath found in \(url)"
-    }
-    
-    func description() throws -> String {
-        if isZozoGoodsDetail {
-            return try descriptionFromZozoGoodsDetail()
-        } else if Self.isGuDetail(url) {
-            return guDetail!.description
-        }
-        
-        throw "no description found in \(url)"
-    }
-    
-    func price() throws -> Int {
-        if Self.isGuDetail(url) {
-            return guDetail!.result.prices.base.value
-        }
-        
-        throw "no price found in \(url)"
     }
 }

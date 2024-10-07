@@ -200,8 +200,8 @@ struct WebItemDetail: HashableView {
         .task {
             do {
                 if let sourceUrl = item.sourceUrl {
-                    let doc = try await Scraper.from(url: sourceUrl)
-                    imageUrlOptions = try await doc.imageUrls()
+                    let detail = try await generateEcItemDetail(url: sourceUrl)
+                    imageUrlOptions = try detail.imageUrls()
                 }
             } catch {
                 logger.error("\(error)")

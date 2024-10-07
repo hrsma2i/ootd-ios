@@ -1,24 +1,31 @@
 //
-//  Scraper+GU.swift
+//  UniqloPurchaseHistory.swift
 //  OOTD
 //
-//  Created by Hiroshi Matsui on 2024/09/15.
+//  Created by Hiroshi Matsui on 2024/10/08.
 //
 
 import Foundation
+import SwiftSoup
 
 private let logger = getLogger(#file)
 
-extension Scraper {
-    private var isGuPurchaseHistory: Bool {
-        url.hasPrefix("https://www.gu-global.com/jp/ja/member/purchase/history")
+struct UniqloPurchaseHistory: EcPurchaseHistory {
+    let url: String
+    let html: String
+    private let doc: SwiftSoup.Document
+
+    init(html: String, url: String) throws {
+        self.html = html
+        doc = try SwiftSoup.parse(html)
+        self.url = url
     }
 
-    static func isGuDetail(_ url: String) -> Bool {
-        return url.matches(#"https://www\.gu-global\.com/jp/ja/products/[A-Za-z0-9-]+/\d+(\?.*)?"#)
+    static func isValidUrl(_ url: String) -> Bool {
+        url.hasPrefix("https://www.uniqlo.com/jp/ja/member/purchase/history")
     }
 
-    private func itemsFromGuPurchaseHistory() async throws -> [Item] {
+    func items() async throws -> [Item] {
         let anchors = try doc.select("#root > section > section > section > section.fr-ec-layout.fr-ec-layout--gutter-sm.fr-ec-layout--gutter-md.fr-ec-layout--gutter-lg.fr-ec-layout--span-4-sm.fr-ec-layout--span-12-md.fr-ec-layout--span-9-lg.fr-ec-template-information--min-height > ul > li > div.fr-ec-product-tile-resize-wrapper > a")
 
         guard anchors.count != 0 else {
@@ -66,46 +73,10 @@ extension Scraper {
                     purchasedOn: purchasedOn,
                     sourceUrl: sourceUrl,
                     originalColor: color,
-                    originalBrand: "GU",
+                    originalBrand: "UNIQLO",
                     originalSize: size
                 )
             )
-        }
-
-        return items
-    }
-
-    private func isValidImageUrl(_ imageUrl: String) -> Bool {
-        return imageUrl.matches(#"https://image.uniqlo.com/GU/ST3/(jp|AsianCommon)/imagesgoods/\d+/(item|sub)/(jpgoods|goods)_\d+_(sub)?\d+.*\.jpg"#)
-    }
-
-    func itemsFromGu() async throws -> [Item] {
-        var items: [Item]
-        if isGuPurchaseHistory {
-            items = try await itemsFromGuPurchaseHistory()
-        } else {
-            items = try await defaultItems()
-            items = items.compactMapWithErrorLog(logger) {
-                guard let sourceUrl = $0.sourceUrl else {
-                    throw "Item.sourceUrl is nil"
-                }
-
-                return Item(
-                    imageSource: $0.imageSource,
-                    option: .init(
-                        sourceUrl: sourceUrl
-                    )
-                )
-            }
-        }
-
-        // common post process
-        items = items.filter {
-            guard case let .url(imageUrl) = $0.imageSource else {
-                return false
-            }
-
-            return isValidImageUrl(imageUrl)
         }
 
         return items

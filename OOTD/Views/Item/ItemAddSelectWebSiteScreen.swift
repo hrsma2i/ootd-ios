@@ -41,8 +41,8 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         Task {
             do {
                 let html = try await webView.getHtml()
-                let doc = try Scraper(html, url: url)
-                let items = try await doc.items()
+                let history = try generateEcPurchaseHisotry(html: html, url: url)
+                let items = try await history.items()
 
                 navigation.path.append(
                     SelectWebItemScreen(items: items)

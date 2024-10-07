@@ -11,6 +11,12 @@ import WebKit
 
 private let logger = getLogger(#file)
 
+enum URLDomain: String, CaseIterable {
+    case zozo = "zozo.jp"
+    case uniqlo = "uniqlo.com"
+    case gu = "gu-global.com"
+}
+
 func cookiesKey(_ domain: URLDomain) -> String {
     return "\(domain.rawValue)-cookies"
 }
