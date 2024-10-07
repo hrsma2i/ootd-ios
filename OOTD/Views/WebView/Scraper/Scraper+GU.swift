@@ -14,7 +14,7 @@ extension Scraper {
         url.hasPrefix("https://www.gu-global.com/jp/ja/member/purchase/history")
     }
 
-    var isGuDetail: Bool {
+    static func isGuDetail(_ url: String) -> Bool {
         return url.matches(#"https://www\.gu-global\.com/jp/ja/products/[A-Za-z0-9-]+/\d+(\?.*)?"#)
     }
 

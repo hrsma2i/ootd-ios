@@ -9,11 +9,42 @@ import Foundation
 
 private let logger = getLogger(#file)
 
-private struct ProductDetail: Codable {
+struct GuProductDetail: Codable {
     let result: Result
 
     struct Result: Codable {
         let images: Images
+        let breadcrumbs: BreadCrumbs
+
+        struct BreadCrumbs: Codable {
+            let gender: Gender
+            let class_: Class_
+            let category: GuProductDetail.Result.BreadCrumbs.Category
+            let subcategory: SubCategory
+
+            enum CodingKeys: String, CodingKey {
+                case gender
+                case class_ = "class"
+                case category
+                case subcategory
+            }
+
+            struct Gender: Codable {
+                let locale: String
+            }
+
+            struct Class_: Codable {
+                let locale: String
+            }
+
+            struct Category: Codable {
+                let locale: String
+            }
+
+            struct SubCategory: Codable {
+                let locale: String
+            }
+        }
 
         struct Images: Codable {
             let sub: [Sub]
@@ -23,24 +54,25 @@ private struct ProductDetail: Codable {
             }
         }
     }
-}
 
-enum GuApi {
-    static func imageUrlsFromDetail(detailUrl: String) async throws -> [String] {
-        logger.debug("get image urls from gu detail")
-
-        let productCode = try getProductCodeFromDetailUrl(detailUrl)
+    static func from(detailUrl: String) async throws -> GuProductDetail {
+        let productCode = try Self.getProductCode(detailUrl)
         let apiUrl = "https://www.gu-global.com/jp/api/commerce/v5/ja/products/\(productCode)/price-groups/00/details"
 
-        let data = try await request(apiUrl)
-        let productDetail = try JSONDecoder().decode(ProductDetail.self, from: data)
+        let data = try await Self.request(apiUrl)
+        let detail = try JSONDecoder().decode(Self.self, from: data)
+        return detail
+    }
 
-        let imageUrls = productDetail.result.images.sub.compactMap { $0.image }
+    func imageUrls() async throws -> [String] {
+        logger.debug("get image urls from gu detail")
+
+        let imageUrls = result.images.sub.compactMap { $0.image }
 
         return imageUrls
     }
 
-    static func getProductCodeFromDetailUrl(_ detailUrl: String) throws -> String {
+    static func getProductCode(_ detailUrl: String) throws -> String {
         // 正規表現パターン。URL全体のパターンの中で商品コード部分だけをキャプチャ
         let pattern = "https://www\\.gu-global\\.com/jp/ja/products/([A-Z0-9]+-[A-Z0-9]+)/\\d+"
 

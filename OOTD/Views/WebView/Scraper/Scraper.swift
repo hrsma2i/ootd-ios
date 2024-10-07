@@ -20,11 +20,13 @@ struct Scraper {
     let doc: SwiftSoup.Document
     let url: String
     let html: String
+    let guDetail: GuProductDetail?
     
-    init(_ html: String, url: String) throws {
+    init(_ html: String, url: String, guDetail: GuProductDetail? = nil) throws {
         self.html = html
         doc = try SwiftSoup.parse(html)
         self.url = url
+        self.guDetail = guDetail
     }
     
     var domain: URLDomain? {
@@ -62,7 +64,14 @@ struct Scraper {
         
         let redirectedUrl = httpResponse.url
         
-        return try .init(html, url: redirectedUrl?.absoluteString ?? urlString)
+        let guDetail: GuProductDetail?
+        if isGuDetail(url.absoluteString) {
+            guDetail = try await GuProductDetail.from(detailUrl: url.absoluteString)
+        } else {
+            guDetail = nil
+        }
+        
+        return try .init(html, url: redirectedUrl?.absoluteString ?? urlString, guDetail: guDetail)
     }
     
     func ogImageURL() throws -> String {
@@ -99,8 +108,8 @@ struct Scraper {
     func imageUrls() async throws -> [String] {
         if isZozoGoodsDetail {
             return try imageUrlsFromZozoGoodsDetail()
-        } else if isGuDetail {
-            return try await GuApi.imageUrlsFromDetail(detailUrl: url)
+        } else if Self.isGuDetail(url) {
+            return try await guDetail!.imageUrls()
         }
         
         return try await defaultImageUrls()
