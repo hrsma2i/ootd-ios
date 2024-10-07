@@ -176,4 +176,32 @@ struct Scraper {
         // TODO: サイズで足切りする？
         return items
     }
+    
+    func categoryPath() throws -> [String] {
+        if isZozoGoodsDetail {
+            return try categoryPathFromZozoGoodsDetail()
+        } else if Self.isGuDetail(url) {
+            return guDetail!.categoryPath()
+        }
+        
+        throw "no categoryPath found in \(url)"
+    }
+    
+    func description() throws -> String {
+        if isZozoGoodsDetail {
+            return try descriptionFromZozoGoodsDetail()
+        } else if Self.isGuDetail(url) {
+            return guDetail!.description
+        }
+        
+        throw "no description found in \(url)"
+    }
+    
+    func price() throws -> Int {
+        if Self.isGuDetail(url) {
+            return guDetail!.result.prices.base.value
+        }
+        
+        throw "no price found in \(url)"
+    }
 }

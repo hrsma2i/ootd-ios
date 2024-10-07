@@ -123,12 +123,14 @@ struct Item: Hashable, Identifiable {
 
         let doc = try await Scraper.from(url: sourceUrl)
         let redirectedUrl = doc.url
-        let originalCategoryPath = try doc.categoryPathFromZozoGoodsDetail()
-        let originalDescription = try doc.descriptionFromZozoGoodsDetail()
+        let price = try? doc.price()
+        let originalCategoryPath = try? doc.categoryPath()
+        let originalDescription = try? doc.description()
 
         let updatedItem = copyWith(\.sourceUrl, value: redirectedUrl)
-            .copyWith(\.originalCategoryPath, value: originalCategoryPath)
-            .copyWith(\.originalDescription, value: originalDescription)
+            .copyWith(\.originalCategoryPath, value: originalCategoryPath ?? self.originalCategoryPath)
+            .copyWith(\.originalDescription, value: originalDescription ?? self.originalDescription)
+            .copyWith(\.purchasedPrice, value: price ?? purchasedPrice)
 
         return updatedItem
     }
