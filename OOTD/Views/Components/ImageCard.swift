@@ -17,6 +17,7 @@ struct ImageCard: View {
     var padding: CGFloat = 0
     var contentMode: ContentMode = .fit
     var backgroundColor: Color = .white
+    var onError: ((ImageSource) -> Void)? = { _ in }
 
     func imageView(_ image: Image) -> some View {
         AspectRatioContainer(aspectRatio: aspectRatio) {
@@ -41,6 +42,11 @@ struct ImageCard: View {
                     .font(.callout)
             }
             .foregroundColor(.red)
+        }
+        .task {
+            if let onError {
+                onError(source)
+            }
         }
     }
 

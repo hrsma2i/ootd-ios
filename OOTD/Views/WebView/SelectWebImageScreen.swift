@@ -7,8 +7,10 @@
 
 import SwiftUI
 
+private let logger = getLogger(#file)
+
 struct SelectWebImageScreen: HashableView {
-    let imageURLs: [String]
+    @State var imageURLs: [String]
     var limit: Int = .max
     var onSelected: ([String]) -> Void = { _ in }
 
@@ -43,7 +45,13 @@ struct SelectWebImageScreen: HashableView {
             source: .url(url),
             aspectRatio: 1,
             contentMode: .fill
-        )
+        ) { _ in
+            imageURLs = imageURLs.filter { imageUrl in
+                imageUrl != url
+            }
+
+            logger.warning("failed to load image from \(url)")
+        }
     }
 
     @ViewBuilder
