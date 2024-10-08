@@ -61,6 +61,8 @@ func generateEcItemDetail(html html_: String? = nil, url urlString_: String) asy
         return try ZozoItemDetail(html: html, url: urlString)
     } else if GuItemDetail.isValidUrl(urlString) {
         return try await GuItemDetail.from(url: urlString)
+    } else if UniqloItemDetail.isValidUrl(urlString) {
+        return try await UniqloItemDetail.from(url: urlString)
     }
 
     throw "unsupported item detail page: \(urlString)"
