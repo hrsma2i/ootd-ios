@@ -10,7 +10,7 @@ import SwiftSoup
 
 private let logger = getLogger(#file)
 
-struct UniqloPurchaseHistory: EcPurchaseHistory {
+struct UniqloPurchaseHistory: EcPurchaseHistory, FirstRetailingPage {
     let url: String
     let html: String
     private let doc: SwiftSoup.Document
@@ -35,7 +35,9 @@ struct UniqloPurchaseHistory: EcPurchaseHistory {
         let items = anchors.compactMapWithErrorLog(logger) { anchor in
             let img = try anchor.select("div.fr-ec-product-tile__horizontal-small-spacing-ec-renewal > div > div > img")
 
-            let imageUrl = try img.attr("src")
+            var imageUrl = try img.attr("src")
+            imageUrl = removeAspectSuffix(imageUrl)
+
             let sourceUrl = try anchor.attr("href")
 
             let divProductTileEnd = try anchor.select("div.fr-ec-product-tile__end.fr-ec-product-tile__end--padding-horizontal-small")

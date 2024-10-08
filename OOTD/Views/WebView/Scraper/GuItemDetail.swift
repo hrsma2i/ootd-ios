@@ -9,7 +9,7 @@ import Foundation
 
 private let logger = getLogger(#file)
 
-struct GuItemDetail: EcItemDetail {
+struct GuItemDetail: EcItemDetail, FirstRetailingPage {
     let url: String
     let detail: ProductDetail
     
@@ -85,6 +85,7 @@ struct GuItemDetail: EcItemDetail {
     
     func imageUrls() throws -> [String] {
         let imageUrls = detail.result.images.sub.compactMap { $0.image }
+            .map { removeAspectSuffix($0) }
         
         return imageUrls
     }

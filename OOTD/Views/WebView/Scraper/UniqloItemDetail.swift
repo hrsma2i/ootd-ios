@@ -10,7 +10,7 @@ import SwiftSoup
 
 private let logger = getLogger(#file)
 
-struct UniqloItemDetail: EcItemDetail {
+struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
     let url: String
     let productCode: String
     let priceGroup: String
@@ -197,6 +197,10 @@ struct UniqloItemDetail: EcItemDetail {
             
         guard !imageUrls.isEmpty else {
             throw "no image urls"
+        }
+        
+        imageUrls = imageUrls.map {
+            removeAspectSuffix($0)
         }
         
         imageUrls = imageUrls.unique()
