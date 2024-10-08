@@ -16,7 +16,8 @@ struct UniqloItemDetail: EcItemDetail {
     let priceGroup: String
     let scraper: Scraper
     let preloadedState: PreloadedState
-
+    let product: PreloadedState.Entity.Product_.Product
+    
     struct PreloadedState: Codable {
         let entity: Entity
         
@@ -27,18 +28,48 @@ struct UniqloItemDetail: EcItemDetail {
                 let product: Product
                 
                 struct Product: Codable {
+                    let breadcrumbs: BreadCrumbs
+                    let designDetail: String
                     let images: Images
+                    let prices: Prices
                     
+                    struct BreadCrumbs: Codable {
+                        let class_: Class_
+                        let category: GuItemDetail.ProductDetail.Result.BreadCrumbs.Category
+                        let subcategory: SubCategory
+                        
+                        enum CodingKeys: String, CodingKey {
+                            case class_ = "class"
+                            case category
+                            case subcategory
+                        }
+                        
+                        struct Class_: Codable {
+                            let locale: String
+                        }
+                        
+                        struct Category: Codable {
+                            let locale: String
+                        }
+                        
+                        struct SubCategory: Codable {
+                            let locale: String
+                        }
+                    }
+
                     struct Images: Codable {
                         let main: [String: Main]
-                        let sub: [Sub]
                         
                         struct Main: Codable {
                             let image: String
                         }
+                    }
+                    
+                    struct Prices: Codable {
+                        let base: Base
                         
-                        struct Sub: Codable {
-                            let image: String
+                        struct Base: Codable {
+                            let value: Int
                         }
                     }
                 }
@@ -55,7 +86,18 @@ struct UniqloItemDetail: EcItemDetail {
         let priceGroup = try Self.getPriceGroup(detailUrl)
         let scraper = try await Scraper.from(url: detailUrl)
         let preloadedState = try Self.decodePreloadedState(scraper.doc)
-        return .init(url: detailUrl, productCode: productCode, priceGroup: priceGroup, scraper: scraper, preloadedState: preloadedState)
+        let key = "\(productCode)-\(priceGroup)"
+        guard let product_ = preloadedState.entity.pdpEntity[key] else {
+            throw "no entity.pdpEntity.\(key) in the preloaded state"
+        }
+        return .init(
+            url: detailUrl,
+            productCode: productCode,
+            priceGroup: priceGroup,
+            scraper: scraper,
+            preloadedState: preloadedState,
+            product: product_.product
+        )
     }
     
     static func decodePreloadedState(_ doc: SwiftSoup.Document) throws -> PreloadedState {
@@ -84,30 +126,6 @@ struct UniqloItemDetail: EcItemDetail {
         }
         
         throw "failed to decode a preloaded state"
-    }
-    
-    func imageUrls() throws -> [String] {
-        let key = "\(productCode)-\(priceGroup)"
-
-        var imageUrls: [String] = []
-        
-        guard let product_ = preloadedState.entity.pdpEntity[key] else {
-            throw "no entity.pdpEntity.\(key) in the preloaded state"
-        }
-            
-        let images = product_.product.images
-            
-        let mainImageUrls = images.main.map { $0.value.image }
-        imageUrls.append(contentsOf: mainImageUrls)
-            
-        let subImageUrls = images.sub.map { $0.image }
-        imageUrls.append(contentsOf: subImageUrls)
-        
-        guard !imageUrls.isEmpty else {
-            throw "no image urls"
-        }
-        
-        return imageUrls
     }
     
     static func getProductCode(_ detailUrl: String) throws -> String {
@@ -152,15 +170,34 @@ struct UniqloItemDetail: EcItemDetail {
         return productCode
     }
     
+    func imageUrls() throws -> [String] {
+        var imageUrls: [String] = []
+        
+        let images = product.images
+            
+        let mainImageUrls = images.main.map { $0.value.image }
+        imageUrls.append(contentsOf: mainImageUrls)
+            
+        guard !imageUrls.isEmpty else {
+            throw "no image urls"
+        }
+        
+        return imageUrls
+    }
+    
     func categoryPath() throws -> [String] {
-        throw "not implemented"
+        [
+            product.breadcrumbs.class_.locale,
+            product.breadcrumbs.category.locale,
+            product.breadcrumbs.subcategory.locale,
+        ]
     }
     
     func description() throws -> String {
-        throw "not implemented"
+        product.designDetail.replacingOccurrences(of: "<br>", with: "\n")
     }
     
     func price() throws -> Int {
-        throw "not implemented"
+        product.prices.base.value
     }
 }
