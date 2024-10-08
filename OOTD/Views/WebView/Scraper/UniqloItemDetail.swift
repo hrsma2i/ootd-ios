@@ -31,6 +31,8 @@ struct UniqloItemDetail: EcItemDetail {
                     let breadcrumbs: BreadCrumbs
                     let designDetail: String
                     let images: Images
+                    // 同一商品としてまとめられる商品番号
+                    let l1Ids: [String]
                     let prices: Prices
                     
                     struct BreadCrumbs: Codable {
@@ -146,26 +148,26 @@ struct UniqloItemDetail: EcItemDetail {
         return group
     }
 
-    static func extract(_ detailUrl: String, pattern: String) throws -> String {
+    static func extract(_ s: String, pattern: String) throws -> String {
         // 正規表現オブジェクトを作成
         guard let regex = try? NSRegularExpression(pattern: pattern) else {
             throw "正規表現の作成に失敗しました"
         }
         
-        let range = NSRange(detailUrl.startIndex ..< detailUrl.endIndex, in: detailUrl)
+        let range = NSRange(s.startIndex ..< s.endIndex, in: s)
         
         // 最初のマッチを探す
-        guard let match = regex.firstMatch(in: detailUrl, options: [], range: range) else {
+        guard let match = regex.firstMatch(in: s, options: [], range: range) else {
             throw "商品コードが見つかりませんでした"
         }
         
         // キャプチャグループの範囲を取得
-        guard let matchRange = Range(match.range(at: 1), in: detailUrl) else {
+        guard let matchRange = Range(match.range(at: 1), in: s) else {
             throw "マッチ範囲が不正です"
         }
         
         // 商品コードを抽出
-        let productCode = String(detailUrl[matchRange])
+        let productCode = String(s[matchRange])
         
         return productCode
     }
@@ -177,12 +179,46 @@ struct UniqloItemDetail: EcItemDetail {
             
         let mainImageUrls = images.main.map { $0.value.image }
         imageUrls.append(contentsOf: mainImageUrls)
+        
+        // also append other productCode images
+        guard let productId = try? Self.extract(productCode, pattern: #"E(\d+)-\d+"#) else {
+            logger.warning("failed to extarct product id from \(productCode)")
+            return imageUrls
+        }
+        
+        for otherId in product.l1Ids {
+            guard otherId != productId else { continue }
+            
+            let otherImageUrls = mainImageUrls.map {
+                $0.replacingOccurrences(of: productId, with: otherId)
+            }
+            imageUrls.append(contentsOf: otherImageUrls)
+        }
             
         guard !imageUrls.isEmpty else {
             throw "no image urls"
         }
         
+        imageUrls = imageUrls.unique()
+        
+        imageUrls = sortImageUrlsByColor(imageUrls)
+        
         return imageUrls
+    }
+    
+    func sortImageUrlsByColor(_ imageUrls: [String]) -> [String] {
+        let pattern = #"https://image\.uniqlo\.com/UQ/ST3/AsianCommon/imagesgoods/\d+/item/goods_(\d+)_\d+(_3x4)?.jpg"#
+        
+        return imageUrls.compactMap { imageUrl -> (url: String, color: String)? in
+            guard let color = try? Self.extract(imageUrl, pattern: pattern) else {
+                return nil
+            }
+            return (url: imageUrl, color: color)
+        }.sorted {
+            $0.color < $1.color
+        }.map {
+            $0.url
+        }
     }
     
     func categoryPath() throws -> [String] {
