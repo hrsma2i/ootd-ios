@@ -53,7 +53,12 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
             }
             
             struct Images: Codable {
+                let main: [String: Main]
                 let sub: [Sub]
+                
+                struct Main: Codable {
+                    let image: String
+                }
                 
                 struct Sub: Codable {
                     let image: String?
@@ -84,9 +89,16 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
     }
     
     func imageUrls() throws -> [String] {
-        let imageUrls = detail.result.images.sub.compactMap { $0.image }
-            .map { removeAspectSuffix($0) }
+        var imageUrls: [String] = []
         
+        let mainImageUrls = detail.result.images.main.map { $0.value.image }
+        imageUrls.append(contentsOf: mainImageUrls)
+
+        let subImageUrls = detail.result.images.sub.compactMap { $0.image }
+        imageUrls.append(contentsOf: subImageUrls)
+        
+        imageUrls = imageUrls.map { removeAspectSuffix($0) }
+
         return imageUrls
     }
     
