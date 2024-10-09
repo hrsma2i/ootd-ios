@@ -33,7 +33,11 @@ final class WebViewManager: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
 
     private init() {
-        webView = WKWebView()
+        // HTML内の動画を AVPlayer ではなくインラインで再生する。特に Uniqlo とか、勝手に AVPlayer が起動してしまって面倒。
+        // webView.configuration は read only なので webView.configuration.allowsInlineMediaPlayback = true は意味ない
+        let config = WKWebViewConfiguration()
+        config.allowsInlineMediaPlayback = true
+        webView = WKWebView(frame: .zero, configuration: config)
         webView.load(URLRequest(url: url))
 
         for domain in URLDomain.allCases {
