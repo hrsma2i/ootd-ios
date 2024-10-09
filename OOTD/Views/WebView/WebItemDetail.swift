@@ -11,11 +11,23 @@ private let logger = getLogger(#file)
 
 struct WebItemDetail: HashableView {
     @State var item: Item
+    var colorOptions: [String]?
+    var sizeOptions: [String]?
     var onCreated: (Item) -> Void = { _ in }
     var onBacked: (Item) -> Void = { _ in }
 
     @State private var isImageEditDialogPresented: Bool = false
     @State private var imageUrlOptions: [String] = []
+    @State private var activeSheet: ActiveSheet? = nil
+    enum ActiveSheet: Int, Identifiable {
+        case selectColor
+        case selectSize
+
+        var id: Int {
+            rawValue
+        }
+    }
+
     @EnvironmentObject var navigation: NavigationManager
     @EnvironmentObject var itemStore: ItemStore
 
@@ -155,6 +167,54 @@ struct WebItemDetail: HashableView {
         }
     }
 
+    @ViewBuilder
+    var colorRow: some View {
+        let title = "カラー"
+        if colorOptions != nil {
+            propertyRow(title, item.originalColor ?? "<選ぶ>") {
+                activeSheet = .selectColor
+            }
+        } else {
+            propertyRow(title, item.originalColor ?? "-")
+        }
+    }
+
+    @ViewBuilder
+    var sizeRow: some View {
+        let title = "サイズ"
+        if colorOptions != nil {
+            propertyRow(title, item.originalSize ?? "<選ぶ>") {
+                activeSheet = .selectSize
+            }
+        } else {
+            propertyRow(title, item.originalColor ?? "-")
+        }
+    }
+
+    @ViewBuilder
+    func selectableRow(_ key: String, _ value: String?, _ options: [String]?, _ sheet: ActiveSheet) -> some View {
+        if options != nil {
+            propertyRow(key, value ?? "<選ぶ>") {
+                activeSheet = sheet
+            }
+        } else {
+            propertyRow(key, value ?? "-")
+        }
+    }
+
+    func selectSheet(_ options: [String], key: WritableKeyPath<Item, String?>) -> some View {
+        Form {
+            ForEach(options, id: \.self) { value in
+                Button {
+                    item = item.copyWith(key, value: value)
+                    activeSheet = nil
+                } label: {
+                    Text(value)
+                }
+            }
+        }
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             ScrollView {
@@ -166,11 +226,11 @@ struct WebItemDetail: HashableView {
                     section {
                         propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
                         Divider()
-                        propertyRow("カラー", item.originalColor ?? "-")
+                        selectableRow("カラー", item.originalColor, colorOptions, .selectColor)
                         Divider()
                         propertyRow("ブランド", item.originalBrand ?? "-")
                         Divider()
-                        propertyRow("サイズ", item.originalSize ?? "-")
+                        selectableRow("サイズ", item.originalSize, sizeOptions, .selectSize)
                         Divider()
                         propertyRow("URL", item.sourceUrl ?? "-")
                         Divider()
@@ -186,6 +246,14 @@ struct WebItemDetail: HashableView {
             saveButton
         }
         .navigationBarHidden(true)
+        .sheet(item: $activeSheet) {
+            switch $0 {
+            case .selectColor:
+                selectSheet(colorOptions!, key: \.originalColor)
+            case .selectSize:
+                selectSheet(sizeOptions!, key: \.originalSize)
+            }
+        }
         .edgeSwipe {
             onBacked_()
         }
@@ -200,7 +268,9 @@ struct WebItemDetail: HashableView {
         .task {
             do {
                 if let sourceUrl = item.sourceUrl {
-                    let detail = try await generateEcItemDetail(url: sourceUrl)
+                    guard let detail = try await generateEcItemDetail(url: sourceUrl) else {
+                        throw "detail page is nil"
+                    }
                     imageUrlOptions = try detail.imageUrls()
                 }
             } catch {

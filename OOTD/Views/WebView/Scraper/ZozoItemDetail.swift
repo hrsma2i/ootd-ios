@@ -41,6 +41,10 @@ struct ZozoItemDetail: EcItemDetail, ZozoPage {
         return imageUrls
     }
 
+    func name() throws -> String {
+        throw "not implemented"
+    }
+
     func categoryPath() throws -> [String] {
         // PC 版に限る
         let infoSpecList = try doc.select("#tabItemInfo > div > div.p-goods-information-spec > div:nth-child(1) > dl")
@@ -63,6 +67,22 @@ struct ZozoItemDetail: EcItemDetail, ZozoPage {
         }
 
         return categoryPath
+    }
+
+    func colors() throws -> [String] {
+        throw "not implemented"
+    }
+
+    func selectColorFromImage(_ imageUrl: String) throws -> String {
+        throw "not implemented"
+    }
+
+    func brand() throws -> String {
+        throw "not implemented"
+    }
+
+    func sizes() throws -> [String] {
+        throw "not implemented"
     }
 
     func description() throws -> String {

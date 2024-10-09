@@ -7,13 +7,15 @@
 
 import Foundation
 
+private let logger = getLogger(#file)
+
 protocol EcPurchaseHistory {
     static func isValidUrl(_ url: String) -> Bool
 
     func items() async throws -> [Item]
 }
 
-func generateEcPurchaseHisotry(html: String, url: String) throws -> any EcPurchaseHistory {
+func generateEcPurchaseHisotry(html: String, url: String) throws -> (any EcPurchaseHistory)? {
     if ZozoPurchaseHistory.isValidUrl(url) {
         return try ZozoPurchaseHistory(html: html, url: url)
     } else if GuPurchaseHistory.isValidUrl(url) {
@@ -22,5 +24,6 @@ func generateEcPurchaseHisotry(html: String, url: String) throws -> any EcPurcha
         return try UniqloPurchaseHistory(html: html, url: url)
     }
 
-    return try DefaultPurchaseHistory(html: html, url: url)
+    logger.warning("unsupported purchase history: \(url)")
+    return nil
 }

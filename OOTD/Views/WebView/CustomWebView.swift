@@ -129,10 +129,11 @@ struct CustomWebView: HashableView {
                 ProgressView(value: manager.progress).progressViewStyle(.linear)
             }
 
-            ZStack(alignment: .bottom) {
-                WebViewRepresentable()
-                footer
-            }
+            WebViewRepresentable()
+
+            Divider()
+
+            footer
         }
     }
 }

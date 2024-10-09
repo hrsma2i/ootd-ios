@@ -147,6 +147,10 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
         return data
     }
     
+    func name() throws -> String {
+        throw "not implemented"
+    }
+
     func categoryPath() throws -> [String] {
         [
             detail.result.breadcrumbs.class_.locale,
@@ -155,6 +159,22 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
         ]
     }
     
+    func colors() throws -> [String] {
+        throw "not implemented"
+    }
+    
+    func selectColorFromImage(_ imageUrl: String) throws -> String {
+        throw "not implemented"
+    }
+
+    func brand() throws -> String {
+        throw "not implemented"
+    }
+
+    func sizes() throws -> [String] {
+        throw "not implemented"
+    }
+
     func description() throws -> String {
         detail.result.longDescription.replacingOccurrences(of: "<br>", with: "\n")
     }

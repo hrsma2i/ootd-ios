@@ -16,14 +16,24 @@ protocol EcItemDetail {
 
     func imageUrls() throws -> [String]
 
+    func name() throws -> String
+
     func categoryPath() throws -> [String]
+
+    func colors() throws -> [String]
+
+    func selectColorFromImage(_ imageUrl: String) throws -> String
+
+    func brand() throws -> String
+
+    func sizes() throws -> [String]
 
     func description() throws -> String
 
     func price() throws -> Int
 }
 
-func generateEcItemDetail(html html_: String? = nil, url urlString_: String) async throws -> any EcItemDetail {
+func generateEcItemDetail(html html_: String? = nil, url urlString_: String) async throws -> (any EcItemDetail)? {
     let html: String
     let urlString: String
 
@@ -65,5 +75,7 @@ func generateEcItemDetail(html html_: String? = nil, url urlString_: String) asy
         return try await UniqloItemDetail.from(url: urlString)
     }
 
-    throw "unsupported item detail page: \(urlString)"
+    logger.warning("unsupported item detail page: \(urlString)")
+
+    return nil
 }

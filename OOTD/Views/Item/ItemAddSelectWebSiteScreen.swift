@@ -41,12 +41,54 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         Task {
             do {
                 let html = try await webView.getHtml()
-                let history = try generateEcPurchaseHisotry(html: html, url: url)
-                let items = try await history.items()
 
-                navigation.path.append(
-                    SelectWebItemScreen(items: items)
-                )
+                if let history = try generateEcPurchaseHisotry(html: html, url: url) {
+                    let items = try await history.items()
+
+                    navigation.path.append(
+                        SelectWebItemScreen(items: items)
+                    )
+                } else if let detail = try await generateEcItemDetail(url: url) {
+                    // TODO: 長いので別関数として切り分けたい
+                    let imageUrls = try detail.imageUrls()
+                    let name = try detail.name()
+                    let colorOptions = try? detail.colors()
+                    let brand = try? detail.brand()
+                    let sizeOptions = try? detail.sizes()
+
+                    navigation.path.append(
+                        SelectWebImageScreen(
+                            imageURLs: imageUrls,
+                            limit: 1
+                        ) { selected in
+                            let imageUrl = selected.first!
+                            let color = try? detail.selectColorFromImage(imageUrl)
+                            var item = Item(
+                                imageSource: .url(imageUrl),
+                                option: .init(
+                                    name: name,
+                                    sourceUrl: url,
+                                    originalColor: color,
+                                    originalBrand: brand
+                                )
+                            )
+                            Task {
+                                item = try await item.copyWithPropertiesFromSourceUrl()
+
+                                navigation.path.append(
+                                    WebItemDetail(
+                                        item: item,
+                                        colorOptions: color == nil ? colorOptions : nil,
+                                        sizeOptions: sizeOptions,
+                                        onCreated: { _ in
+                                            navigation.path = NavigationPath()
+                                        }
+                                    )
+                                )
+                            }
+                        }
+                    )
+                }
             } catch {
                 logger.error("\(error)")
             }
@@ -72,6 +114,8 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         }
         .navigationDestination(for: CustomWebView.self) { $0 }
         .navigationDestination(for: SelectWebItemScreen.self) { $0 }
+        .navigationDestination(for: SelectWebImageScreen.self) { $0 }
+        .navigationDestination(for: WebItemDetail.self) { $0 }
     }
 }
 

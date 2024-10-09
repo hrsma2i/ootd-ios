@@ -29,11 +29,14 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
                 
                 struct Product: Codable {
                     let breadcrumbs: BreadCrumbs
+                    let colors: [Color]
                     let designDetail: String
                     let images: Images
                     // 同一商品としてまとめられる商品番号
                     let l1Ids: [String]
+                    let name: String
                     let prices: Prices
+                    let sizes: [Size]
                     
                     struct BreadCrumbs: Codable {
                         let class_: Class_
@@ -58,6 +61,15 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
                             let locale: String
                         }
                     }
+                    
+                    struct Color: Codable {
+                        let displayCode: String
+                        let name: String
+                        
+                        var codeAndName: String {
+                            "\(displayCode) \(name)"
+                        }
+                    }
 
                     struct Images: Codable {
                         let main: [String: Main]
@@ -73,6 +85,10 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
                         struct Base: Codable {
                             let value: Int
                         }
+                    }
+                    
+                    struct Size: Codable {
+                        let name: String
                     }
                 }
             }
@@ -172,6 +188,10 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
         return productCode
     }
     
+    func name() throws -> String {
+        product.name
+    }
+    
     func imageUrls() throws -> [String] {
         var imageUrls: [String] = []
         
@@ -211,10 +231,8 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
     }
     
     func sortImageUrlsByColor(_ imageUrls: [String]) -> [String] {
-        let pattern = #"https://image\.uniqlo\.com/UQ/ST3/AsianCommon/imagesgoods/\d+/item/goods_(\d+)_\d+(_3x4)?.jpg"#
-        
         return imageUrls.compactMap { imageUrl -> (url: String, color: String)? in
-            guard let color = try? Self.extract(imageUrl, pattern: pattern) else {
+            guard let color = try? Self.getColorCode(imageUrl) else {
                 return nil
             }
             return (url: imageUrl, color: color)
@@ -225,12 +243,38 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
         }
     }
     
+    static func getColorCode(_ imageUrl: String) throws -> String {
+        let pattern = #"https://image\.uniqlo\.com/UQ/ST3/AsianCommon/imagesgoods/\d+/item/goods_(\d+)_\d+(_3x4)?.jpg"#
+        let colorCode = try Self.extract(imageUrl, pattern: pattern)
+        return colorCode
+    }
+    
     func categoryPath() throws -> [String] {
         [
             product.breadcrumbs.class_.locale,
             product.breadcrumbs.category.locale,
             product.breadcrumbs.subcategory.locale,
         ]
+    }
+    
+    func colors() throws -> [String] {
+        product.colors.map { $0.codeAndName }
+    }
+    
+    func selectColorFromImage(_ imageUrl: String) throws -> String {
+        let colorCode = try Self.getColorCode(imageUrl)
+        guard let color = product.colors.filter({ $0.displayCode == colorCode }).first else {
+            throw "no color options matching the image"
+        }
+        return color.codeAndName
+    }
+    
+    func brand() throws -> String {
+        "UNIQLO"
+    }
+    
+    func sizes() throws -> [String] {
+        product.sizes.map { $0.name }
     }
     
     func description() throws -> String {
