@@ -150,7 +150,7 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
         // 正規表現パターン。URL全体のパターンの中で商品コード部分だけをキャプチャ
         let pattern = "https://www\\.uniqlo\\.com/jp/ja/products/([A-Z0-9]+-[A-Z0-9]+)/\\d+"
         
-        let code = try extract(detailUrl, pattern: pattern)
+        let code = try detailUrl.extract(pattern)
         
         return code
     }
@@ -159,35 +159,11 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
         // 正規表現パターン。URL全体のパターンの中で商品コード部分だけをキャプチャ
         let pattern = "https://www\\.uniqlo\\.com/jp/ja/products/[A-Z0-9]+-[A-Z0-9]+/(\\d+)"
         
-        let group = try extract(detailUrl, pattern: pattern)
+        let group = try detailUrl.extract(pattern)
         
         return group
     }
 
-    static func extract(_ s: String, pattern: String) throws -> String {
-        // 正規表現オブジェクトを作成
-        guard let regex = try? NSRegularExpression(pattern: pattern) else {
-            throw "正規表現の作成に失敗しました"
-        }
-        
-        let range = NSRange(s.startIndex ..< s.endIndex, in: s)
-        
-        // 最初のマッチを探す
-        guard let match = regex.firstMatch(in: s, options: [], range: range) else {
-            throw "商品コードが見つかりませんでした"
-        }
-        
-        // キャプチャグループの範囲を取得
-        guard let matchRange = Range(match.range(at: 1), in: s) else {
-            throw "マッチ範囲が不正です"
-        }
-        
-        // 商品コードを抽出
-        let productCode = String(s[matchRange])
-        
-        return productCode
-    }
-    
     func name() throws -> String {
         product.name
     }
@@ -201,7 +177,7 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
         imageUrls.append(contentsOf: mainImageUrls)
         
         // also append other productCode images
-        guard let productId = try? Self.extract(productCode, pattern: #"E(\d+)-\d+"#) else {
+        guard let productId = try? productCode.extract(#"E(\d+)-\d+"#) else {
             logger.warning("failed to extarct product id from \(productCode)")
             return imageUrls
         }
@@ -245,7 +221,7 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
     
     static func getColorCode(_ imageUrl: String) throws -> String {
         let pattern = #"https://image\.uniqlo\.com/UQ/ST3/AsianCommon/imagesgoods/\d+/item/goods_(\d+)_\d+(_3x4)?.jpg"#
-        let colorCode = try Self.extract(imageUrl, pattern: pattern)
+        let colorCode = try imageUrl.extract(pattern)
         return colorCode
     }
     

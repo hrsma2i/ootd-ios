@@ -19,8 +19,11 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
         struct Result: Codable {
             let images: Images
             let breadcrumbs: BreadCrumbs
+            let colors: [Color]
+            let name: String
             fileprivate let longDescription: String
             let prices: Prices
+            let sizes: [Size]
             
             struct BreadCrumbs: Codable {
                 let gender: Gender
@@ -52,6 +55,15 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
                 }
             }
             
+            struct Color: Codable {
+                let displayCode: String
+                let name: String
+                
+                var codeAndName: String {
+                    "\(displayCode) \(name)"
+                }
+            }
+
             struct Images: Codable {
                 let main: [String: Main]
                 let sub: [Sub]
@@ -72,6 +84,10 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
                     let value: Int
                 }
             }
+            
+            struct Size: Codable {
+                let name: String
+            }
         }
     }
     
@@ -81,7 +97,8 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
     
     static func from(url detailUrl: String) async throws -> GuItemDetail {
         let productCode = try Self.getProductCode(detailUrl)
-        let apiUrl = "https://www.gu-global.com/jp/api/commerce/v5/ja/products/\(productCode)/price-groups/00/details"
+        let priceGroup = try Self.getPriceGroup(detailUrl)
+        let apiUrl = "https://www.gu-global.com/jp/api/commerce/v5/ja/products/\(productCode)/price-groups/\(priceGroup)/details"
         
         let data = try await Self.request(apiUrl)
         let detail = try JSONDecoder().decode(ProductDetail.self, from: data)
@@ -103,32 +120,17 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
     }
     
     static func getProductCode(_ detailUrl: String) throws -> String {
-        // 正規表現パターン。URL全体のパターンの中で商品コード部分だけをキャプチャ
-        let pattern = "https://www\\.gu-global\\.com/jp/ja/products/([A-Z0-9]+-[A-Z0-9]+)/\\d+"
-        
-        // 正規表現オブジェクトを作成
-        guard let regex = try? NSRegularExpression(pattern: pattern) else {
-            throw "正規表現の作成に失敗しました"
-        }
-        
-        let range = NSRange(detailUrl.startIndex ..< detailUrl.endIndex, in: detailUrl)
-        
-        // 最初のマッチを探す
-        guard let match = regex.firstMatch(in: detailUrl, options: [], range: range) else {
-            throw "商品コードが見つかりませんでした"
-        }
-        
-        // キャプチャグループの範囲を取得
-        guard let matchRange = Range(match.range(at: 1), in: detailUrl) else {
-            throw "マッチ範囲が不正です"
-        }
-        
-        // 商品コードを抽出
-        let productCode = String(detailUrl[matchRange])
-        
-        return productCode
+        let pattern = #"https://www\.gu-global\.com/jp/ja/products/([A-Z0-9]+-[A-Z0-9]+)/\d+"#
+        let code = try detailUrl.extract(pattern)
+        return code
     }
     
+    static func getPriceGroup(_ detailUrl: String) throws -> String {
+        let pattern = #"https://www\.gu-global\.com/jp/ja/products/[A-Z0-9]+-[A-Z0-9]+/(\d+)"#
+        let group = try detailUrl.extract(pattern)
+        return group
+    }
+
     static func request(_ urlString: String) async throws -> Data {
         logger.debug("request to \(urlString)")
         // URLを生成
@@ -148,7 +150,7 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
     }
     
     func name() throws -> String {
-        throw "not implemented"
+        detail.result.name
     }
 
     func categoryPath() throws -> [String] {
@@ -160,19 +162,30 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
     }
     
     func colors() throws -> [String] {
-        throw "not implemented"
+        detail.result.colors.map { $0.codeAndName }
     }
     
     func selectColorFromImage(_ imageUrl: String) throws -> String {
-        throw "not implemented"
+        // main 画像のみ対応。 sub画像のURLにはカラーコードが含まれないので画像から色を判定できない。
+        let colorCode = try Self.getColorCode(imageUrl)
+        guard let color = detail.result.colors.filter({ $0.displayCode == colorCode }).first else {
+            throw "no color options matching the image"
+        }
+        return color.codeAndName
+    }
+    
+    static func getColorCode(_ imageUrl: String) throws -> String {
+        let pattern = #"https://image\.uniqlo\.com/GU/ST3/AsianCommon/imagesgoods/\d+/item/goods_(\d+)_\d+(_3x4)?.jpg"#
+        let colorCode = try imageUrl.extract(pattern)
+        return colorCode
     }
 
     func brand() throws -> String {
-        throw "not implemented"
+        "GU"
     }
 
     func sizes() throws -> [String] {
-        throw "not implemented"
+        detail.result.sizes.map { $0.name }
     }
 
     func description() throws -> String {

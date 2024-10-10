@@ -17,6 +17,7 @@
 		88004E312CB43BF400A80A80 /* DefaultPurchaseHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E302CB43BF400A80A80 /* DefaultPurchaseHistory.swift */; };
 		88004E372CB5496000A80A80 /* UniqloItemDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E362CB5496000A80A80 /* UniqloItemDetail.swift */; };
 		88004E472CB58D2000A80A80 /* FirstRetailingPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E462CB58D2000A80A80 /* FirstRetailingPage.swift */; };
+		88004E492CB7E8F600A80A80 /* String+extract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E482CB7E8F600A80A80 /* String+extract.swift */; };
 		881B6B5A2CA5BAC7008274FF /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B592CA5BAC7008274FF /* SchemaV3.swift */; };
 		881B6B5C2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B5B2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift */; };
 		881B6B5E2CA5C250008274FF /* Date+toString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B5D2CA5C250008274FF /* Date+toString.swift */; };
@@ -136,6 +137,7 @@
 		88004E302CB43BF400A80A80 /* DefaultPurchaseHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPurchaseHistory.swift; sourceTree = "<group>"; };
 		88004E362CB5496000A80A80 /* UniqloItemDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqloItemDetail.swift; sourceTree = "<group>"; };
 		88004E462CB58D2000A80A80 /* FirstRetailingPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstRetailingPage.swift; sourceTree = "<group>"; };
+		88004E482CB7E8F600A80A80 /* String+extract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extract.swift"; sourceTree = "<group>"; };
 		881B6B592CA5BAC7008274FF /* SchemaV3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV3.swift; sourceTree = "<group>"; };
 		881B6B5B2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SchemaV3+ItemDTO.swift"; sourceTree = "<group>"; };
 		881B6B5D2CA5C250008274FF /* Date+toString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+toString.swift"; sourceTree = "<group>"; };
@@ -504,6 +506,7 @@
 				883FCB402C99C82E0001DAAF /* View+edgeSwipe.swift */,
 				881B6B5D2CA5C250008274FF /* Date+toString.swift */,
 				881B6B632CA6D49A008274FF /* Date+initYMD.swift */,
+				88004E482CB7E8F600A80A80 /* String+extract.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -749,6 +752,7 @@
 				886232A32C7CC7D100A1802D /* Array+asyncMap.swift in Sources */,
 				886232792C7CC6EC00A1802D /* downloadImage.swift in Sources */,
 				88004E202CB42F9000A80A80 /* EcPurchaseHistory.swift in Sources */,
+				88004E492CB7E8F600A80A80 /* String+extract.swift in Sources */,
 				886232B52C7CCA7800A1802D /* UserInfoScreen.swift in Sources */,
 				88004E292CB4326300A80A80 /* GuPurchaseHistory.swift in Sources */,
 				88004E472CB58D2000A80A80 /* FirstRetailingPage.swift in Sources */,
