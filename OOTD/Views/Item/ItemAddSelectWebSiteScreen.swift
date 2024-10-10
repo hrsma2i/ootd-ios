@@ -52,9 +52,20 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                     // TODO: 長いので別関数として切り分けたい
                     let imageUrls = try detail.imageUrls()
                     let name = try detail.name()
-                    let colorOptions = try? detail.colors()
-                    let brand = try? detail.brand()
-                    let sizeOptions = try? detail.sizes()
+
+                    func doWithErrorLog<T>(_ f: () throws -> T) -> T? {
+                        do {
+                            return try f()
+                        } catch {
+                            logger.warning("\(error)")
+                            return nil
+                        }
+                    }
+
+                    let colorOptions = doWithErrorLog { try detail.colors() }
+                    let brand = doWithErrorLog { try detail.brand() }
+                    let sizeOptions = doWithErrorLog { try detail.sizes() }
+                    let price = doWithErrorLog { try detail.price() }
 
                     navigation.path.append(
                         SelectWebImageScreen(
@@ -62,11 +73,12 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                             limit: 1
                         ) { selected in
                             let imageUrl = selected.first!
-                            let color = try? detail.selectColorFromImage(imageUrl)
+                            let color = doWithErrorLog { try detail.selectColorFromImage(imageUrl) }
                             var item = Item(
                                 imageSource: .url(imageUrl),
                                 option: .init(
                                     name: name,
+                                    purchasedPrice: price,
                                     sourceUrl: url,
                                     originalColor: color,
                                     originalBrand: brand

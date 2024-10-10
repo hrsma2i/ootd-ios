@@ -42,7 +42,8 @@ struct ZozoItemDetail: EcItemDetail, ZozoPage {
     }
 
     func name() throws -> String {
-        throw "not implemented"
+        let name = try doc.select("#goodsRight > div.p-goods-information__primary > h1").text()
+        return name
     }
 
     func categoryPath() throws -> [String] {
@@ -70,19 +71,35 @@ struct ZozoItemDetail: EcItemDetail, ZozoPage {
     }
 
     func colors() throws -> [String] {
-        throw "not implemented"
+        let spans = try doc.select("#goodsRight > div.cartBlock.clearfix > div > dl > dt > span")
+        let colors = spans.compactMapWithErrorLog(logger) { try $0.text() }
+        guard !colors.isEmpty else {
+            throw "no color options"
+        }
+        return colors
     }
 
     func selectColorFromImage(_ imageUrl: String) throws -> String {
-        throw "not implemented"
+        // 画像URLに色情報が含まれていないので判定不可能
+        throw "\(String(describing: Self.self)).\(#function) not implemented"
     }
 
     func brand() throws -> String {
-        throw "not implemented"
+        let brand = try doc.select("#goodsRight > div.p-goods-information__primary > div.p-goods-information-brand > a > div.p-goods-information-brand-link__label").text()
+        return brand
     }
 
     func sizes() throws -> [String] {
-        throw "not implemented"
+        // #tblItemSize と table の間に div が挟まるパターンもあるので #tblItemSize 内のすべての table を取得する
+        let sizes = try doc.select("#tblItemSize table:not([data-size-table=\"purchased\"]) > tbody > tr > th")
+            .compactMapWithErrorLog(logger) {
+                try $0.attr("data-size")
+            }
+
+        guard !sizes.isEmpty else {
+            throw "no size options"
+        }
+        return sizes
     }
 
     func description() throws -> String {
@@ -93,6 +110,20 @@ struct ZozoItemDetail: EcItemDetail, ZozoPage {
     }
 
     func price() throws -> Int {
-        throw "It's impossisble to get price from zozo item detail page"
+        let priceString = try doc.select([
+            "#goodsRight > div.p-goods-information__primary > div.p-goods-information__price",
+            // セールの場合の元値
+            "#goodsRight > div.p-goods-information__primary > div.p-goods-information__proper > span",
+        ].joined(separator: ", ")).text()
+
+        guard let price = Int(priceString
+            .replacingOccurrences(of: "¥", with: "")
+            .replacingOccurrences(of: "税込", with: "")
+            .replacingOccurrences(of: ",", with: "")
+        ) else {
+            throw "failed to convert \(priceString) to Int"
+        }
+
+        return price
     }
 }
