@@ -155,14 +155,17 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
             do {
                 let dto = try fetchSingle(outfit: outfit)
 
+                context.delete(dto)
+                logger.debug("[SwiftData] delete outfit id=\(outfit.id)")
+
                 // .imageSource == .localPath のときだけ削除するのはダメ
                 // create したばかりのものをすぐ削除しようとすると imageSource = .uiImage | .url となり、
                 // LocalStorage に保存した画像が削除されなくなる
-                try LocalStorage.remove(at: outfit.imagePath)
-                try LocalStorage.remove(at: outfit.thumbnailPath)
-
-                context.delete(dto)
-                logger.debug("[SwiftData] delete outfit id=\(outfit.id)")
+                // Item と異なり、 imageSource = nil の場合が普通にあり、その場合は削除不要。
+                if outfit.imageSource != nil {
+                    try LocalStorage.remove(at: outfit.imagePath)
+                    try LocalStorage.remove(at: outfit.thumbnailPath)
+                }
             } catch {
                 logger.error("\(error)")
             }
