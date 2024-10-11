@@ -44,8 +44,12 @@ struct ZozoPurchaseHistory: EcPurchaseHistory, ZozoPage {
                 }
 
                 let itemsInOrder = await feedRows.asyncCompactMapWithErrorLog(logger) { row -> Item in
-                    let img = try row.select("figure > div > div > a > img")
+                    // だいたいが div > a > img だが、もう売ってない昔の商品などは div > img になることもあるので div 以下の img にしてある
+                    let img = try row.select("figure > div > div img")
                     var imageUrl = try img.attr("src")
+                    guard isValidImageUrl(imageUrl) else {
+                        throw "invalid image url: \(imageUrl)"
+                    }
                     imageUrl = resize(imageUrl)
 
                     let goodsOutline = try row.select("div > div")
