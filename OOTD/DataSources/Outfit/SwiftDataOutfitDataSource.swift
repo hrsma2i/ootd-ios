@@ -29,16 +29,11 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
         init(outfit: Outfit) {
             id = outfit.id
 
-            // SwiftData で fetch した ItemDTO を直接 items に入れるため map を使わない
-            // map を使うと Illegal attempt to establish a relationship 'items' between objects in different contexts が起きる
             items = []
-            for item in outfit.items {
-                do {
-                    let dto = try SwiftDataItemDataSource.shared.fetchSingle(item: item)
-                    items.append(dto)
-                } catch {
-                    logger.error("\(error)")
-                }
+            do {
+                items = try SwiftDataItemDataSource.shared.fetch(items: outfit.items)
+            } catch {
+                logger.error("\(error)")
             }
         }
 
@@ -137,6 +132,9 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
         for outfit in outfits {
             do {
                 let dto = try fetchSingle(outfit: outfit)
+
+                dto.items = try SwiftDataItemDataSource.shared.fetch(items: outfit.items)
+
                 context.insert(dto)
                 logger.debug("[SwiftData] insert updated outfit id=\(dto.id)")
 

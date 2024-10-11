@@ -16,6 +16,10 @@ typealias ItemDTO = SchemaV4.ItemDTO
 final class SwiftDataItemDataSource: ItemDataSource {
     var context: ModelContext
 
+    var className: String {
+        String(describing: Self.self)
+    }
+
     static let shared = SwiftDataItemDataSource()
 
     private init() {
@@ -35,6 +39,21 @@ final class SwiftDataItemDataSource: ItemDataSource {
             }
         }
         return items
+    }
+
+    func fetch(items: [Item]) throws -> [ItemDTO] {
+        let logHeader = "[\(className).\(#function)]"
+        // dto.id == item.id としてしまうと、以下のエラーになるので、いったん String だけの変数にしてる
+        // Cannot convert value of type 'PredicateExpressions.SequenceContainsWhere<PredicateExpressions.Value<[Item]>, PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<Item>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Variable<ItemDTO>, String>>>' (aka 'PredicateExpressions.SequenceContainsWhere<PredicateExpressions.Value<Array<Item>>, PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<Item>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Variable<SchemaV4.ItemDTO>, String>>>') to closure result type 'any StandardPredicateExpression<Bool>'
+        let ids = items.map(\.id)
+        let descriptor = FetchDescriptor<ItemDTO>(predicate: #Predicate { dto in
+            ids.contains(dto.id)
+        })
+
+        let dtos = try context.fetch(descriptor)
+
+        logger.debug("\(logHeader) ItemDTOs have already exist, so get them from the container")
+        return dtos
     }
 
     func fetchSingle(item: Item) throws -> ItemDTO {
