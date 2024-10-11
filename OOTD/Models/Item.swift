@@ -121,9 +121,7 @@ struct Item: Hashable, Identifiable {
             throw "Item.sourceUrl is nil"
         }
 
-        guard let detail = try await generateEcItemDetail(url: sourceUrl) else {
-            throw "detail page is nil"
-        }
+        let detail = try await generateEcItemDetail(url: sourceUrl)
 
         let redirectedUrl = detail.url
         let price = try? detail.price()

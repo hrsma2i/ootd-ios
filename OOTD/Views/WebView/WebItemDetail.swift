@@ -268,9 +268,7 @@ struct WebItemDetail: HashableView {
         .task {
             do {
                 if let sourceUrl = item.sourceUrl {
-                    guard let detail = try await generateEcItemDetail(url: sourceUrl) else {
-                        throw "detail page is nil"
-                    }
+                    let detail = try await generateEcItemDetail(url: sourceUrl)
                     imageUrlOptions = try detail.imageUrls()
                 }
             } catch {

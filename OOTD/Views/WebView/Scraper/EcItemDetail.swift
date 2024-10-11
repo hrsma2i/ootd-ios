@@ -33,7 +33,7 @@ protocol EcItemDetail {
     func price() throws -> Int
 }
 
-func generateEcItemDetail(html html_: String? = nil, url urlString_: String) async throws -> (any EcItemDetail)? {
+func generateEcItemDetail(html html_: String? = nil, url urlString_: String) async throws -> any EcItemDetail {
     let html: String
     let urlString: String
 
@@ -75,7 +75,5 @@ func generateEcItemDetail(html html_: String? = nil, url urlString_: String) asy
         return try await UniqloItemDetail.from(url: urlString)
     }
 
-    logger.warning("unsupported item detail page: \(urlString)")
-
-    return nil
+    throw "unsupported item detail page: \(urlString)"
 }

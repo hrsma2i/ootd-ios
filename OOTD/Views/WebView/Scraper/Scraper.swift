@@ -15,7 +15,7 @@ struct Scraper {
     let url: String
     let html: String
     
-    init(_ html: String, url: String, guDetail: GuItemDetail? = nil) throws {
+    init(_ html: String, url: String) throws {
         self.html = html
         doc = try SwiftSoup.parse(html)
         self.url = url

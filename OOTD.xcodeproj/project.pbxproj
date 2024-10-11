@@ -18,6 +18,7 @@
 		88004E372CB5496000A80A80 /* UniqloItemDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E362CB5496000A80A80 /* UniqloItemDetail.swift */; };
 		88004E472CB58D2000A80A80 /* FirstRetailingPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E462CB58D2000A80A80 /* FirstRetailingPage.swift */; };
 		88004E492CB7E8F600A80A80 /* String+extract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E482CB7E8F600A80A80 /* String+extract.swift */; };
+		88004E4B2CB9552A00A80A80 /* doWithErrorLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E4A2CB9552A00A80A80 /* doWithErrorLog.swift */; };
 		881B6B5A2CA5BAC7008274FF /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B592CA5BAC7008274FF /* SchemaV3.swift */; };
 		881B6B5C2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B5B2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift */; };
 		881B6B5E2CA5C250008274FF /* Date+toString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B5D2CA5C250008274FF /* Date+toString.swift */; };
@@ -138,6 +139,7 @@
 		88004E362CB5496000A80A80 /* UniqloItemDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqloItemDetail.swift; sourceTree = "<group>"; };
 		88004E462CB58D2000A80A80 /* FirstRetailingPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstRetailingPage.swift; sourceTree = "<group>"; };
 		88004E482CB7E8F600A80A80 /* String+extract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extract.swift"; sourceTree = "<group>"; };
+		88004E4A2CB9552A00A80A80 /* doWithErrorLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = doWithErrorLog.swift; sourceTree = "<group>"; };
 		881B6B592CA5BAC7008274FF /* SchemaV3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV3.swift; sourceTree = "<group>"; };
 		881B6B5B2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SchemaV3+ItemDTO.swift"; sourceTree = "<group>"; };
 		881B6B5D2CA5C250008274FF /* Date+toString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+toString.swift"; sourceTree = "<group>"; };
@@ -454,6 +456,7 @@
 				884CF6552C7F670200250026 /* LocalStorage.swift */,
 				883FCB312C9489780001DAAF /* KeyChainHelper.swift */,
 				883FCB3E2C99BB560001DAAF /* Color+gray.swift */,
+				88004E4A2CB9552A00A80A80 /* doWithErrorLog.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -787,6 +790,7 @@
 				88004E2B2CB4337300A80A80 /* UniqloPurchaseHistory.swift in Sources */,
 				886232572C7CC2EE00A1802D /* OutfitStore.swift in Sources */,
 				8862328B2C7CC71F00A1802D /* OutfitCard.swift in Sources */,
+				88004E4B2CB9552A00A80A80 /* doWithErrorLog.swift in Sources */,
 				881B6B622CA650B1008274FF /* SchemaV4.swift in Sources */,
 				88CD55A42C8755CD00A9B78A /* Scraper.swift in Sources */,
 				883FCB322C9489780001DAAF /* KeyChainHelper.swift in Sources */,

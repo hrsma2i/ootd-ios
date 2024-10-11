@@ -15,7 +15,7 @@ protocol EcPurchaseHistory {
     func items() async throws -> [Item]
 }
 
-func generateEcPurchaseHisotry(html: String, url: String) throws -> (any EcPurchaseHistory)? {
+func generateEcPurchaseHisotry(html: String, url: String) throws -> any EcPurchaseHistory {
     if ZozoPurchaseHistory.isValidUrl(url) {
         return try ZozoPurchaseHistory(html: html, url: url)
     } else if GuPurchaseHistory.isValidUrl(url) {
@@ -24,6 +24,5 @@ func generateEcPurchaseHisotry(html: String, url: String) throws -> (any EcPurch
         return try UniqloPurchaseHistory(html: html, url: url)
     }
 
-    logger.warning("unsupported purchase history: \(url)")
-    return nil
+    throw "unsupported purchase history: \(url)"
 }

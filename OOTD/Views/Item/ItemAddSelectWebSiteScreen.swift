@@ -19,7 +19,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         CustomWebView(
             url: url,
             buttonText: "画像を選ぶ",
-            onButtonTapped: extractedItemsToSelectWebImageScreen
+            onButtonTapped: extractedItemsToSelectScreen
         )
     }
 
@@ -32,7 +32,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         }
     }
 
-    private func extractedItemsToSelectWebImageScreen(_ webView: WKWebView) {
+    private func extractedItemsToSelectScreen(_ webView: WKWebView) {
         guard let url = webView.url?.absoluteString else {
             logger.error("webView.url is nil")
             return
@@ -41,70 +41,102 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         Task {
             do {
                 let html = try await webView.getHtml()
+                let title = webView.title
 
-                if let history = try generateEcPurchaseHisotry(html: html, url: url) {
-                    let items = try await history.items()
-
-                    navigation.path.append(
-                        SelectWebItemScreen(items: items)
-                    )
-                } else if let detail = try await generateEcItemDetail(url: url) {
-                    // TODO: 長いので別関数として切り分けたい
-                    let imageUrls = try detail.imageUrls()
-                    let name = try detail.name()
-
-                    func doWithErrorLog<T>(_ f: () throws -> T) -> T? {
-                        do {
-                            return try f()
-                        } catch {
-                            logger.warning("\(error)")
-                            return nil
-                        }
-                    }
-
-                    let colorOptions = doWithErrorLog { try detail.colors() }
-                    let brand = doWithErrorLog { try detail.brand() }
-                    let sizeOptions = doWithErrorLog { try detail.sizes() }
-                    let price = doWithErrorLog { try detail.price() }
-
-                    navigation.path.append(
-                        SelectWebImageScreen(
-                            imageURLs: imageUrls,
-                            limit: 1
-                        ) { selected in
-                            let imageUrl = selected.first!
-                            let color = doWithErrorLog { try detail.selectColorFromImage(imageUrl) }
-                            var item = Item(
-                                imageSource: .url(imageUrl),
-                                option: .init(
-                                    name: name,
-                                    purchasedPrice: price,
-                                    sourceUrl: url,
-                                    originalColor: color,
-                                    originalBrand: brand
-                                )
-                            )
-                            Task {
-                                item = try await item.copyWithPropertiesFromSourceUrl()
-
-                                navigation.path.append(
-                                    WebItemDetail(
-                                        item: item,
-                                        colorOptions: color == nil ? colorOptions : nil,
-                                        sizeOptions: sizeOptions,
-                                        onCreated: { _ in
-                                            navigation.path = NavigationPath()
-                                        }
-                                    )
-                                )
-                            }
-                        }
-                    )
+                if let history = doWithErrorLog({ try generateEcPurchaseHisotry(html: html, url: url) }) {
+                    try await createItemsFromEcPurchaseHisotry(history)
+                } else if let detail = await doWithErrorLog({ try await generateEcItemDetail(url: url) }) {
+                    try createItemFromEcDetail(detail)
+                } else {
+                    try createItemFromAnyWebPage(html: html, url: url, title: title)
                 }
             } catch {
                 logger.error("\(error)")
             }
         }
+    }
+
+    private func createItemsFromEcPurchaseHisotry(_ history: EcPurchaseHistory) async throws {
+        let items = try await history.items()
+
+        navigation.path.append(
+            SelectWebItemScreen(items: items)
+        )
+    }
+
+    private func createItemFromEcDetail(_ detail: EcItemDetail) throws {
+        let imageUrls = try detail.imageUrls()
+        let name = try detail.name()
+
+        let colorOptions = doWithErrorLog { try detail.colors() }
+        let brand = doWithErrorLog { try detail.brand() }
+        let sizeOptions = doWithErrorLog { try detail.sizes() }
+        let price = doWithErrorLog { try detail.price() }
+
+        navigation.path.append(
+            SelectWebImageScreen(
+                imageURLs: imageUrls,
+                limit: 1
+            ) { selected in
+                let imageUrl = selected.first!
+                let color = doWithErrorLog { try detail.selectColorFromImage(imageUrl) }
+                var item = Item(
+                    imageSource: .url(imageUrl),
+                    option: .init(
+                        name: name,
+                        purchasedPrice: price,
+                        sourceUrl: detail.url,
+                        originalColor: color,
+                        originalBrand: brand
+                    )
+                )
+                Task {
+                    item = try await item.copyWithPropertiesFromSourceUrl()
+
+                    navigation.path.append(
+                        WebItemDetail(
+                            item: item,
+                            colorOptions: color == nil ? colorOptions : nil,
+                            sizeOptions: sizeOptions,
+                            onCreated: { _ in
+                                navigation.path = NavigationPath()
+                            }
+                        )
+                    )
+                }
+            }
+        )
+    }
+
+    private func createItemFromAnyWebPage(html: String, url: String, title: String?) throws {
+        let scraper = try Scraper(html, url: url)
+        let imageUrls = try scraper.imageUrls()
+
+        navigation.path.append(
+            SelectWebImageScreen(
+                imageURLs: imageUrls,
+                limit: 1
+            ) { selected in
+                let imageUrl = selected.first!
+                var item = Item(
+                    imageSource: .url(imageUrl),
+                    option: .init(
+                        name: title ?? "",
+                        sourceUrl: url
+                    )
+                )
+                Task {
+                    navigation.path.append(
+                        WebItemDetail(
+                            item: item,
+                            onCreated: { _ in
+                                navigation.path = NavigationPath()
+                            }
+                        )
+                    )
+                }
+            }
+        )
     }
 
     private var currentYear: Int {
