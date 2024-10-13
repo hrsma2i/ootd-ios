@@ -92,7 +92,7 @@ struct Item: Hashable, Identifiable {
     }
 
     // init 内でも使うので id は引数として受け取る
-    private static func generateImagePath(_ id: String, size: CGFloat) -> String {
+    static func generateImagePath(_ id: String, size: CGFloat) -> String {
         return "dev/item_images_\(Int(size))/\(id).jpg"
     }
 

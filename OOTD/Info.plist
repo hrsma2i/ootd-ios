@@ -4,5 +4,7 @@
 <dict>
 	<key>Data Source</key>
 	<string>$(DATA_SOURCE)</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 </dict>
 </plist>
