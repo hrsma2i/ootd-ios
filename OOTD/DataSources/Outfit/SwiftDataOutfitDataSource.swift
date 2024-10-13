@@ -45,8 +45,8 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
             let thumbnailSource: ImageSource?
             do {
                 // check there are images in the storage
-                let _ = try LocalStorage.loadImage(from: imagePath)
-                let _ = try LocalStorage.loadImage(from: thumbnailPath)
+                let _ = try LocalStorage.applicationSupport.loadImage(from: imagePath)
+                let _ = try LocalStorage.applicationSupport.loadImage(from: thumbnailPath)
                 imageSource = .localPath(imagePath)
                 thumbnailSource = .localPath(thumbnailPath)
             } catch {
@@ -123,8 +123,8 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
     func saveImage(_ outfit: Outfit) async throws {
         let image = try await outfit.getUiImage()
 
-        try LocalStorage.save(image: image.resized(to: Outfit.imageSize), to: outfit.imagePath)
-        try LocalStorage.save(image: image.resized(to: Outfit.thumbnailSize), to: outfit.thumbnailPath)
+        try LocalStorage.applicationSupport.save(image: image.resized(to: Outfit.imageSize), to: outfit.imagePath)
+        try LocalStorage.applicationSupport.save(image: image.resized(to: Outfit.thumbnailSize), to: outfit.thumbnailPath)
     }
 
     func update(_ outfits: [Outfit]) async throws {
@@ -163,8 +163,8 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
                 // LocalStorage に保存した画像が削除されなくなる
                 // Item と異なり、 imageSource = nil の場合が普通にあり、その場合は削除不要。
                 if outfit.imageSource != nil {
-                    try LocalStorage.remove(at: outfit.imagePath)
-                    try LocalStorage.remove(at: outfit.thumbnailPath)
+                    try LocalStorage.applicationSupport.remove(at: outfit.imagePath)
+                    try LocalStorage.applicationSupport.remove(at: outfit.thumbnailPath)
                 }
             } catch {
                 logger.error("\(error)")

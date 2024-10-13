@@ -10,20 +10,28 @@ import UIKit
 
 private let logger = getLogger(#file)
 
-enum LocalStorage {
+struct LocalStorage {
     // https://gist.github.com/y-takagi/9f2cea659fb3f55b56aa04530bf0af39
 
-    private static let manager = FileManager.default
-    private static let directory = manager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+    private let manager: FileManager
+    private let directory: URL
 
-    static func save(image: UIImage, to relPath: String) throws {
+    static let applicationSupport: LocalStorage = .init(.applicationSupportDirectory)
+    static let documents: LocalStorage = .init(.documentDirectory)
+
+    private init(_ directory: FileManager.SearchPathDirectory) {
+        manager = FileManager.default
+        self.directory = manager.urls(for: directory, in: .userDomainMask)[0]
+    }
+
+    func save(image: UIImage, to relPath: String) throws {
         guard let data = image.pngData() else {
             throw "failed to convert UIImage to Data"
         }
         try save(data: data, to: relPath)
     }
 
-    static func save(data: Data, to relPath: String) throws {
+    func save(data: Data, to relPath: String) throws {
         let path = directory.appendingPathComponent(relPath)
 
         let saveDirectory = path.deletingLastPathComponent()
@@ -33,7 +41,7 @@ enum LocalStorage {
         logger.debug("[LocalStorage] save to \(path)")
     }
 
-    static func loadImage(from relPath: String) throws -> UIImage {
+    func loadImage(from relPath: String) throws -> UIImage {
         let data = try load(from: relPath)
         guard let image = UIImage(data: data) else {
             throw "[LocalStorage] failed to convert Data to UIImage for path: \(relPath)"
@@ -41,13 +49,13 @@ enum LocalStorage {
         return image
     }
 
-    static func load(from relPath: String) throws -> Data {
+    func load(from relPath: String) throws -> Data {
         let path = directory.appendingPathComponent(relPath)
         let data = try Data(contentsOf: path)
         return data
     }
 
-    static func remove(at relPath: String) throws {
+    func remove(at relPath: String) throws {
         let path = directory.appendingPathComponent(relPath)
         try manager.removeItem(at: path)
         logger.debug("[LocalStorage] remove \(path)")

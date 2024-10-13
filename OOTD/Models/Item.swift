@@ -105,7 +105,7 @@ struct Item: Hashable, Identifiable {
             let image = try await downloadImage(url)
             return image
         case .localPath(let path):
-            let image = try LocalStorage.loadImage(from: path)
+            let image = try LocalStorage.applicationSupport.loadImage(from: path)
             return image
         }
     }

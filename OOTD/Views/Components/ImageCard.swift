@@ -62,7 +62,7 @@ struct ImageCard: View {
         }
 
         do {
-            let image = try LocalStorage.loadImage(from: path)
+            let image = try LocalStorage.applicationSupport.loadImage(from: path)
             return image
         } catch {
             logger.error("\(error)")

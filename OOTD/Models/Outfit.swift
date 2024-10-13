@@ -62,7 +62,7 @@ struct Outfit: Hashable {
             let image = try await downloadImage(url)
             return image
         case let .localPath(path):
-            let image = try LocalStorage.loadImage(from: path)
+            let image = try LocalStorage.applicationSupport.loadImage(from: path)
             return image
         default:
             throw "Outfit.imageSource is nil"
