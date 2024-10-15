@@ -71,7 +71,7 @@ struct ItemCard: View {
             .padding(spacing)
             .background(.gray)
             .task {
-                let image = try! await itemHasURL.getUiImage()
+                let image = try! await itemHasURL.imageSource.getUiImage()
                 itemHasUIImage = .init(imageSource: .uiImage(image))
             }
         }

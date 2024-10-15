@@ -53,22 +53,6 @@ struct Outfit: Hashable {
         return "dev/outfit_images_\(Int(size))/\(id).jpg"
     }
 
-    // 画像加工時に使う
-    func getUiImage() async throws -> UIImage {
-        switch imageSource {
-        case let .uiImage(image):
-            return image
-        case let .url(url):
-            let image = try await downloadImage(url)
-            return image
-        case let .localPath(path):
-            let image = try LocalStorage.applicationSupport.loadImage(from: path)
-            return image
-        default:
-            throw "Outfit.imageSource is nil"
-        }
-    }
-
     func copyWith<T>(_ keyPath: WritableKeyPath<Outfit, T>, value: T) -> Outfit {
         var clone = self
         clone[keyPath: keyPath] = value

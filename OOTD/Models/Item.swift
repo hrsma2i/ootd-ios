@@ -96,20 +96,6 @@ struct Item: Hashable, Identifiable {
         return "dev/item_images_\(Int(size))/\(id).jpg"
     }
 
-    // 画像加工時に使う
-    func getUiImage() async throws -> UIImage {
-        switch imageSource {
-        case .uiImage(let image):
-            return image
-        case .url(let url):
-            let image = try await downloadImage(url)
-            return image
-        case .localPath(let path):
-            let image = try LocalStorage.applicationSupport.loadImage(from: path)
-            return image
-        }
-    }
-
     func copyWith<T>(_ keyPath: WritableKeyPath<Item, T>, value: T) -> Item {
         var clone = self
         clone[keyPath: keyPath] = value

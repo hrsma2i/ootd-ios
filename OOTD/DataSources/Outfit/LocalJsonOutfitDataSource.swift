@@ -59,7 +59,10 @@ struct LocalJsonOutfitDataSource: OutfitDataSource {
         for outfit in outfits {
             // Item と違い、画像がない場合が多々ある
             do {
-                let image = try await outfit.getUiImage()
+                guard let image = try await outfit.imageSource?.getUiImage() else {
+                    // 画像がない場合は特に何もしない
+                    continue
+                }
                 try LocalStorage.documents.save(image: image, to: backup(outfit.imagePath))
             } catch {
                 logger.warning("\(error)")

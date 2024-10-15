@@ -19,6 +19,9 @@ struct ImageCard: View {
     var backgroundColor: Color = .white
     var onError: ((ImageSource) -> Void)? = { _ in }
 
+    @State var image: UIImage? = nil
+    @State var isError = false
+
     func imageView(_ image: Image) -> some View {
         AspectRatioContainer(aspectRatio: aspectRatio) {
             image
@@ -56,31 +59,19 @@ struct ImageCard: View {
         }
     }
 
-    var localImage: UIImage? {
-        guard case .localPath(let path) = source else {
-            return nil
-        }
-
-        do {
-            let image = try LocalStorage.applicationSupport.loadImage(from: path)
-            return image
-        } catch {
-            logger.error("\(error)")
-            return nil
-        }
-    }
-
     var body: some View {
         Group {
-            if case .localPath = source {
-                if let localImage {
-                    imageView(Image(uiImage: localImage))
-                } else {
+            switch source {
+            case .localPath, .uiImage:
+                if let image {
+                    imageView(Image(uiImage: image))
+                } else if isError {
                     errorView
+                } else {
+                    loadingView
                 }
-            } else if case .uiImage(let image) = source {
-                imageView(Image(uiImage: image))
-            } else if case .url(let url) = source {
+
+            case .url(let url):
                 CachedAsyncImage(url: URL(string: url)) { phase in
                     if let image = phase.image {
                         imageView(image)
@@ -93,8 +84,20 @@ struct ImageCard: View {
                         loadingView
                     }
                 }
-            } else {
-                loadingView
+            }
+        }
+        .task {
+            Task {
+                do {
+                    switch source {
+                    case .localPath, .uiImage:
+                        image = try await source.getUiImage()
+                    default:
+                        break
+                    }
+                } catch {
+                    isError = true
+                }
             }
         }
     }

@@ -89,7 +89,7 @@ final class SwiftDataItemDataSource: ItemDataSource {
     }
 
     func saveImage(_ item: Item) async throws {
-        let image = try await item.getUiImage()
+        let image = try await item.imageSource.getUiImage()
 
         try LocalStorage.applicationSupport.save(image: image.resized(to: Item.imageSize), to: item.imagePath)
         try LocalStorage.applicationSupport.save(image: image.resized(to: Item.thumbnailSize), to: item.thumbnailPath)

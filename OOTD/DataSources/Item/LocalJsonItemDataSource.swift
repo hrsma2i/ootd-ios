@@ -89,7 +89,7 @@ struct LocalJsonItemDataSource: ItemDataSource {
         let jsonData = try encoder.encode(items)
 
         for item in items {
-            let image = try await item.getUiImage()
+            let image = try await item.imageSource.getUiImage()
             try LocalStorage.documents.save(image: image, to: backup(item.imagePath))
         }
 

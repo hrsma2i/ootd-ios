@@ -121,7 +121,10 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
     }
 
     func saveImage(_ outfit: Outfit) async throws {
-        let image = try await outfit.getUiImage()
+        guard let image = try await outfit.imageSource?.getUiImage() else {
+            // 画像がない場合は特に何もしない
+            return
+        }
 
         try LocalStorage.applicationSupport.save(image: image.resized(to: Outfit.imageSize), to: outfit.imagePath)
         try LocalStorage.applicationSupport.save(image: image.resized(to: Outfit.thumbnailSize), to: outfit.thumbnailPath)
