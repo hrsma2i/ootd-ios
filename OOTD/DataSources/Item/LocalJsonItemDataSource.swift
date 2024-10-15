@@ -61,7 +61,7 @@ extension Item: Codable {
     }
 }
 
-struct LocalJsonItemDataSource {
+struct LocalJsonItemDataSource: ItemDataSource {
     static let shared: LocalJsonItemDataSource = .init()
 
     private init() {}
@@ -79,15 +79,7 @@ struct LocalJsonItemDataSource {
     func fetch() async throws -> [Item] {
         let decoder = JSONDecoder()
         let data = try LocalStorage.documents.load(from: backup("items.json"))
-        let items = try decoder.decode([Item].self, from: data)
-
-        for item in items {
-            let image = try LocalStorage.documents.loadImage(from: backup(item.imagePath))
-            try LocalStorage.applicationSupport.save(image: image, to: item.imagePath)
-            let thumbnail = try image.resized(to: Item.thumbnailSize)
-            try LocalStorage.applicationSupport.save(image: thumbnail, to: item.thumbnailPath)
-        }
-
+        var items = try decoder.decode([Item].self, from: data)
         return items
     }
 

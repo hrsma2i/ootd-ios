@@ -11,6 +11,7 @@ private let logger = getLogger(#file)
 
 struct UserInfoScreen: View {
     @EnvironmentObject var itemStore: ItemStore
+    @EnvironmentObject var outfitStore: OutfitStore
     @EnvironmentObject var navigation: NavigationManager
     @State var activeSheet: ActiveSheet? = nil
     enum ActiveSheet: Int, Identifiable {
@@ -49,51 +50,50 @@ struct UserInfoScreen: View {
             .interactiveDismissDisabled()
     }
 
+    var exportRow: some View {
+        row("エクスポート") {
+            activeSheet = .export
+
+            Task {
+                // TODO: limit を外す
+                async let exportItemsTask: () = itemStore.export(LocalJsonItemDataSource.shared, limit: 3)
+                async let exportOutfitsTask: () = outfitStore.export(LocalJsonOutfitDataSource.shared, limit: 5)
+
+                do { try await exportItemsTask } catch { logger.warning("\(error)") }
+
+                do { try await exportOutfitsTask } catch { logger.warning("\(error)") }
+
+                activeSheet = nil
+            }
+        }
+    }
+
+    var importRow: some View {
+        row("インポート") {
+            activeSheet = .import_
+
+            Task {
+                async let importItemsTask: () = itemStore.import_(LocalJsonItemDataSource.shared)
+                async let importOutfitsTask: () = outfitStore.import_(LocalJsonOutfitDataSource.shared)
+
+                do { try await importItemsTask } catch { logger.warning("\(error)") }
+
+                do { try await importOutfitsTask } catch { logger.warning("\(error)") }
+
+                outfitStore.joinItems(itemStore.items)
+
+                activeSheet = nil
+            }
+        }
+    }
+
     var body: some View {
         Form {
             Section("開発者向け") {
                 row("データソース", Config.DATA_SOURCE.rawValue)
                 row("Build Config", Config.BUILD_CONFIG)
-                row("エクスポート") {
-                    activeSheet = .export
-
-                    Task {
-                        var items = itemStore.items
-                        // TODO: すべてのアイテムにする
-                        items = Array(items.prefix(3))
-                        try await LocalJsonItemDataSource.shared.create(items)
-                        activeSheet = nil
-                    }
-                }
-
-                row("インポート") {
-                    activeSheet = .import_
-
-                    Task {
-                        do {
-                            var items = try await LocalJsonItemDataSource.shared.fetch()
-
-                            items = items.filter { item in
-                                guard !itemStore.items.contains(where: { item_ in
-                                    item.id == item_.id
-                                }) else {
-                                    logger.warning("item \(item.id) has already exist")
-                                    return false
-                                }
-                                return true
-                            }
-
-                            guard !items.isEmpty else {
-                                throw "no items to import"
-                            }
-
-                            try await itemStore.create(items)
-                        } catch {
-                            logger.error("\(error)")
-                        }
-                        activeSheet = nil
-                    }
-                }
+                exportRow
+                importRow
             }
         }
         .sheet(item: $activeSheet) { sheet in

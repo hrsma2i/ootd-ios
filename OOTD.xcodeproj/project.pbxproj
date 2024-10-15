@@ -20,6 +20,7 @@
 		88004E492CB7E8F600A80A80 /* String+extract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E482CB7E8F600A80A80 /* String+extract.swift */; };
 		88004E4B2CB9552A00A80A80 /* doWithErrorLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E4A2CB9552A00A80A80 /* doWithErrorLog.swift */; };
 		88004E4D2CBBF82400A80A80 /* LocalJsonItemDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E4C2CBBF82400A80A80 /* LocalJsonItemDataSource.swift */; };
+		88004E4F2CBE35EF00A80A80 /* LocalJsonOutfitDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E4E2CBE35EF00A80A80 /* LocalJsonOutfitDataSource.swift */; };
 		881B6B5A2CA5BAC7008274FF /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B592CA5BAC7008274FF /* SchemaV3.swift */; };
 		881B6B5C2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B5B2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift */; };
 		881B6B5E2CA5C250008274FF /* Date+toString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B5D2CA5C250008274FF /* Date+toString.swift */; };
@@ -142,6 +143,7 @@
 		88004E482CB7E8F600A80A80 /* String+extract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extract.swift"; sourceTree = "<group>"; };
 		88004E4A2CB9552A00A80A80 /* doWithErrorLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = doWithErrorLog.swift; sourceTree = "<group>"; };
 		88004E4C2CBBF82400A80A80 /* LocalJsonItemDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalJsonItemDataSource.swift; sourceTree = "<group>"; };
+		88004E4E2CBE35EF00A80A80 /* LocalJsonOutfitDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalJsonOutfitDataSource.swift; sourceTree = "<group>"; };
 		881B6B592CA5BAC7008274FF /* SchemaV3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV3.swift; sourceTree = "<group>"; };
 		881B6B5B2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SchemaV3+ItemDTO.swift"; sourceTree = "<group>"; };
 		881B6B5D2CA5C250008274FF /* Date+toString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+toString.swift"; sourceTree = "<group>"; };
@@ -484,6 +486,7 @@
 				886232592C7CC2FF00A1802D /* OutfitDataSource.swift */,
 				8862325A2C7CC2FF00A1802D /* SampleOutfitDataSource.swift */,
 				886064102C906B45003C7001 /* SwiftDataOutfitDataSource.swift */,
+				88004E4E2CBE35EF00A80A80 /* LocalJsonOutfitDataSource.swift */,
 			);
 			path = Outfit;
 			sourceTree = "<group>";
@@ -725,6 +728,7 @@
 				886232642C7CC32900A1802D /* ItemFilter.swift in Sources */,
 				886232A82C7CC7D100A1802D /* View+if.swift in Sources */,
 				88004E2F2CB4374E00A80A80 /* ZozoPage.swift in Sources */,
+				88004E4F2CBE35EF00A80A80 /* LocalJsonOutfitDataSource.swift in Sources */,
 				883FCB412C99C82E0001DAAF /* View+edgeSwipe.swift in Sources */,
 				88CD55A02C8749E800A9B78A /* WKWebView+.swift in Sources */,
 				8862326A2C7CC4D600A1802D /* DataSourceType.swift in Sources */,

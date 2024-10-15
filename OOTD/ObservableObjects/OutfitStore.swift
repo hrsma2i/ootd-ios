@@ -121,4 +121,53 @@ class OutfitStore: ObservableObject {
 
         return newOutfits
     }
+
+    func export(_ target: OutfitDataSource, limit: Int? = nil) async throws {
+        logger.debug("\(String(describing: Self.self)).\(#function) to \(String(describing: type(of: target)))")
+
+        let outfits: [Outfit]
+        if let limit {
+            outfits = Array(self.outfits.prefix(limit))
+        } else {
+            outfits = self.outfits
+        }
+
+        try await target.create(outfits)
+    }
+
+    func import_(_ source: OutfitDataSource) async throws {
+        logger.debug("\(String(describing: Self.self)).\(#function) from \(String(describing: type(of: source)))")
+
+        var outfits = try await source.fetch()
+
+        outfits = outfits.filter { outfit in
+            !self.outfits.contains { outfit_ in
+                outfit.id == outfit_.id
+            }
+        }
+
+        outfits = outfits.map { outfit in
+            do {
+                // .mageSource に uiImage を持たせようとするとメモリが足りないので、 ここで画像の読み込みと書き出しを行う
+                // TODO: ここの処理を .create に移譲すべきかも。ImageSource の localPath を applicationSupport と documents で分ければできるはず。
+                let image = try LocalStorage.documents.loadImage(from: "backup/\(outfit.imagePath)")
+                try LocalStorage.applicationSupport.save(image: image, to: outfit.imagePath)
+                let thumbnail = try image.resized(to: Item.thumbnailSize)
+                try LocalStorage.applicationSupport.save(image: thumbnail, to: outfit.thumbnailPath)
+
+                return outfit
+                    .copyWith(\.imageSource, value: .localPath(outfit.imagePath))
+                    .copyWith(\.thumbnailSource, value: .localPath(outfit.thumbnailPath))
+            } catch {
+                logger.debug("\(error)")
+                return outfit
+            }
+        }
+
+        guard !outfits.isEmpty else {
+            throw "no outfits to import"
+        }
+
+        try await create(outfits)
+    }
 }

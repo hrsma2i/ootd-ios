@@ -118,4 +118,50 @@ class ItemStore: ObservableObject {
             try await dataSource.delete(items)
         }
     }
+
+    func export(_ target: ItemDataSource, limit: Int? = nil) async throws {
+        logger.debug("\(String(describing: Self.self)).\(#function) to \(String(describing: type(of: target)))")
+
+        let items: [Item]
+        if let limit {
+            items = Array(self.items.prefix(limit))
+        } else {
+            items = self.items
+        }
+
+        try await target.create(items)
+    }
+
+    func import_(_ source: ItemDataSource) async throws {
+        logger.debug("\(String(describing: Self.self)).\(#function) from \(String(describing: type(of: source)))")
+
+        let items = try await source.fetch()
+
+        var newItems: [Item] = []
+
+        for item in items {
+            let exists = self.items.contains { item_ in
+                item.id == item_.id
+            }
+
+            if !exists {
+                doWithErrorLog {
+                    // .imageSource に uiImage を持たせようとするとメモリが足りないので、 ここで画像の読み込みと書き出しを行う
+                    // TODO: ここの処理を .create に移譲すべきかも。ImageSource の localPath を applicationSupport と documents で分ければできるはず。
+                    let image = try LocalStorage.documents.loadImage(from: "backup/\(item.imagePath)")
+                    try LocalStorage.applicationSupport.save(image: image, to: item.imagePath)
+                    let thumbnail = try image.resized(to: Item.thumbnailSize)
+                    try LocalStorage.applicationSupport.save(image: thumbnail, to: item.thumbnailPath)
+
+                    newItems.append(item)
+                }
+            }
+        }
+
+        guard !newItems.isEmpty else {
+            throw "no items to import"
+        }
+
+        try await create(newItems)
+    }
 }
