@@ -55,9 +55,8 @@ struct UserInfoScreen: View {
             activeSheet = .export
 
             Task {
-                // TODO: limit を外す
-                async let exportItemsTask: () = itemStore.export(LocalJsonItemDataSource.shared, limit: 3)
-                async let exportOutfitsTask: () = outfitStore.export(LocalJsonOutfitDataSource.shared, limit: 5)
+                async let exportItemsTask: () = itemStore.export(LocalJsonItemDataSource.shared)
+                async let exportOutfitsTask: () = outfitStore.export(LocalJsonOutfitDataSource.shared)
 
                 do { try await exportItemsTask } catch { logger.warning("\(error)") }
 
