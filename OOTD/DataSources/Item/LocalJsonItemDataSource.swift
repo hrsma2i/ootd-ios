@@ -72,16 +72,20 @@ struct LocalJsonItemDataSource {
         "[\(className).\(#function)]"
     }
 
+    func backup(_ path: String) -> String {
+        "backup/\(path)"
+    }
+
     func fetch() async throws -> [Item] {
         let decoder = JSONDecoder()
-        let data = try LocalStorage.documents.load(from: "items.json")
+        let data = try LocalStorage.documents.load(from: backup("items.json"))
         let items = try decoder.decode([Item].self, from: data)
 
         for item in items {
-            let image = try LocalStorage.documents.loadImage(from: Item.generateImagePath(item.id, size: Item.imageSize))
-            try LocalStorage.applicationSupport.save(image: image, to: Item.generateImagePath(item.id, size: Item.imageSize))
+            let image = try LocalStorage.documents.loadImage(from: backup(item.imagePath))
+            try LocalStorage.applicationSupport.save(image: image, to: item.imagePath)
             let thumbnail = try image.resized(to: Item.thumbnailSize)
-            try LocalStorage.applicationSupport.save(image: thumbnail, to: Item.generateImagePath(item.id, size: Item.thumbnailSize))
+            try LocalStorage.applicationSupport.save(image: thumbnail, to: item.thumbnailPath)
         }
 
         return items
@@ -94,10 +98,10 @@ struct LocalJsonItemDataSource {
 
         for item in items {
             let image = try await item.getUiImage()
-            try LocalStorage.documents.save(image: image, to: Item.generateImagePath(item.id, size: Item.imageSize))
+            try LocalStorage.documents.save(image: image, to: backup(item.imagePath))
         }
 
-        try LocalStorage.documents.save(data: jsonData, to: "items.json")
+        try LocalStorage.documents.save(data: jsonData, to: backup("items.json"))
     }
 
     func update(_ items: [Item]) async throws {
