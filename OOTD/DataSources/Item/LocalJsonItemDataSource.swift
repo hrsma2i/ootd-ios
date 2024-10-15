@@ -44,8 +44,8 @@ extension Item: Codable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        imageSource = .localPath(Item.generateImagePath(id, size: Item.imageSize))
-        thumbnailSource = .localPath(Item.generateImagePath(id, size: Item.thumbnailSize))
+        imageSource = .applicatinoSupport(Item.generateImagePath(id, size: Item.imageSize))
+        thumbnailSource = .applicatinoSupport(Item.generateImagePath(id, size: Item.thumbnailSize))
         name = try container.decode(String.self, forKey: .name)
         category = try container.decode(Category.self, forKey: .category)
         purchasedPrice = try container.decodeIfPresent(Int.self, forKey: .purchasedPrice)
@@ -79,7 +79,10 @@ struct LocalJsonItemDataSource: ItemDataSource {
     func fetch() async throws -> [Item] {
         let decoder = JSONDecoder()
         let data = try LocalStorage.documents.load(from: backup("items.json"))
-        let items = try decoder.decode([Item].self, from: data)
+        var items = try decoder.decode([Item].self, from: data)
+        items = items.map { item in
+            item.copyWith(\.imageSource, value: .documents(backup(item.imagePath)))
+        }
         return items
     }
 

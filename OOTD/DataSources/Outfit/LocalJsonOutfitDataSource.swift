@@ -47,7 +47,16 @@ struct LocalJsonOutfitDataSource: OutfitDataSource {
     func fetch() async throws -> [Outfit] {
         let decoder = JSONDecoder()
         let data = try LocalStorage.documents.load(from: backup("outfits.json"))
-        let outfits = try decoder.decode([Outfit].self, from: data)
+        var outfits = try decoder.decode([Outfit].self, from: data)
+        outfits = outfits.map { outfit in
+            let imagePath = backup(outfit.imagePath)
+            if LocalStorage.documents.exists(at: imagePath) {
+                return outfit.copyWith(\.imageSource, value: .documents(backup(outfit.imagePath)))
+            } else {
+                // 画像がない場合は imageSource = nil のままにする。 ImageCard で読み込みエラーが出たりするから。
+                return outfit
+            }
+        }
         return outfits
     }
 

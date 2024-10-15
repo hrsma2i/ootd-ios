@@ -47,8 +47,8 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
                 // check there are images in the storage
                 let _ = try LocalStorage.applicationSupport.loadImage(from: imagePath)
                 let _ = try LocalStorage.applicationSupport.loadImage(from: thumbnailPath)
-                imageSource = .localPath(imagePath)
-                thumbnailSource = .localPath(thumbnailPath)
+                imageSource = .applicatinoSupport(imagePath)
+                thumbnailSource = .applicatinoSupport(thumbnailPath)
             } catch {
                 imageSource = nil
                 thumbnailSource = nil

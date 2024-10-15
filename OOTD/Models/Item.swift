@@ -66,8 +66,8 @@ struct Item: Hashable, Identifiable {
     // read
     init(id: String, createdAt: Date, updatedAt: Date, option: Option = .init()) {
         self.id = id
-        imageSource = .localPath(Item.generateImagePath(id, size: Item.imageSize))
-        thumbnailSource = .localPath(Item.generateImagePath(id, size: Item.thumbnailSize))
+        imageSource = .applicatinoSupport(Item.generateImagePath(id, size: Item.imageSize))
+        thumbnailSource = .applicatinoSupport(Item.generateImagePath(id, size: Item.thumbnailSize))
 
         name = option.name
         category = option.category

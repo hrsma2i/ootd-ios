@@ -146,24 +146,6 @@ class OutfitStore: ObservableObject {
             }
         }
 
-        outfits = outfits.map { outfit in
-            do {
-                // .mageSource に uiImage を持たせようとするとメモリが足りないので、 ここで画像の読み込みと書き出しを行う
-                // TODO: ここの処理を .create に移譲すべきかも。ImageSource の localPath を applicationSupport と documents で分ければできるはず。
-                let image = try LocalStorage.documents.loadImage(from: "backup/\(outfit.imagePath)")
-                try LocalStorage.applicationSupport.save(image: image, to: outfit.imagePath)
-                let thumbnail = try image.resized(to: Item.thumbnailSize)
-                try LocalStorage.applicationSupport.save(image: thumbnail, to: outfit.thumbnailPath)
-
-                return outfit
-                    .copyWith(\.imageSource, value: .localPath(outfit.imagePath))
-                    .copyWith(\.thumbnailSource, value: .localPath(outfit.thumbnailPath))
-            } catch {
-                logger.debug("\(error)")
-                return outfit
-            }
-        }
-
         guard !outfits.isEmpty else {
             throw "no outfits to import"
         }

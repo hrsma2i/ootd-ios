@@ -60,4 +60,9 @@ struct LocalStorage {
         try manager.removeItem(at: path)
         logger.debug("[LocalStorage] remove \(path)")
     }
+
+    func exists(at relPath: String) -> Bool {
+        let path = directory.appendingPathComponent(relPath)
+        return manager.fileExists(atPath: path.path)
+    }
 }

@@ -11,7 +11,8 @@ import UIKit
 enum ImageSource: Hashable {
     case uiImage(UIImage)
     case url(String)
-    case localPath(String)
+    case applicatinoSupport(String)
+    case documents(String)
 
     func getUiImage() async throws -> UIImage {
         switch self {
@@ -20,8 +21,11 @@ enum ImageSource: Hashable {
         case .url(let url):
             let image = try await downloadImage(url)
             return image
-        case .localPath(let path):
+        case .applicatinoSupport(let path):
             let image = try LocalStorage.applicationSupport.loadImage(from: path)
+            return image
+        case .documents(let path):
+            let image = try LocalStorage.documents.loadImage(from: path)
             return image
         }
     }
