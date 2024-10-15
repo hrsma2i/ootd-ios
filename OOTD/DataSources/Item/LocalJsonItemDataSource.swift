@@ -79,7 +79,7 @@ struct LocalJsonItemDataSource: ItemDataSource {
     func fetch() async throws -> [Item] {
         let decoder = JSONDecoder()
         let data = try LocalStorage.documents.load(from: backup("items.json"))
-        var items = try decoder.decode([Item].self, from: data)
+        let items = try decoder.decode([Item].self, from: data)
         return items
     }
 

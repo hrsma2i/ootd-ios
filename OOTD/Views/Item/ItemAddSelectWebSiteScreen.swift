@@ -118,7 +118,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                 limit: 1
             ) { selected in
                 let imageUrl = selected.first!
-                var item = Item(
+                let item = Item(
                     imageSource: .url(imageUrl),
                     option: .init(
                         name: title ?? "",
