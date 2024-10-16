@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Category: String, Codable, CaseIterable {
+enum Category: String, Codable, CaseIterable, Comparable {
     case halfInnerTops = "Tシャツ・半袖シャツ"
     case longInnerTops = "シャツ・ロンT"
     case middleTops = "ニット・スウェット"
@@ -19,5 +19,14 @@ enum Category: String, Codable, CaseIterable {
 
     static var allCasesWithoutUncategorized: [Category] {
         allCases.filter { $0 != .uncategorized }
+    }
+
+    static func < (lhs: Category, rhs: Category) -> Bool {
+        guard let lhsIndex = allCases.firstIndex(of: lhs),
+              let rhsIndex = allCases.firstIndex(of: rhs)
+        else {
+            return false
+        }
+        return lhsIndex < rhsIndex
     }
 }

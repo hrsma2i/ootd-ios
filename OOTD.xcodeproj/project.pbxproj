@@ -70,7 +70,6 @@
 		8862325D2C7CC2FF00A1802D /* OutfitDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232592C7CC2FF00A1802D /* OutfitDataSource.swift */; };
 		8862325E2C7CC2FF00A1802D /* SampleOutfitDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862325A2C7CC2FF00A1802D /* SampleOutfitDataSource.swift */; };
 		886232632C7CC32900A1802D /* Outfit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862325F2C7CC32900A1802D /* Outfit.swift */; };
-		886232642C7CC32900A1802D /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232602C7CC32900A1802D /* ItemFilter.swift */; };
 		886232652C7CC32900A1802D /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232612C7CC32900A1802D /* Category.swift */; };
 		886232662C7CC32900A1802D /* OutfitCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232622C7CC32900A1802D /* OutfitCondition.swift */; };
 		886232682C7CC4C600A1802D /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232672C7CC4C600A1802D /* Config.swift */; };
@@ -100,6 +99,7 @@
 		886232B52C7CCA7800A1802D /* UserInfoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232B12C7CCA7800A1802D /* UserInfoScreen.swift */; };
 		886232B92C7CCB5000A1802D /* ItemCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232B82C7CCB5000A1802D /* ItemCard.swift */; };
 		886232BD2C7CCC9100A1802D /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232BC2C7CCC9100A1802D /* NavigationManager.swift */; };
+		889F34FC2CBF991100C5BD65 /* ItemGridTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889F34FB2CBF991100C5BD65 /* ItemGridTab.swift */; };
 		88A350032CA86DD300021FBF /* SelectWebItemScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A350022CA86DD300021FBF /* SelectWebItemScreen.swift */; };
 		88B2BCE92C7E0E89008F45B7 /* SwiftDataItemDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B2BCE82C7E0E89008F45B7 /* SwiftDataItemDataSource.swift */; };
 		88C00C3E2CAD7DF9007D83FF /* ACarousel in Frameworks */ = {isa = PBXBuildFile; productRef = 88C00C3D2CAD7DF9007D83FF /* ACarousel */; };
@@ -197,7 +197,6 @@
 		886232592C7CC2FF00A1802D /* OutfitDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitDataSource.swift; sourceTree = "<group>"; };
 		8862325A2C7CC2FF00A1802D /* SampleOutfitDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleOutfitDataSource.swift; sourceTree = "<group>"; };
 		8862325F2C7CC32900A1802D /* Outfit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Outfit.swift; sourceTree = "<group>"; };
-		886232602C7CC32900A1802D /* ItemFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemFilter.swift; sourceTree = "<group>"; };
 		886232612C7CC32900A1802D /* Category.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		886232622C7CC32900A1802D /* OutfitCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitCondition.swift; sourceTree = "<group>"; };
 		886232672C7CC4C600A1802D /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -226,6 +225,7 @@
 		886232B12C7CCA7800A1802D /* UserInfoScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoScreen.swift; sourceTree = "<group>"; };
 		886232B82C7CCB5000A1802D /* ItemCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCard.swift; sourceTree = "<group>"; };
 		886232BC2C7CCC9100A1802D /* NavigationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationManager.swift; sourceTree = "<group>"; };
+		889F34FB2CBF991100C5BD65 /* ItemGridTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemGridTab.swift; sourceTree = "<group>"; };
 		88A350022CA86DD300021FBF /* SelectWebItemScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectWebItemScreen.swift; sourceTree = "<group>"; };
 		88B2BCE82C7E0E89008F45B7 /* SwiftDataItemDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataItemDataSource.swift; sourceTree = "<group>"; };
 		88CD55932C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemAddSelectWebSiteScreen.swift; sourceTree = "<group>"; };
@@ -471,11 +471,11 @@
 			children = (
 				886232482C7CC14300A1802D /* Item.swift */,
 				886232612C7CC32900A1802D /* Category.swift */,
-				886232602C7CC32900A1802D /* ItemFilter.swift */,
 				8862325F2C7CC32900A1802D /* Outfit.swift */,
 				886232622C7CC32900A1802D /* OutfitCondition.swift */,
 				883FCB422C9B25690001DAAF /* ImageSource.swift */,
 				883FCB442C9C5F4C0001DAAF /* DetailMode.swift */,
+				889F34FB2CBF991100C5BD65 /* ItemGridTab.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -725,7 +725,6 @@
 				881B6B602CA650A7008274FF /* SchemaV4+ItemDTO.swift in Sources */,
 				886232432C7CC0E900A1802D /* HashableView.swift in Sources */,
 				881B6B5C2CA5BAD6008274FF /* SchemaV3+ItemDTO.swift in Sources */,
-				886232642C7CC32900A1802D /* ItemFilter.swift in Sources */,
 				886232A82C7CC7D100A1802D /* View+if.swift in Sources */,
 				88004E2F2CB4374E00A80A80 /* ZozoPage.swift in Sources */,
 				88004E4F2CBE35EF00A80A80 /* LocalJsonOutfitDataSource.swift in Sources */,
@@ -751,6 +750,7 @@
 				886232662C7CC32900A1802D /* OutfitCondition.swift in Sources */,
 				883FCB3D2C986B060001DAAF /* SearchBar.swift in Sources */,
 				88004E272CB430B800A80A80 /* ZozoPurchaseHistory.swift in Sources */,
+				889F34FC2CBF991100C5BD65 /* ItemGridTab.swift in Sources */,
 				886232B92C7CCB5000A1802D /* ItemCard.swift in Sources */,
 				886232A42C7CC7D100A1802D /* Color+textColorBasedOnBrightness.swift in Sources */,
 				886232652C7CC32900A1802D /* Category.swift in Sources */,

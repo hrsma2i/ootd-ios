@@ -100,16 +100,6 @@ class ItemStore: ObservableObject {
         }
     }
 
-    func filter(_ items: [Item], by filter: ItemFilter) -> [Item] {
-        var newItems: [Item] = items
-
-        if let category = filter.category {
-            newItems = newItems.filter { $0.category == category }
-        }
-
-        return newItems
-    }
-
     func delete(_ items: [Item]) async throws {
         DispatchQueue.main.async {
             self.items.removeAll { item in items.contains { item.id == $0.id } }

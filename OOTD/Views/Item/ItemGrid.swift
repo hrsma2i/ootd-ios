@@ -35,9 +35,14 @@ struct ItemGrid: HashableView {
     @State private var isSelectable: Bool
     @State private var isAlertPresented = false
 
+    @State private var activeTab: ItemGridTab = ItemGrid.defaultTab
+    private static let defaultTab = ItemGridTab(
+        name: "すべて",
+        sort: .category
+    )
+
     private enum ActiveSheet: Int, Identifiable {
         case itemDeleteConfirmOutfits
-        case categorySelect
         case imagePicker
         case addOptions
 
@@ -47,23 +52,32 @@ struct ItemGrid: HashableView {
     }
 
     @State private var activeSheet: ActiveSheet?
-    @State private var filter = ItemFilter()
 
     var relatedOutfits: [Outfit] {
         outfitStore.getOutfits(using: selected)
     }
 
     var items: [Item] {
-        itemStore.filter(itemStore.items, by: filter)
+        activeTab.apply(itemStore.items)
     }
 
-    var categoryFilterButton: some View {
-        RoundRectangleButton(
-            text: filter.category?.rawValue ?? "カテゴリー", systemName: "line.horizontal.3.decrease",
-            fill: filter.category != nil
-        ) {
-            activeSheet = .categorySelect
+    // TODO: TabStore を作って、そこから読み書きする
+    var tabs: [ItemGridTab] {
+        let categories = itemStore.items.map(\.category).unique().sorted()
+
+        let tabs = [
+            ItemGrid.defaultTab
+        ] + categories.map { category in
+            ItemGridTab(
+                name: category.rawValue,
+                sort: .createdAt,
+                filter: .init(
+                    category: category
+                )
+            )
         }
+
+        return tabs
     }
 
     var sortButton: some View {
@@ -131,7 +145,23 @@ struct ItemGrid: HashableView {
     }
 
     var bottomBar: some View {
-        VStack {
+        VStack(spacing: 0) {
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(tabs, id: \.self) { tab in
+                        RoundRectangleButton(
+                            text: tab.name,
+                            fontSize: 17,
+                            fill: tab == activeTab
+                        ) {
+                            activeTab = tab
+                        }
+                        .padding(.top, 3)
+                    }
+                }
+                .padding(.bottom, 10)
+            }
+
             if !isOnlySelectable, isSelectable, !selected.isEmpty {
                 HStack {
                     editButton
@@ -154,7 +184,6 @@ struct ItemGrid: HashableView {
                     }
 
                     sortButton
-                    categoryFilterButton
                 }
             }
         }
@@ -289,15 +318,6 @@ struct ItemGrid: HashableView {
                 .onDisappear {
                     isSelectable = false
                     selected = []
-                }
-
-            case .categorySelect:
-                CategorySelectSheet(
-                    allowUncategorized: true,
-                    allowNil: true
-                ) { category in
-                    activeSheet = nil
-                    filter.category = category
                 }
 
             case .imagePicker:
