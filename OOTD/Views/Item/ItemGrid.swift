@@ -131,18 +131,16 @@ struct ItemGrid: HashableView {
     }
 
     var bottomBar: some View {
-        VStack(spacing: 0) {
-            Spacer()
+        VStack {
             if !isOnlySelectable, isSelectable, !selected.isEmpty {
                 HStack {
                     editButton
                     Spacer()
                     deleteButton
                 }
-                .padding(.horizontal, 10)
-                .padding(.top, 10)
                 .background(.white.opacity(0.5))
             }
+
             ScrollView(.horizontal) {
                 HStack {
                     if isOnlySelectable {
@@ -158,10 +156,9 @@ struct ItemGrid: HashableView {
                     sortButton
                     categoryFilterButton
                 }
-                .padding(10)
             }
-            .background(.white.opacity(0.5))
         }
+        .padding(10)
     }
 
     private func onTapItem_(_ item: Item) {
@@ -238,7 +235,7 @@ struct ItemGrid: HashableView {
         let spacing: CGFloat = 2
         let columns = Array(repeating: GridItem(.flexible(), spacing: spacing), count: numColumns)
 
-        ZStack {
+        VStack(spacing: 0) {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: spacing) {
                     if !isOnlySelectable {
@@ -254,6 +251,8 @@ struct ItemGrid: HashableView {
                 .padding(spacing)
             }
             .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
+
+            Divider()
 
             bottomBar
         }
