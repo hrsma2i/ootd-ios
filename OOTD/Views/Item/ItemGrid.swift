@@ -35,7 +35,6 @@ struct ItemGrid: HashableView {
     @State private var isSelectable: Bool
     @State private var isAlertPresented = false
 
-    @State private var activeTab: ItemGridTab = ItemGrid.defaultTab
     private static let defaultTab = ItemGridTab(
         name: "すべて",
         sort: .category
@@ -57,8 +56,8 @@ struct ItemGrid: HashableView {
         outfitStore.getOutfits(using: selected)
     }
 
-    var items: [Item] {
-        activeTab.apply(itemStore.items)
+    func tabItems(_ tab: ItemGridTab) -> [Item] {
+        tab.apply(itemStore.items)
     }
 
     // TODO: TabStore を作って、そこから読み書きする
@@ -146,22 +145,6 @@ struct ItemGrid: HashableView {
 
     var bottomBar: some View {
         VStack(spacing: 0) {
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(tabs, id: \.self) { tab in
-                        RoundRectangleButton(
-                            text: tab.name,
-                            fontSize: 17,
-                            fill: tab == activeTab
-                        ) {
-                            activeTab = tab
-                        }
-                        .padding(.top, 3)
-                    }
-                }
-                .padding(.bottom, 10)
-            }
-
             if !isOnlySelectable, isSelectable, !selected.isEmpty {
                 HStack {
                     editButton
@@ -265,21 +248,27 @@ struct ItemGrid: HashableView {
         let columns = Array(repeating: GridItem(.flexible(), spacing: spacing), count: numColumns)
 
         VStack(spacing: 0) {
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: spacing) {
-                    if !isOnlySelectable {
-                        AddButton {
-                            activeSheet = .addOptions
+            ScrollableTabView(
+                tabs,
+                id: \.name,
+                title: \.name
+            ) { tab in
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: spacing) {
+                        if !isOnlySelectable {
+                            AddButton {
+                                activeSheet = .addOptions
+                            }
+                        }
+
+                        ForEach(tabItems(tab), id: \.self) { item in
+                            itemCard(item)
                         }
                     }
-
-                    ForEach(items, id: \.self) { item in
-                        itemCard(item)
-                    }
+                    .padding(spacing)
                 }
-                .padding(spacing)
+                .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
             }
-            .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
 
             Divider()
 
