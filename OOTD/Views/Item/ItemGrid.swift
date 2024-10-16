@@ -70,7 +70,7 @@ struct ItemGrid: HashableView {
         ] + categories.map { category in
             ItemGridTab(
                 name: category.rawValue,
-                sort: .createdAt,
+                sort: .purchasedOn,
                 filter: .init(
                     category: category
                 )

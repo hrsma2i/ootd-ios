@@ -14,12 +14,15 @@ struct ItemGridTab: Hashable {
 
     enum Sort {
         case category,
+             purchasedOn,
              createdAt
 
         func compare(_ lhs: Item, _ rhs: Item) -> Bool {
             switch self {
             case .category:
                 lhs.category < rhs.category
+            case .purchasedOn:
+                compareOptional(lhs.purchasedOn, rhs.purchasedOn)
             case .createdAt:
                 compareOptional(lhs.createdAt, rhs.createdAt)
             }
