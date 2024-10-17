@@ -8,12 +8,13 @@
 import Foundation
 import SwiftUI
 
-struct ScrollableTabView<Data: RandomAccessCollection, Content: View, ID: Hashable>: View {
+struct ScrollableTabView<Data: RandomAccessCollection, Content: View, ID: Hashable, Footer: View>: View {
     // https://zenn.dev/never_inc_dev/articles/303283ffaab541
     let data: Data
     let id: KeyPath<Data.Element, ID>
     let title: (Data.Element) -> String
     let content: (Data.Element) -> Content
+    let footer: () -> Footer
 
     let position: Position
     enum Position: String, Identifiable {
@@ -23,13 +24,14 @@ struct ScrollableTabView<Data: RandomAccessCollection, Content: View, ID: Hashab
         var id: String { rawValue }
     }
 
-    init(position: Position = .bottom, _ data: Data, id: KeyPath<Data.Element, ID>, title: @escaping (Data.Element) -> String, content: @escaping (Data.Element) -> Content) {
+    init(position: Position = .bottom, _ data: Data, id: KeyPath<Data.Element, ID>, title: @escaping (Data.Element) -> String, content: @escaping (Data.Element) -> Content, footer: @escaping () -> Footer = { EmptyView() }) {
         self.position = position
         self.data = data
         self.id = id
         self.title = title
         self.content = content
         _selectedTabId = State(initialValue: data.first?[keyPath: id])
+        self.footer = footer
     }
 
     @State private var selectedTabId: ID?
@@ -83,40 +85,41 @@ struct ScrollableTabView<Data: RandomAccessCollection, Content: View, ID: Hashab
                 }
             }
         }
-//        .background {
-//            if let selectedTabId {
-//                Rectangle()
-//                    .fill(.accent)
-//                    .matchedGeometryEffect(
-//                        id: selectedTabId, in: tabNamespace, isSource: false
-//                    )
-//            }
-//        }
     }
 
     var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
-                if position == .top {
-                    tabBar
-                    Divider()
-                }
-
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 0) {
-                        ForEach(data, id: id) {
-                            content($0)
-                                .frame(width: geometry.size.width)
-                        }
+            ZStack(alignment: .bottom) {
+                VStack(spacing: 0) {
+                    if position == .top {
+                        tabBar
+                        Divider()
                     }
-                    .scrollTargetLayout()
-                }
-                .scrollTargetBehavior(.viewAligned)
-                .scrollPosition(id: $selectedTabId)
 
-                if position == .bottom {
-                    Divider()
-                    tabBar
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 0) {
+                            ForEach(data, id: id) {
+                                content($0)
+                                    .frame(width: geometry.size.width)
+                            }
+                        }
+                        .scrollTargetLayout()
+                    }
+                    .scrollTargetBehavior(.viewAligned)
+                    .scrollPosition(id: $selectedTabId)
+
+                    if position == .bottom {
+                        Divider()
+                        tabBar
+                    }
+                }
+
+                VStack(spacing: 0) {
+                    footer()
+
+                    Rectangle()
+                        .opacity(0)
+                        .frame(height: 44)
                 }
             }
             .animation(.easeInOut, value: selectedTabId)
@@ -155,5 +158,13 @@ struct ScrollableTabView<Data: RandomAccessCollection, Content: View, ID: Hashab
                 .containerRelativeFrame(.horizontal)
             }
         }
+        .padding(.bottom, 60)
+    } footer: {
+        Text("Footer")
+            .padding()
+            .foregroundColor(.white)
+            .background(.accent)
+            .shadow(radius: /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
+            .padding(10)
     }
 }

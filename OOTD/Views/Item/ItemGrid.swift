@@ -92,28 +92,23 @@ struct ItemGrid: HashableView {
     }
 
     var sortButton: some View {
-        Button {} label: {
-            VStack {
-                Image(systemName: "arrow.up.arrow.down")
-                    .font(.system(size: 20))
-                Text("並べ替え")
-                    .font(.system(size: 8))
-            }
-            .foregroundColor(.gray)
-        }
+        footerButton(
+            text: "並べ替え",
+            systemName: "arrow.up.arrow.down"
+        )
     }
 
     var selectButton: some View {
-        RoundRectangleButton(
+        footerButton(
             text: "選択",
-            systemName: "checkmark.square"
+            systemName: "checkmark.square.fill"
         ) {
             isSelectable = true
         }
     }
 
     var cancelButton: some View {
-        RoundRectangleButton(
+        footerButton(
             text: "戻る",
             systemName: "arrow.uturn.left"
         ) {
@@ -123,8 +118,8 @@ struct ItemGrid: HashableView {
     }
 
     var editButton: some View {
-        RoundRectangleButton(
-            text: "編集",
+        footerButton(
+            text: "一括編集",
             systemName: "pencil"
         ) {
             navigation.path.append(ItemDetail(
@@ -138,10 +133,10 @@ struct ItemGrid: HashableView {
     }
 
     var deleteButton: some View {
-        RoundRectangleButton(
-            text: "削除",
+        footerButton(
+            text: "一括削除",
             systemName: "trash.fill",
-            color: .red
+            color: Color(red: 255 / 255, green: 117 / 255, blue: 117 / 255)
         ) {
             if relatedOutfits.isEmpty {
                 isAlertPresented = true
@@ -152,7 +147,7 @@ struct ItemGrid: HashableView {
     }
 
     var decideButton: some View {
-        RoundRectangleButton(
+        footerButton(
             text: "決定",
             systemName: "checkmark"
         ) {
@@ -160,15 +155,30 @@ struct ItemGrid: HashableView {
         }
     }
 
-    var bottomBar: some View {
-        VStack(spacing: 10) {
-            HStack {
+    func footerButton(text: String, systemName: String, color: Color = .white, action: @escaping () -> Void = {}) -> some View {
+        Button(action: action) {
+            VStack(spacing: 5) {
+                Image(systemName: systemName)
+                    .font(.system(size: 15))
+
+                Text(text)
+                    .font(.system(size: 10))
+                    .bold()
+            }
+            .bold()
+            .foregroundColor(color)
+            .frame(width: 60)
+        }
+    }
+
+    var innerFooter: some View {
+        HStack {
+            Spacer()
+
+            HStack(spacing: 0) {
                 if !isOnlySelectable, isSelectable, !selected.isEmpty {
                     deleteButton
-                    Spacer()
                     editButton
-                } else {
-                    Spacer()
                 }
 
                 if isOnlySelectable {
@@ -180,21 +190,30 @@ struct ItemGrid: HashableView {
                         selectButton
                     }
                 }
-            }
-            .background(.white.opacity(0.5))
 
-            HStack {
-                SearchBar(text: $searchText, placeholder: "アイテム名を検索")
-                    .padding(7)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke()
-                            .foregroundColor(.init(gray: 0.8))
-                    }
                 sortButton
             }
+            .padding(.vertical, 10)
+            .padding(.horizontal, 10)
+            .background {
+                RoundedRectangle(cornerRadius: 15)
+                    .foregroundColor(.accent)
+                    .shadow(radius: 3)
+            }
+            .padding(.trailing, 10)
         }
-        .padding(10)
+    }
+
+    var bottomBar: some View {
+        SearchBar(text: $searchText, placeholder: "アイテム名を検索")
+            .padding(7)
+            .overlay {
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke()
+                    .foregroundColor(.init(gray: 0.8))
+            }
+            .padding(.horizontal, 15)
+            .padding(.bottom, 10)
     }
 
     private func onTapItem_(_ item: Item) {
@@ -290,11 +309,13 @@ struct ItemGrid: HashableView {
                         }
                     }
                     .padding(spacing)
+                    .padding(.bottom, 70)
                 }
                 .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
+            } footer: {
+                innerFooter
+                    .padding(.bottom, 7)
             }
-
-            Divider()
 
             bottomBar
         }
