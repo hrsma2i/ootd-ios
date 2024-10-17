@@ -68,6 +68,9 @@ struct ItemGrid: HashableView {
                 item.name.lowercased().contains(keyword)
                     || item.originalDescription?.lowercased().contains(keyword) ?? false
                     || item.originalBrand?.lowercased().contains(keyword) ?? false
+                    || item.tags.map {
+                        $0.lowercased().contains(keyword)
+                    }.contains(true)
             }
         }
 
@@ -225,7 +228,7 @@ struct ItemGrid: HashableView {
     }
 
     var bottomBar: some View {
-        SearchBar(text: $searchText, placeholder: "アイテム名を検索")
+        SearchBar(text: $searchText, placeholder: "検索")
             .padding(7)
             .overlay {
                 RoundedRectangle(cornerRadius: 5)
