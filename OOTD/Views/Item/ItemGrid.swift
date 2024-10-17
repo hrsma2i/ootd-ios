@@ -127,6 +127,15 @@ struct ItemGrid: HashableView {
         }
     }
 
+    var addButton: some View {
+        footerButton(
+            text: "追加",
+            systemName: "plus"
+        ) {
+            activeSheet = .addOptions
+        }
+    }
+
     var editButton: some View {
         footerButton(
             text: "一括編集",
@@ -199,6 +208,7 @@ struct ItemGrid: HashableView {
                     } else {
                         selectButton
                     }
+                    addButton
                 }
 
                 sortButton
@@ -321,12 +331,6 @@ struct ItemGrid: HashableView {
             ) { tab in
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: spacing) {
-                        if !isOnlySelectable {
-                            AddButton {
-                                activeSheet = .addOptions
-                            }
-                        }
-
                         ForEach(tabItems(tab), id: \.self) { item in
                             itemCard(item)
                         }
