@@ -317,6 +317,7 @@ struct ItemGrid: HashableView {
                 }
             }
         }
+        .presentationDetents([.fraction(0.3)]) // 高さを調整
     }
 
     var body: some View {
