@@ -35,6 +35,7 @@ struct ItemGrid: HashableView {
     @State private var isSelectable: Bool
     @State private var isAlertPresented = false
     @State private var searchText: String = ""
+    @State private var sorter: ItemGridTab.Sort? = nil
 
     private static let defaultTab = ItemGridTab(
         name: "すべて",
@@ -45,6 +46,7 @@ struct ItemGrid: HashableView {
         case itemDeleteConfirmOutfits
         case imagePicker
         case addOptions
+        case selectSort
 
         var id: Int {
             rawValue
@@ -69,7 +71,13 @@ struct ItemGrid: HashableView {
             }
         }
 
-        return tab.apply(items)
+        items = tab.apply(items)
+
+        if let sorter {
+            items = items.sorted { sorter.compare($0, $1) }
+        }
+
+        return items
     }
 
     // TODO: TabStore を作って、そこから読み書きする
@@ -93,9 +101,11 @@ struct ItemGrid: HashableView {
 
     var sortButton: some View {
         footerButton(
-            text: "並べ替え",
+            text: sorter?.rawValue ?? "並べ替え",
             systemName: "arrow.up.arrow.down"
-        )
+        ) {
+            activeSheet = .selectSort
+        }
     }
 
     var selectButton: some View {
@@ -286,6 +296,19 @@ struct ItemGrid: HashableView {
         .presentationDetents([.fraction(0.18)])
     }
 
+    var selectSortSheet: some View {
+        Form {
+            ForEach(ItemGridTab.Sort.allCases, id: \.self) { sort in
+                Button {
+                    sorter = sort
+                    activeSheet = nil
+                } label: {
+                    Text(sort.rawValue)
+                }
+            }
+        }
+    }
+
     var body: some View {
         let spacing: CGFloat = 2
         let columns = Array(repeating: GridItem(.flexible(), spacing: spacing), count: numColumns)
@@ -375,6 +398,9 @@ struct ItemGrid: HashableView {
 
             case .addOptions:
                 addOptionsSheet
+
+            case .selectSort:
+                selectSortSheet
             }
         }
         .navigationBarBackButtonHidden(true)

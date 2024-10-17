@@ -12,7 +12,7 @@ struct ItemGridTab: Hashable {
     var sort: Sort
     var filter: Filter?
 
-    enum Sort: String {
+    enum Sort: String, CaseIterable {
         case category = "カテゴリー順"
         case purchasedOn = "購入日順"
         case createdAt = "作成日時順"
