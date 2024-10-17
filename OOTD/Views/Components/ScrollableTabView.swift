@@ -96,7 +96,7 @@ struct ScrollableTabView<Data: RandomAccessCollection, Content: View, ID: Hashab
                         Divider()
                     }
 
-                    ScrollView(.horizontal) {
+                    ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 0) {
                             ForEach(data, id: id) {
                                 content($0)
