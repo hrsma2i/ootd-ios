@@ -11,6 +11,7 @@ import SwiftUI
 struct WrappedLayout<Data: RandomAccessCollection, Content: View>: View where Data.Element: Hashable {
     let data: Data
     var geometry: GeometryProxy?
+    var spacing: CGFloat = 4
     @ViewBuilder var content: (Data.Element) -> Content
 
     var body: some View {
@@ -31,7 +32,7 @@ struct WrappedLayout<Data: RandomAccessCollection, Content: View>: View where Da
             ZStack(alignment: .topLeading) {
                 ForEach(data, id: \.self) { element in
                     content(element)
-                        .padding([.horizontal, .vertical], 4)
+                        .padding([.horizontal, .vertical], spacing)
                         .alignmentGuide(.leading, computeValue: { d in
                             if abs(width - d.width) > g.size.width {
                                 width = 0

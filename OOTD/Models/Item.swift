@@ -16,6 +16,7 @@ struct Item: Hashable, Identifiable {
     var thumbnailSource: ImageSource
     var name: String
     var category: Category = .uncategorized
+    var tags: [String] = []
     var purchasedPrice: Int?
     var purchasedOn: Date?
     var createdAt: Date?
@@ -34,6 +35,7 @@ struct Item: Hashable, Identifiable {
     struct Option {
         var name: String = ""
         var category: Category = .uncategorized
+        var tags: [String] = []
         var purchasedPrice: Int?
         var purchasedOn: Date?
         var sourceUrl: String? = nil
@@ -52,6 +54,7 @@ struct Item: Hashable, Identifiable {
         self.updatedAt = updatedAt
         self.name = option.name
         self.category = option.category
+        self.tags = option.tags
         self.purchasedPrice = option.purchasedPrice
         self.purchasedOn = option.purchasedOn
         self.sourceUrl = option.sourceUrl

@@ -318,64 +318,130 @@ struct ItemDetail: HashableView {
     }
 
     func update<T>(_ key: WritableKeyPath<Item, T>, _ value: T, only item: Item? = nil) {
+        let commonTags = commonTags()
+        
         // items から取り出したものを直接更新しても再描画されないので items まるごと更新する
         items = items.map { item_ in
             if let item, item_.id != item.id {
                 return item_
             }
+            
+            if key == \.tags, let newCommonTags = value as? [String] {
+                var tags: [String] = []
+                
+                for tag in item_.tags {
+                    // 削除された共通タグは追加しない
+                    if !commonTags.contains(tag) || newCommonTags.contains(tag) {
+                        tags.append(tag)
+                    }
+                }
+                
+                for tag in newCommonTags {
+                    if !tags.contains(tag) {
+                        tags.append(tag)
+                    }
+                }
+                
+                return item_.copyWith(key, value: tags as! T)
+            }
+            
             return item_.copyWith(key, value: value)
         }
     }
     
-    var body: some View {
-        ZStack {
-            ScrollView {
-                imageArea
-                
-                VStack(spacing: 20) {
-                    nameRow
-                    
-                    section {
-                        categoryRow
-                    }
-                    
-                    if items.count == 1, let item = items.first {
-                        section {
-                            priceRow(item)
+    func commonTags() -> [String] {
+        guard !items.isEmpty else { return [] }
+        
+        // 最初の tags を Set に変換して共通部分を取得
+        let initialTags = Set(items[0].tags)
+        let commonSet = items.map { Set($0.tags) }
+            .reduce(initialTags) { $0.intersection($1) }
+        
+        // 共通のタグを初期の順序に従ってフィルタリング
+        return items[0].tags.filter { commonSet.contains($0) }
+    }
+    
+    func tagsRow(geometry: GeometryProxy) -> some View {
+        HStack {
+            if items.count == 1, let item = items.first {
+                EditableTagListView(
+                    tags: Binding(
+                        get: { item.tags },
+                        set: { newTags in
+                            update(\.tags, newTags, only: item)
                         }
+                    ),
+                    geometry: geometry
+                )
+            } else {
+                EditableTagListView(
+                    tags: Binding(
+                        get: { commonTags() },
+                        set: { newTags in
+                            update(\.tags, newTags)
+                        }
+                    ),
+                    geometry: geometry
+                )
+            }
+            Spacer()
+        }
+    }
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                ScrollView {
+                    imageArea
+                    
+                    VStack(spacing: 20) {
+                        nameRow
+                        
+                        tagsRow(geometry: geometry)
                         
                         section {
-                            propertyRow("購入日", item.purchasedOn?.toString(hasTime: false) ?? "----/--/--") {}
-                            Divider()
-                            propertyRow("作成日時", item.createdAt?.toString() ?? "----/--/-- --:--:--")
-                            Divider()
-                            propertyRow("更新日時", item.updatedAt?.toString() ?? "----/--/-- --:--:--")
+                            categoryRow
                         }
-                    
-                        if let urlString = item.sourceUrl {
+                        
+                        if items.count == 1, let item = items.first {
                             section {
-                                urlRow(urlString)
+                                priceRow(item)
+                            }
+                            
+                            section {
+                                propertyRow("購入日", item.purchasedOn?.toString(hasTime: false) ?? "----/--/--") {}
+                                Divider()
+                                propertyRow("作成日時", item.createdAt?.toString() ?? "----/--/-- --:--:--")
+                                Divider()
+                                propertyRow("更新日時", item.updatedAt?.toString() ?? "----/--/-- --:--:--")
+                            }
+                            
+                            if let urlString = item.sourceUrl {
+                                section {
+                                    urlRow(urlString)
+                                }
+                            }
+                            
+                            section {
+                                propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
+                                Divider()
+                                propertyRow("カラー", item.originalColor ?? "-")
+                                Divider()
+                                propertyRow("ブランド", item.originalBrand ?? "-")
+                                Divider()
+                                propertyRow("サイズ", item.originalSize ?? "-")
+                                Divider()
+                                descriptionRow(item.originalDescription ?? "")
                             }
                         }
-
-                        section {
-                            propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
-                            Divider()
-                            propertyRow("カラー", item.originalColor ?? "-")
-                            Divider()
-                            propertyRow("ブランド", item.originalBrand ?? "-")
-                            Divider()
-                            propertyRow("サイズ", item.originalSize ?? "-")
-                            Divider()
-                            descriptionRow(item.originalDescription ?? "")
-                        }
                     }
+                    .padding(20)
+                    .frame(width: geometry.size.width)
                 }
-                .padding(20)
-            }
-            
-            if hasChanges {
-                saveButton
+
+                if hasChanges {
+                    saveButton
+                }
             }
         }
         .navigationBarHidden(true)

@@ -23,23 +23,34 @@ let sampleItems = [
     Item(
         imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/thurmont_glasses.png?alt=media&token=bb7eab8b-0bd1-49a4-839c-b387a5dc9ea8"),
         option: .init(
-            category: .others
+            category: .others,
+            tags: ["共通タグ1"]
         )
     ),
     Item(
-        imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/gu_suede_touch_jacket_cb_camel.png?alt=media&token=2106309a-0ac2-4e7f-8f3e-0665a6fe9190")
+        imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/gu_suede_touch_jacket_cb_camel.png?alt=media&token=2106309a-0ac2-4e7f-8f3e-0665a6fe9190"),
+        option: .init(
+            tags: ["共通タグ1"]
+        )
     ),
     Item(
-        imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/hardrock_T_shirts.jpeg?alt=media&token=cb15d0ce-a16a-4edd-a638-a32e40d095b9")
+        imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/hardrock_T_shirts.jpeg?alt=media&token=cb15d0ce-a16a-4edd-a638-a32e40d095b9"),
+        option: .init(
+            tags: ["共通タグ1"]
+        )
     ),
     Item(
-        imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/black_cocoon_denim.jpeg?alt=media&token=e5cbade5-b60a-4c36-b69e-128600e34498")
+        imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/black_cocoon_denim.jpeg?alt=media&token=e5cbade5-b60a-4c36-b69e-128600e34498"),
+        option: .init(
+            tags: ["共通タグ1"]
+        )
     ),
     Item(
         imageSource: .url("https://firebasestorage.googleapis.com/v0/b/closet-app-649ec.appspot.com/o/Dr_Martens_3hole.jpg?alt=media&token=044e31d3-0cfd-436f-95df-e7b7ad0956a9"),
         option: .init(
             name: "Dr.Martens　1461 3ホール 10085001",
             category: .shoes,
+            tags: ["ドレスシューズ", "Dr. Martnes", "マーチン", "きれいめ", "ブーツ", "雨の日", "共通タグ1"],
             purchasedPrice: 25_300,
             sourceUrl: "https://zozo.jp/shop/jackandmarie/goods/67932863/?did=113101990",
             originalCategoryPath: ["シューズ", "その他シューズ"],
