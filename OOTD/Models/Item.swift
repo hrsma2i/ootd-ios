@@ -44,43 +44,45 @@ struct Item: Hashable, Identifiable {
         var originalDescription: String?
     }
 
+    private init(id: String, imageSource: ImageSource, thumbnailSource: ImageSource, option: Option, createdAt: Date? = nil, updatedAt: Date? = nil) {
+        self.id = id
+        self.imageSource = imageSource
+        self.thumbnailSource = imageSource
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.name = option.name
+        self.category = option.category
+        self.purchasedPrice = option.purchasedPrice
+        self.purchasedOn = option.purchasedOn
+        self.sourceUrl = option.sourceUrl
+        self.originalCategoryPath = option.originalCategoryPath
+        self.originalColor = option.originalColor
+        self.originalBrand = option.originalBrand
+        self.originalSize = option.originalSize
+        self.originalDescription = option.originalDescription
+    }
+
     // create
     init(imageSource: ImageSource, option: Option = .init()) {
-        id = UUID().uuidString
-        self.imageSource = imageSource
-        thumbnailSource = self.imageSource
-
-        name = option.name
-        category = option.category
-        purchasedPrice = option.purchasedPrice
-        purchasedOn = option.purchasedOn
         // createdAt, updatedAt は ItemStore で書き込み時にセットする
-        sourceUrl = option.sourceUrl
-        originalCategoryPath = option.originalCategoryPath
-        originalColor = option.originalColor
-        originalBrand = option.originalBrand
-        originalSize = option.originalSize
-        originalDescription = option.originalDescription
+        self.init(
+            id: UUID().uuidString,
+            imageSource: imageSource,
+            thumbnailSource: imageSource,
+            option: option
+        )
     }
 
     // read
     init(id: String, createdAt: Date, updatedAt: Date, option: Option = .init()) {
-        self.id = id
-        imageSource = .applicatinoSupport(Item.generateImagePath(id, size: Item.imageSize))
-        thumbnailSource = .applicatinoSupport(Item.generateImagePath(id, size: Item.thumbnailSize))
-
-        name = option.name
-        category = option.category
-        purchasedPrice = option.purchasedPrice
-        purchasedOn = option.purchasedOn
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
-        sourceUrl = option.sourceUrl
-        originalCategoryPath = option.originalCategoryPath
-        originalColor = option.originalColor
-        originalBrand = option.originalBrand
-        originalSize = option.originalSize
-        originalDescription = option.originalDescription
+        self.init(
+            id: id,
+            imageSource: .applicatinoSupport(Item.generateImagePath(id, size: Item.imageSize)),
+            thumbnailSource: .applicatinoSupport(Item.generateImagePath(id, size: Item.thumbnailSize)),
+            option: option,
+            createdAt: createdAt,
+            updatedAt: updatedAt
+        )
     }
 
     var imagePath: String {
