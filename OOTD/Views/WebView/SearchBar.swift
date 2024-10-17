@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SearchBar: View {
     @Binding var text: String
+    var placeholder: String = "Google で検索 / URL を入力"
     var onSubmit: (String) -> Void = { _ in }
 
     var body: some View {
@@ -17,7 +18,7 @@ struct SearchBar: View {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(color)
 
-            TextField("Google で検索 / URL を入力", text: $text)
+            TextField(placeholder, text: $text)
                 .onSubmit {
                     let url: String
                     if text.hasPrefix("https://") {

@@ -34,6 +34,7 @@ struct ItemGrid: HashableView {
 
     @State private var isSelectable: Bool
     @State private var isAlertPresented = false
+    @State private var searchText: String = ""
 
     private static let defaultTab = ItemGridTab(
         name: "すべて",
@@ -57,7 +58,18 @@ struct ItemGrid: HashableView {
     }
 
     func tabItems(_ tab: ItemGridTab) -> [Item] {
-        tab.apply(itemStore.items)
+        var items = itemStore.items
+        let keyword = searchText.lowercased()
+
+        if keyword != "" {
+            items = items.filter { item in
+                item.name.lowercased().contains(keyword)
+                    || item.originalDescription?.lowercased().contains(keyword) ?? false
+                    || item.originalBrand?.lowercased().contains(keyword) ?? false
+            }
+        }
+
+        return tab.apply(items)
     }
 
     // TODO: TabStore を作って、そこから読み書きする
@@ -80,10 +92,15 @@ struct ItemGrid: HashableView {
     }
 
     var sortButton: some View {
-        RoundRectangleButton(
-            text: "並べ替え",
-            systemName: "arrow.up.arrow.down"
-        ) {}
+        Button {} label: {
+            VStack {
+                Image(systemName: "arrow.up.arrow.down")
+                    .font(.system(size: 20))
+                Text("並べ替え")
+                    .font(.system(size: 8))
+            }
+            .foregroundColor(.gray)
+        }
     }
 
     var selectButton: some View {
@@ -144,30 +161,37 @@ struct ItemGrid: HashableView {
     }
 
     var bottomBar: some View {
-        VStack(spacing: 0) {
-            if !isOnlySelectable, isSelectable, !selected.isEmpty {
-                HStack {
-                    editButton
-                    Spacer()
+        VStack(spacing: 10) {
+            HStack {
+                if !isOnlySelectable, isSelectable, !selected.isEmpty {
                     deleteButton
+                    Spacer()
+                    editButton
+                } else {
+                    Spacer()
                 }
-                .background(.white.opacity(0.5))
-            }
 
-            ScrollView(.horizontal) {
-                HStack {
-                    if isOnlySelectable {
-                        decideButton
+                if isOnlySelectable {
+                    decideButton
+                } else {
+                    if isSelectable {
+                        cancelButton
                     } else {
-                        if isSelectable {
-                            cancelButton
-                        } else {
-                            selectButton
-                        }
+                        selectButton
                     }
-
-                    sortButton
                 }
+            }
+            .background(.white.opacity(0.5))
+
+            HStack {
+                SearchBar(text: $searchText, placeholder: "アイテム名を検索")
+                    .padding(7)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke()
+                            .foregroundColor(.init(gray: 0.8))
+                    }
+                sortButton
             }
         }
         .padding(10)
