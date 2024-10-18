@@ -19,6 +19,7 @@ struct OutfitDetail: HashableView {
 
     @State private var isAlertPresented = false
     @State private var isImagePickerPresented = false
+    @State private var isImageEditDialogPresented = false
     private let originalOutfit: Outfit
 
     init(outfit: Outfit, mode: DetailMode) {
@@ -40,36 +41,75 @@ struct OutfitDetail: HashableView {
             VStack {
                 Image(systemName: "camera.circle.fill")
                     .font(.system(size: 50))
-                Text("スナップ画像をアップロード")
+
+                Text("スナップ画像を設定")
                     .font(.system(size: 10))
             }
             .foregroundColor(.gray)
         }
     }
 
-    var snapImage: some View {
-        ZStack {
-            // なぜか、そのまま Button の label としてラップすると画面が真っ白になってしまうので、しかたなく ZStack で透明な四角形のボタンを被せる
-            if let imageSource = outfit.imageSource {
-                ImageCard(
-                    source: imageSource
-                )
-            } else {
-                imageEmptyView
-            }
+    var editImageButton: some View {
+        Button {
+            isImageEditDialogPresented = true
+        } label: {
+            let height: CGFloat = 40
+            let fontSize: CGFloat = 23
+            let padding: CGFloat = 10
+            return Circle().foregroundColor(.black).opacity(0.5).frame(height: height)
+                .overlay {
+                    Image(systemName: "pencil")
+                        .foregroundColor(.white)
+                        .font(.system(size: fontSize))
+                }
+                .padding(padding)
+        }
+    }
 
-            Button {
-                isImagePickerPresented = true
-            } label: {
-                Rectangle()
-                    .opacity(0)
+    var cropImageButton: some View {
+        Button("切り抜く") {
+            Task {
+                guard let originalImage = try await outfit.imageSource?.getUiImage() else { return }
+
+                navigation.path.append(
+                    ImageCropView(uiImage: originalImage) { editedImage in
+                        self.outfit = outfit
+                            .copyWith(\.imageSource, value: .uiImage(editedImage))
+                            .copyWith(\.thumbnailSource, value: .uiImage(editedImage))
+
+                        navigation.path.removeLast()
+                    }
+                )
             }
+        }
+    }
+
+    var changeImageButton: some View {
+        Button("画像を変更する") {
+            isImagePickerPresented = true
         }
     }
 
     var body: some View {
         ScrollView {
-            snapImage
+            // MARK: - バグ回避のための workaround
+
+            // 本当はこの部分を snapImage といったメソッドに切り出したいが、メソッドとして呼び出すと OutfitGrid から遷移できずに固まる。
+            // AspectRatioContainer と ZStack の相性が悪そう。
+            ZStack(alignment: .bottomTrailing) {
+                if let imageSource = outfit.imageSource {
+                    // 本当はこっちだけ ZStack でくくりたいが、そうすると OutfitGrid から遷移できずに固まる。
+                    ImageCard(
+                        source: imageSource
+                    )
+
+                    editImageButton
+                } else {
+                    imageEmptyView
+                }
+            }
+
+            // MARK: バグ回避のための workaround -
 
             SelectedItemsGrid(
                 items: $outfit.items
@@ -147,12 +187,17 @@ struct OutfitDetail: HashableView {
             }
         }
         .navigationDestination(for: ItemGrid.self) { $0 }
+        .navigationDestination(for: ImageCropView.self) { $0 }
+        .confirmationDialog("画像を編集する", isPresented: $isImageEditDialogPresented, titleVisibility: .visible) {
+            cropImageButton
+            changeImageButton
+        }
     }
 }
 
 #Preview {
     struct PreviewView: View {
-        @State private var isImageSourceNil: Bool = true
+        @State private var isImageSourceNil: Bool = false
 
         var body: some View {
             VStack {
