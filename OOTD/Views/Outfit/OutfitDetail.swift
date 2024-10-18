@@ -29,11 +29,8 @@ struct OutfitDetail: HashableView {
     }
 
     var hasChanges: Bool {
-        if mode == .create {
-            return true
-        } else {
-            return outfit != originalOutfit
-        }
+        // Item では画像が必須なので .create 時は必ず保存ボタンを表示したいが、 Outfit の場合はすべて空のときは保存ボタンを表示させたくないため .create / .update で表示条件を分けない
+        return outfit != originalOutfit
     }
 
     var imageEmptyView: some View {
