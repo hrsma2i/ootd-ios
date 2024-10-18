@@ -51,6 +51,17 @@ let sampleOutfits = [
     ),
     Outfit(
         items: [
+            "black_cocoon_denim",
+            "adadias_samba_naby",
+        ].compactMap { name in
+            sampleItems.filter {
+                guard case let .url(url) = $0.imageSource else { return false }
+                return url.contains(name)
+            }.first
+        }
+    ),
+    Outfit(
+        items: [
             "white_ma1",
             "3d_knit",
             "black_leather_pants",

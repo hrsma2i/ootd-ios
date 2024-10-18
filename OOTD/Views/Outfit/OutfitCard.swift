@@ -19,21 +19,19 @@ struct OutfitCard: View {
     let outfit: Outfit
     var isThumbnail: Bool = false
 
+    private let aspectRatio: CGFloat = 3 / 4
+
     var columns: Int {
         outfit.items.count <= 6 ? 2 : 3
     }
 
-    var collageAspectRatio: CGFloat? {
-        outfit.items.isEmpty ? 1 : nil
-    }
-
     var collage: some View {
-        AspectRatioContainer(aspectRatio: collageAspectRatio) {
+        AspectRatioContainer(aspectRatio: aspectRatio) {
             LazyVGrid(
                 columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: columns),
                 spacing: 0
             ) {
-                ForEach(outfit.items, id: \.self) { item in
+                ForEach(outfit.items.prefix(9), id: \.self) { item in
                     ItemCard(
                         item: item,
                         isThumbnail: true,
@@ -41,7 +39,7 @@ struct OutfitCard: View {
                     )
                 }
             }
-            .padding(12)
+            .padding(20)
         }
         .background(.white)
     }
@@ -49,7 +47,8 @@ struct OutfitCard: View {
     var body: some View {
         if let imageSource = outfit.imageSource {
             ImageCard(
-                source: imageSource
+                source: imageSource,
+                aspectRatio: aspectRatio
             )
         } else {
             collage
