@@ -105,6 +105,7 @@
 		88B012AD2CC1341E00CD9153 /* EditableTagListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012AC2CC1341E00CD9153 /* EditableTagListView.swift */; };
 		88B012B12CC15F0900CD9153 /* SchemaV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012B02CC15F0900CD9153 /* SchemaV5.swift */; };
 		88B012B32CC15F2600CD9153 /* SchemaV5+ItemDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012B22CC15F2600CD9153 /* SchemaV5+ItemDTO.swift */; };
+		88B012B72CC22FCB00CD9153 /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012B62CC22FCB00CD9153 /* IconButton.swift */; };
 		88B2BCE92C7E0E89008F45B7 /* SwiftDataItemDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B2BCE82C7E0E89008F45B7 /* SwiftDataItemDataSource.swift */; };
 		88C00C3E2CAD7DF9007D83FF /* ACarousel in Frameworks */ = {isa = PBXBuildFile; productRef = 88C00C3D2CAD7DF9007D83FF /* ACarousel */; };
 		88CD55942C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55932C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift */; };
@@ -235,6 +236,7 @@
 		88B012AC2CC1341E00CD9153 /* EditableTagListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableTagListView.swift; sourceTree = "<group>"; };
 		88B012B02CC15F0900CD9153 /* SchemaV5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV5.swift; sourceTree = "<group>"; };
 		88B012B22CC15F2600CD9153 /* SchemaV5+ItemDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SchemaV5+ItemDTO.swift"; sourceTree = "<group>"; };
+		88B012B62CC22FCB00CD9153 /* IconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconButton.swift; sourceTree = "<group>"; };
 		88B2BCE82C7E0E89008F45B7 /* SwiftDataItemDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataItemDataSource.swift; sourceTree = "<group>"; };
 		88CD55932C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemAddSelectWebSiteScreen.swift; sourceTree = "<group>"; };
 		88CD55972C8749E800A9B78A /* WebViewManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewManager.swift; sourceTree = "<group>"; };
@@ -451,6 +453,7 @@
 				886232852C7CC71F00A1802D /* WrappedLayout.swift */,
 				889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */,
 				88B012AC2CC1341E00CD9153 /* EditableTagListView.swift */,
+				88B012B62CC22FCB00CD9153 /* IconButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -761,6 +764,7 @@
 				886232982C7CC78B00A1802D /* ItemDeleteConfirmOutfitsSheet.swift in Sources */,
 				883FCB432C9B25690001DAAF /* ImageSource.swift in Sources */,
 				886232662C7CC32900A1802D /* OutfitCondition.swift in Sources */,
+				88B012B72CC22FCB00CD9153 /* IconButton.swift in Sources */,
 				883FCB3D2C986B060001DAAF /* SearchBar.swift in Sources */,
 				88004E272CB430B800A80A80 /* ZozoPurchaseHistory.swift in Sources */,
 				889F34FC2CBF991100C5BD65 /* ItemGridTab.swift in Sources */,

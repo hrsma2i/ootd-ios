@@ -23,14 +23,6 @@ struct OutfitGrid: View {
         outfitStore.filterAndSort(outfitStore.outfits, by: condition)
     }
 
-    var addButton: some View {
-        AddButton {
-            navigation.path.append(OutfitDetail(
-                outfit: Outfit(items: []), mode: .create
-            ))
-        }
-    }
-
     func outfitCard(_ outfit: Outfit) -> some View {
         Button {
             if isSelectable {
@@ -64,8 +56,19 @@ struct OutfitGrid: View {
         }
     }
 
+    var addButton: some View {
+        footerButton(
+            text: "追加",
+            systemName: "plus"
+        ) {
+            navigation.path.append(OutfitDetail(
+                outfit: Outfit(items: []), mode: .create
+            ))
+        }
+    }
+
     var filterButton: some View {
-        RoundRectangleButton(
+        footerButton(
             text: "絞り込み",
             systemName: "line.horizontal.3.decrease"
         ) {
@@ -76,23 +79,23 @@ struct OutfitGrid: View {
     }
 
     var sortButton: some View {
-        RoundRectangleButton(
+        footerButton(
             text: "並べ替え",
             systemName: "arrow.up.arrow.down"
         ) {}
     }
 
     var selectButton: some View {
-        RoundRectangleButton(
+        footerButton(
             text: "選択",
-            systemName: "checkmark.square"
+            systemName: "checkmark.square.fill"
         ) {
             isSelectable = true
         }
     }
 
     var cancelButton: some View {
-        RoundRectangleButton(
+        footerButton(
             text: "戻る",
             systemName: "arrow.uturn.left"
         ) {
@@ -102,57 +105,64 @@ struct OutfitGrid: View {
     }
 
     var deleteButton: some View {
-        RoundRectangleButton(
-            text: "削除",
+        footerButton(
+            text: "一括削除",
             systemName: "trash.fill",
-            color: .red
+            color: Color(red: 255 / 255, green: 117 / 255, blue: 117 / 255)
         ) {
             isAlertPresented = true
         }
     }
 
+    func footerButton(text: String, systemName: String, color: Color = .white, action: @escaping () -> Void = {}) -> some View {
+        IconButton(
+            text: text,
+            systemName: systemName,
+            color: color,
+            action: action
+        )
+        .frame(width: 60)
+    }
+
     var bottomBar: some View {
-        VStack {
-            Spacer()
-            HStack {
-                if isSelectable {
-                    VStack(alignment: .trailing) {
-                        if !selected.isEmpty {
-                            HStack {
-                                deleteButton
-                                Spacer()
-                            }
-                        }
-                        HStack {
-                            Spacer()
-                            sortButton
-                            filterButton
-                            cancelButton
-                        }
-                    }
-                } else {
-                    Spacer()
-                    sortButton
-                    filterButton
-                    selectButton
+        HStack(spacing: 0) {
+            if isSelectable {
+                if !selected.isEmpty {
+                    deleteButton
                 }
+                cancelButton
+            } else {
+                addButton
+                selectButton
             }
-            .padding(10)
-            .background(.white.opacity(0.5))
+            sortButton
+            filterButton
         }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 10)
+        .background {
+            RoundedRectangle(cornerRadius: 15)
+                .foregroundColor(.accent)
+                .shadow(radius: 3)
+        }
+        .padding(.trailing, 10)
+        .padding(.bottom, 7)
     }
 
     var body: some View {
-        return ZStack {
-            MasonryGrid(
-                columns: 2,
-                data: 0 ..< outfits.count + 1
-            ) { index in
-                if index == 0 {
-                    addButton
-                } else {
-                    outfitCard(outfits[index - 1])
+        let spacing: CGFloat = 2
+        return ZStack(alignment: .bottomTrailing) {
+            ScrollView {
+                LazyVGrid(
+                    columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: 2),
+                    spacing: spacing
+                ) {
+                    ForEach(outfits, id: \.self) { outfit in
+                        outfitCard(outfit)
+                    }
                 }
+                .padding(.bottom, 70)
+                .padding(spacing)
             }
             .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
 

@@ -178,19 +178,13 @@ struct ItemGrid: HashableView {
     }
 
     func footerButton(text: String, systemName: String, color: Color = .white, action: @escaping () -> Void = {}) -> some View {
-        Button(action: action) {
-            VStack(spacing: 5) {
-                Image(systemName: systemName)
-                    .font(.system(size: 15))
-
-                Text(text)
-                    .font(.system(size: 10))
-                    .bold()
-            }
-            .bold()
-            .foregroundColor(color)
-            .frame(width: 60)
-        }
+        IconButton(
+            text: text,
+            systemName: systemName,
+            color: color,
+            action: action
+        )
+        .frame(width: 60)
     }
 
     var innerFooter: some View {
@@ -209,9 +203,9 @@ struct ItemGrid: HashableView {
                     if isSelectable {
                         cancelButton
                     } else {
+                        addButton
                         selectButton
                     }
-                    addButton
                 }
 
                 sortButton
