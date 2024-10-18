@@ -50,19 +50,26 @@ struct OutfitDetail: HashableView {
     }
 
     var editImageButton: some View {
-        Button {
-            isImageEditDialogPresented = true
-        } label: {
-            let height: CGFloat = 40
-            let fontSize: CGFloat = 23
-            let padding: CGFloat = 10
-            return Circle().foregroundColor(.black).opacity(0.5).frame(height: height)
-                .overlay {
-                    Image(systemName: "pencil")
-                        .foregroundColor(.white)
-                        .font(.system(size: fontSize))
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+
+                Button {
+                    isImageEditDialogPresented = true
+                } label: {
+                    let height: CGFloat = 40
+                    let fontSize: CGFloat = 23
+                    let padding: CGFloat = 10
+                    return Circle().foregroundColor(.black).opacity(0.5).frame(height: height)
+                        .overlay {
+                            Image(systemName: "pencil")
+                                .foregroundColor(.white)
+                                .font(.system(size: fontSize))
+                        }
+                        .padding(padding)
                 }
-                .padding(padding)
+            }
         }
     }
 
@@ -90,22 +97,75 @@ struct OutfitDetail: HashableView {
         }
     }
 
+    func backWithAlertIfChanged() {
+        if hasChanges {
+            isAlertPresented = true
+        } else {
+            navigation.path.removeLast()
+        }
+    }
+
+    @ViewBuilder
+    func backButton(isEmpty: Bool = false) -> some View {
+        if isEmpty {
+            VStack {
+                HStack {
+                    Button {
+                        backWithAlertIfChanged()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 20))
+                            .fontWeight(.bold)
+                            .foregroundColor(.gray)
+                    }
+                    .padding(20)
+
+                    Spacer()
+                }
+                Spacer()
+            }
+        } else {
+            ZStack(alignment: .topLeading) {
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.black.opacity(0.15), Color.clear]),
+                    startPoint: .init(x: 0.0, y: 0.0),
+                    endPoint: .init(x: 0.0, y: 0.4)
+                )
+                .allowsHitTesting(false)
+
+                Button {
+                    backWithAlertIfChanged()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20))
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                }
+                .padding(20)
+            }
+        }
+    }
+
     var body: some View {
         ScrollView {
             // MARK: - バグ回避のための workaround
 
             // 本当はこの部分を snapImage といったメソッドに切り出したいが、メソッドとして呼び出すと OutfitGrid から遷移できずに固まる。
             // AspectRatioContainer と ZStack の相性が悪そう。
-            ZStack(alignment: .bottomTrailing) {
+            ZStack {
                 if let imageSource = outfit.imageSource {
                     // 本当はこっちだけ ZStack でくくりたいが、そうすると OutfitGrid から遷移できずに固まる。
                     ImageCard(
                         source: imageSource
                     )
 
+                    backButton()
+
                     editImageButton
                 } else {
                     imageEmptyView
+
+                    backButton(isEmpty: true)
                 }
             }
 
@@ -116,8 +176,8 @@ struct OutfitDetail: HashableView {
             )
         }
         .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
-        .navigationTitle("コーデ詳細")
-        .toolbarTitleDisplayMode(.inline)
+        .navigationBarHidden(true)
+        .edgeSwipe { backWithAlertIfChanged() }
         .toolbar {
             if hasChanges {
                 ToolbarItem(placement: .bottomBar) {
@@ -140,24 +200,6 @@ struct OutfitDetail: HashableView {
                         }
 
                         navigation.path.removeLast()
-                    }
-                }
-            }
-        }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    if hasChanges {
-                        isAlertPresented = true
-                    } else {
-                        navigation.path.removeLast()
-                    }
-                } label: {
-                    HStack(spacing: 2) {
-                        Image(systemName: "chevron.left") // set image here
-                            .fontWeight(.bold)
-                        Text("Back")
                     }
                 }
             }
