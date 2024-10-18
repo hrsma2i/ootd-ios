@@ -155,29 +155,29 @@ struct OutfitDetail: HashableView {
         @State private var isImageSourceNil: Bool = true
 
         var body: some View {
-            DependencyInjector {
-                VStack {
-                    Button {
-                        isImageSourceNil.toggle()
-                    } label: {
-                        Text("imageSource 有/無 切り替え")
-                    }
+            VStack {
+                if isImageSourceNil {
+                    OutfitDetail(
+                        outfit: sampleOutfits.filter { $0.imageSource == nil }.first!,
+                        mode: .update
+                    )
+                } else {
+                    OutfitDetail(
+                        outfit: sampleOutfits.filter { $0.imageSource != nil }.first!,
+                        mode: .update
+                    )
+                }
 
-                    if isImageSourceNil {
-                        OutfitDetail(
-                            outfit: sampleOutfits.filter { $0.imageSource == nil }.first!,
-                            mode: .update
-                        )
-                    } else {
-                        OutfitDetail(
-                            outfit: sampleOutfits.filter { $0.imageSource != nil }.first!,
-                            mode: .update
-                        )
-                    }
+                Button {
+                    isImageSourceNil.toggle()
+                } label: {
+                    Text("imageSource 有/無 切り替え")
                 }
             }
         }
     }
 
-    return PreviewView()
+    return DependencyInjector {
+        PreviewView()
+    }
 }
