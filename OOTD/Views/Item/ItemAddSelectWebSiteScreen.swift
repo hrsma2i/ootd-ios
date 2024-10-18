@@ -149,7 +149,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                 navigation.path.append(webView(url))
             }
 
-            Section("以下からインポート") {
+            Section("購入履歴からインポート") {
                 siteButton("ZOZOTOWN", url: "https://zozo.jp/sp/_member/orderhistory/?ohid=&ohtype=2&baship=2&ohterm=\(currentYear)")
                 siteButton("GU", url: "https://www.gu-global.com/jp/ja/member/purchase/history")
                 siteButton("UNIQLO", url: "https://www.uniqlo.com/jp/ja/member/purchase/history")
