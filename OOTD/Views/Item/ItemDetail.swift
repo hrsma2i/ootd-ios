@@ -362,28 +362,27 @@ struct ItemDetail: HashableView {
     }
     
     func tagsRow(geometry: GeometryProxy) -> some View {
-        HStack {
-            if items.count == 1, let item = items.first {
-                EditableTagListView(
-                    tags: Binding(
-                        get: { item.tags },
-                        set: { newTags in
-                            update(\.tags, newTags, only: item)
-                        }
-                    ),
-                    geometry: geometry
-                )
-            } else {
-                EditableTagListView(
-                    tags: Binding(
-                        get: { commonTags() },
-                        set: { newTags in
-                            update(\.tags, newTags)
-                        }
-                    ),
-                    geometry: geometry
-                )
-            }
+        let tags: Binding<[String]>
+        if items.count == 1, let item = items.first {
+            tags = Binding(
+                get: { item.tags },
+                set: { newTags in
+                    update(\.tags, newTags, only: item)
+                }
+            )
+        } else {
+            tags = Binding(
+                get: { commonTags() },
+                set: { newTags in
+                    update(\.tags, newTags)
+                }
+            )
+        }
+        
+        return HStack {
+            EditableTagListView(
+                tags: tags
+            )
             Spacer()
         }
     }

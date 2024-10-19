@@ -9,34 +9,20 @@ import SwiftUI
 
 struct EditableTagListView: View {
     @Binding var tags: [String]
-    let geometry: GeometryProxy
     let spacing: CGFloat = 3
 
     @State private var editingText: String = ""
 
     var body: some View {
-        WrappedLayout(
-            data: Array(0 ... tags.count),
-            geometry: geometry,
-            spacing: spacing
-        ) { index in
-            if index == tags.count {
-                TextField("タグを入力...", text: $editingText)
-                    .onSubmit {
-                        tags.append(editingText)
-                        editingText = ""
-                    }
-                    .frame(maxWidth: 100)
-                    .padding(spacing)
-            } else {
-//                AspectRatioContainer {
+        FlowLayout {
+            ForEach($tags, id: \.self) { tag in
                 HStack {
-                    Text(tags[index])
+                    Text(tag.wrappedValue)
                         .lineLimit(1)
                         .truncationMode(.middle)
 
                     Button {
-                        tags.remove(at: index)
+                        tags = tags.filter { $0 != tag.wrappedValue }
                     } label: {
                         Image(systemName: "multiply")
                     }
@@ -49,10 +35,15 @@ struct EditableTagListView: View {
                         .stroke()
                         .foregroundColor(.accent)
                 }
-//                }
-//                .background(.accent)
-//                .cornerRadius(20)
             }
+
+            TextField("タグを入力...", text: $editingText)
+                .onSubmit {
+                    tags.append(editingText)
+                    editingText = ""
+                }
+                .frame(maxWidth: 100)
+                .padding(spacing)
         }
     }
 }
@@ -66,14 +57,14 @@ struct EditableTagListView: View {
             "PlayStation 2",
             "PlayStation 3",
             "PlayStation 4 PlayStation 4 PlayStation 4",
+            "This so long text that is over the parent width. This so long text that is over the parent width. This so long text that is over the parent width.",
         ]
 
         var body: some View {
-            GeometryReader { geometry in
+            GeometryReader { _ in
                 ScrollView {
                     EditableTagListView(
-                        tags: $tags,
-                        geometry: geometry
+                        tags: $tags
                     )
                 }
             }

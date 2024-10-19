@@ -83,7 +83,6 @@
 		8862328A2C7CC71F00A1802D /* ImageCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862327C2C7CC71E00A1802D /* ImageCard.swift */; };
 		8862328B2C7CC71F00A1802D /* OutfitCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862327D2C7CC71E00A1802D /* OutfitCard.swift */; };
 		886232912C7CC71F00A1802D /* OutfitsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232832C7CC71F00A1802D /* OutfitsRow.swift */; };
-		886232932C7CC71F00A1802D /* WrappedLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232852C7CC71F00A1802D /* WrappedLayout.swift */; };
 		886232982C7CC78B00A1802D /* ItemDeleteConfirmOutfitsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232972C7CC78B00A1802D /* ItemDeleteConfirmOutfitsSheet.swift */; };
 		8862329A2C7CC7A900A1802D /* CategorySelectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232992C7CC7A900A1802D /* CategorySelectSheet.swift */; };
 		886232A32C7CC7D100A1802D /* Array+asyncMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862329B2C7CC7D100A1802D /* Array+asyncMap.swift */; };
@@ -102,6 +101,7 @@
 		889F34FC2CBF991100C5BD65 /* ItemGridTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889F34FB2CBF991100C5BD65 /* ItemGridTab.swift */; };
 		889F34FE2CBFDAC600C5BD65 /* ScrollableTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */; };
 		88A350032CA86DD300021FBF /* SelectWebItemScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A350022CA86DD300021FBF /* SelectWebItemScreen.swift */; };
+		88AAE5AC2CC3EF5200DAEC0F /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AAE5AB2CC3EF5200DAEC0F /* FlowLayout.swift */; };
 		88B012AD2CC1341E00CD9153 /* EditableTagListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012AC2CC1341E00CD9153 /* EditableTagListView.swift */; };
 		88B012B12CC15F0900CD9153 /* SchemaV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012B02CC15F0900CD9153 /* SchemaV5.swift */; };
 		88B012B32CC15F2600CD9153 /* SchemaV5+ItemDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012B22CC15F2600CD9153 /* SchemaV5+ItemDTO.swift */; };
@@ -214,7 +214,6 @@
 		8862327C2C7CC71E00A1802D /* ImageCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCard.swift; sourceTree = "<group>"; };
 		8862327D2C7CC71E00A1802D /* OutfitCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitCard.swift; sourceTree = "<group>"; };
 		886232832C7CC71F00A1802D /* OutfitsRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitsRow.swift; sourceTree = "<group>"; };
-		886232852C7CC71F00A1802D /* WrappedLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrappedLayout.swift; sourceTree = "<group>"; };
 		886232972C7CC78B00A1802D /* ItemDeleteConfirmOutfitsSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDeleteConfirmOutfitsSheet.swift; sourceTree = "<group>"; };
 		886232992C7CC7A900A1802D /* CategorySelectSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategorySelectSheet.swift; sourceTree = "<group>"; };
 		8862329B2C7CC7D100A1802D /* Array+asyncMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+asyncMap.swift"; sourceTree = "<group>"; };
@@ -233,6 +232,7 @@
 		889F34FB2CBF991100C5BD65 /* ItemGridTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemGridTab.swift; sourceTree = "<group>"; };
 		889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollableTabView.swift; sourceTree = "<group>"; };
 		88A350022CA86DD300021FBF /* SelectWebItemScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectWebItemScreen.swift; sourceTree = "<group>"; };
+		88AAE5AB2CC3EF5200DAEC0F /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		88B012AC2CC1341E00CD9153 /* EditableTagListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableTagListView.swift; sourceTree = "<group>"; };
 		88B012B02CC15F0900CD9153 /* SchemaV5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV5.swift; sourceTree = "<group>"; };
 		88B012B22CC15F2600CD9153 /* SchemaV5+ItemDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SchemaV5+ItemDTO.swift"; sourceTree = "<group>"; };
@@ -394,6 +394,7 @@
 		886232392C7CBF1500A1802D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				88AAE5AA2CC3EF3800DAEC0F /* Layouts */,
 				88CD559B2C8749E800A9B78A /* WebView */,
 				886232B72C7CCAE700A1802D /* Outfit */,
 				886232B62C7CCADD00A1802D /* Item */,
@@ -450,7 +451,6 @@
 				884CF65D2C82018400250026 /* RoundRectangleButton.swift */,
 				886232832C7CC71F00A1802D /* OutfitsRow.swift */,
 				8862327B2C7CC71E00A1802D /* SelectedItemsGrid.swift */,
-				886232852C7CC71F00A1802D /* WrappedLayout.swift */,
 				889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */,
 				88B012AC2CC1341E00CD9153 /* EditableTagListView.swift */,
 				88B012B62CC22FCB00CD9153 /* IconButton.swift */,
@@ -555,6 +555,14 @@
 				886232AF2C7CCA7800A1802D /* OutfitGrid.swift */,
 			);
 			path = Outfit;
+			sourceTree = "<group>";
+		};
+		88AAE5AA2CC3EF3800DAEC0F /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				88AAE5AB2CC3EF5200DAEC0F /* FlowLayout.swift */,
+			);
+			path = Layouts;
 			sourceTree = "<group>";
 		};
 		88CD559B2C8749E800A9B78A /* WebView */ = {
@@ -756,6 +764,7 @@
 				88CD55A22C874E9800A9B78A /* SelectWebImageScreen.swift in Sources */,
 				886232A72C7CC7D100A1802D /* View+functionalModifier.swift in Sources */,
 				88004E2D2CB4363700A80A80 /* ZozoItemDetail.swift in Sources */,
+				88AAE5AC2CC3EF5200DAEC0F /* FlowLayout.swift in Sources */,
 				886232892C7CC71F00A1802D /* SelectedItemsGrid.swift in Sources */,
 				88CD55942C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift in Sources */,
 				88B2BCE92C7E0E89008F45B7 /* SwiftDataItemDataSource.swift in Sources */,
@@ -811,7 +820,6 @@
 				883FCB4B2CA5A8BE0001DAAF /* SchemaV1.swift in Sources */,
 				886232532C7CC2A700A1802D /* ItemStore.swift in Sources */,
 				884CF6562C7F670200250026 /* LocalStorage.swift in Sources */,
-				886232932C7CC71F00A1802D /* WrappedLayout.swift in Sources */,
 				886232102C7CBDD900A1802D /* OOTDApp.swift in Sources */,
 				8862326C2C7CC53C00A1802D /* DependencyInjector.swift in Sources */,
 				88004E2B2CB4337300A80A80 /* UniqloPurchaseHistory.swift in Sources */,
