@@ -78,38 +78,35 @@ struct SelectWebItemScreen: HashableView {
             )
         } label: {
             ImageCard(
-                source: item.thumbnailSource,
-                aspectRatio: 1,
-                contentMode: .fill
+                source: item.thumbnailSource
             )
         }
     }
 
     @ViewBuilder
     func imageCard(_ item: Item) -> some View {
-        ZStack(alignment: .topTrailing) {
-            imageCard_(item)
-
-            Button {
-                if selected.contains(item) {
-                    selected.removeAll { $0.id == item.id }
-                } else {
-                    selected.append(item)
-                }
-            } label: {
-                if selected.contains(item) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.accentColor)
-                        .font(.system(size: 25))
-                        .padding(5)
-                } else {
-                    Image(systemName: "checkmark.circle")
-                        .foregroundColor(.gray)
-                        .font(.system(size: 25))
-                        .padding(5)
+        imageCard_(item)
+            .overlay(alignment: .topLeading) {
+                Button {
+                    if selected.contains(item) {
+                        selected.removeAll { $0.id == item.id }
+                    } else {
+                        selected.append(item)
+                    }
+                } label: {
+                    Group {
+                        if selected.contains(item) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.accentColor)
+                        } else {
+                            Image(systemName: "checkmark.circle")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .font(.system(size: 25))
+                    .padding(5)
                 }
             }
-        }
     }
 
     var body: some View {
@@ -119,12 +116,13 @@ struct SelectWebItemScreen: HashableView {
             Divider()
 
             ScrollView {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: 3), spacing: spacing) {
+                MasonryVGrid(columns: 3, spacing: spacing) {
                     ForEach(items, id: \.self) { item in
                         imageCard(item)
                     }
                 }
             }
+            .background(Color(gray: 0.9))
 
             Divider()
 

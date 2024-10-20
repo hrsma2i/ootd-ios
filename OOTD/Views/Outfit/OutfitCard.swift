@@ -57,11 +57,14 @@ struct OutfitCard: View {
 }
 
 #Preview {
-    MasonryGrid(
-        columns: 2,
-        data: sampleOutfits
-    ) {
-        OutfitCard(outfit: $0)
+    ScrollView {
+        LazyVGrid(
+            columns: Array(repeating: GridItem(), count: 2)
+        ) {
+            ForEach(sampleOutfits, id: \.self) {
+                OutfitCard(outfit: $0)
+            }
+        }
     }
     .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
 }

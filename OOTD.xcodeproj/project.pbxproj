@@ -48,7 +48,6 @@
 		883FCB552CA5AA720001DAAF /* SchemaV2+ItemDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883FCB542CA5AA720001DAAF /* SchemaV2+ItemDTO.swift */; };
 		884CF6562C7F670200250026 /* LocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6552C7F670200250026 /* LocalStorage.swift */; };
 		884CF65E2C82018400250026 /* RoundRectangleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF65D2C82018400250026 /* RoundRectangleButton.swift */; };
-		884CF66C2C8201F900250026 /* MasonryGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6602C8201F800250026 /* MasonryGrid.swift */; };
 		884CF6702C8201F900250026 /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6642C8201F900250026 /* AddButton.swift */; };
 		884CF6762C8201F900250026 /* AspectRatioContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF66A2C8201F900250026 /* AspectRatioContainer.swift */; };
 		886064112C906B45003C7001 /* SwiftDataOutfitDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886064102C906B45003C7001 /* SwiftDataOutfitDataSource.swift */; };
@@ -102,6 +101,7 @@
 		889F34FE2CBFDAC600C5BD65 /* ScrollableTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */; };
 		88A350032CA86DD300021FBF /* SelectWebItemScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A350022CA86DD300021FBF /* SelectWebItemScreen.swift */; };
 		88AAE5AC2CC3EF5200DAEC0F /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AAE5AB2CC3EF5200DAEC0F /* FlowLayout.swift */; };
+		88AAE5AE2CC4908F00DAEC0F /* MasonryVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AAE5AD2CC4908F00DAEC0F /* MasonryVGrid.swift */; };
 		88B012AD2CC1341E00CD9153 /* EditableTagListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012AC2CC1341E00CD9153 /* EditableTagListView.swift */; };
 		88B012B12CC15F0900CD9153 /* SchemaV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012B02CC15F0900CD9153 /* SchemaV5.swift */; };
 		88B012B32CC15F2600CD9153 /* SchemaV5+ItemDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012B22CC15F2600CD9153 /* SchemaV5+ItemDTO.swift */; };
@@ -177,7 +177,6 @@
 		884CF6542C7F5F1800250026 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		884CF6552C7F670200250026 /* LocalStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorage.swift; sourceTree = "<group>"; };
 		884CF65D2C82018400250026 /* RoundRectangleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundRectangleButton.swift; sourceTree = "<group>"; };
-		884CF6602C8201F800250026 /* MasonryGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasonryGrid.swift; sourceTree = "<group>"; };
 		884CF6642C8201F900250026 /* AddButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddButton.swift; sourceTree = "<group>"; };
 		884CF66A2C8201F900250026 /* AspectRatioContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AspectRatioContainer.swift; sourceTree = "<group>"; };
 		886064102C906B45003C7001 /* SwiftDataOutfitDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataOutfitDataSource.swift; sourceTree = "<group>"; };
@@ -233,6 +232,7 @@
 		889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollableTabView.swift; sourceTree = "<group>"; };
 		88A350022CA86DD300021FBF /* SelectWebItemScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectWebItemScreen.swift; sourceTree = "<group>"; };
 		88AAE5AB2CC3EF5200DAEC0F /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
+		88AAE5AD2CC4908F00DAEC0F /* MasonryVGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasonryVGrid.swift; sourceTree = "<group>"; };
 		88B012AC2CC1341E00CD9153 /* EditableTagListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableTagListView.swift; sourceTree = "<group>"; };
 		88B012B02CC15F0900CD9153 /* SchemaV5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV5.swift; sourceTree = "<group>"; };
 		88B012B22CC15F2600CD9153 /* SchemaV5+ItemDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SchemaV5+ItemDTO.swift"; sourceTree = "<group>"; };
@@ -445,7 +445,6 @@
 			children = (
 				884CF6642C8201F900250026 /* AddButton.swift */,
 				884CF66A2C8201F900250026 /* AspectRatioContainer.swift */,
-				884CF6602C8201F800250026 /* MasonryGrid.swift */,
 				8862327C2C7CC71E00A1802D /* ImageCard.swift */,
 				8862327A2C7CC71E00A1802D /* ImagePicker.swift */,
 				884CF65D2C82018400250026 /* RoundRectangleButton.swift */,
@@ -561,6 +560,7 @@
 			isa = PBXGroup;
 			children = (
 				88AAE5AB2CC3EF5200DAEC0F /* FlowLayout.swift */,
+				88AAE5AD2CC4908F00DAEC0F /* MasonryVGrid.swift */,
 			);
 			path = Layouts;
 			sourceTree = "<group>";
@@ -751,6 +751,7 @@
 				886232A82C7CC7D100A1802D /* View+if.swift in Sources */,
 				88B012AD2CC1341E00CD9153 /* EditableTagListView.swift in Sources */,
 				88004E2F2CB4374E00A80A80 /* ZozoPage.swift in Sources */,
+				88AAE5AE2CC4908F00DAEC0F /* MasonryVGrid.swift in Sources */,
 				88004E4F2CBE35EF00A80A80 /* LocalJsonOutfitDataSource.swift in Sources */,
 				883FCB412C99C82E0001DAAF /* View+edgeSwipe.swift in Sources */,
 				88CD55A02C8749E800A9B78A /* WKWebView+.swift in Sources */,
@@ -796,7 +797,6 @@
 				886232492C7CC14300A1802D /* Item.swift in Sources */,
 				881B6B5A2CA5BAC7008274FF /* SchemaV3.swift in Sources */,
 				88CD559D2C8749E800A9B78A /* WebViewManager.swift in Sources */,
-				884CF66C2C8201F900250026 /* MasonryGrid.swift in Sources */,
 				881B6B642CA6D49A008274FF /* Date+initYMD.swift in Sources */,
 				883B54492C8DD5B8007DB1E8 /* CropView.swift in Sources */,
 				88B012B32CC15F2600CD9153 /* SchemaV5+ItemDTO.swift in Sources */,

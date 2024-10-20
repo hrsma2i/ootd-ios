@@ -42,9 +42,7 @@ struct SelectWebImageScreen: HashableView {
 
     func imageCard_(_ url: String) -> some View {
         ImageCard(
-            source: .url(url),
-            aspectRatio: 1,
-            contentMode: .fill
+            source: .url(url)
         ) { _ in
             imageURLs = imageURLs.filter { imageUrl in
                 imageUrl != url
@@ -63,32 +61,31 @@ struct SelectWebImageScreen: HashableView {
                 imageCard_(url)
             }
         } else {
-            ZStack(alignment: .topTrailing) {
-                imageCard_(url)
-
-                Button {
-                    if selected.contains(url) {
-                        selected.removeAll { $0 == url }
-                    } else {
-                        if selected.count >= limit {
-                            selected.removeFirst()
+            imageCard_(url)
+                .overlay(alignment: .topLeading) {
+                    Button {
+                        if selected.contains(url) {
+                            selected.removeAll { $0 == url }
+                        } else {
+                            if selected.count >= limit {
+                                selected.removeFirst()
+                            }
+                            selected.append(url)
                         }
-                        selected.append(url)
-                    }
-                } label: {
-                    if selected.contains(url) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.accentColor)
-                            .font(.system(size: 25))
-                            .padding(5)
-                    } else {
-                        Image(systemName: "checkmark.circle")
-                            .foregroundColor(.gray)
-                            .font(.system(size: 25))
-                            .padding(5)
+                    } label: {
+                        Group {
+                            if selected.contains(url) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.accentColor)
+                            } else {
+                                Image(systemName: "checkmark.circle")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .font(.system(size: 25))
+                        .padding(5)
                     }
                 }
-            }
         }
     }
 
@@ -99,12 +96,13 @@ struct SelectWebImageScreen: HashableView {
             Divider()
 
             ScrollView {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: 3), spacing: spacing) {
+                MasonryVGrid(columns: 3, spacing: spacing) {
                     ForEach(imageURLs, id: \.self) { url in
                         imageCard(url)
                     }
                 }
             }
+            .background(Color(gray: 0.9))
 
             Divider()
 
