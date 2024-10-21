@@ -12,7 +12,8 @@ private let logger = getLogger(#file)
 extension Outfit: Codable {
     enum CodingKeys: String, CodingKey {
         case id,
-             itemIds = "item_ids"
+             itemIds = "item_ids",
+             tags
     }
 
     func encode(to encoder: Encoder) throws {
@@ -26,6 +27,7 @@ extension Outfit: Codable {
         id = try container.decode(String.self, forKey: .id)
         itemIDs = try container.decode([String].self, forKey: .itemIds)
         items = []
+        tags = try container.decode([String].self, forKey: .tags)
     }
 }
 

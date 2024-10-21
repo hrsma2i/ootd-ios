@@ -17,24 +17,27 @@ struct Outfit: Hashable {
     var itemIDs: [String]
     var imageSource: ImageSource?
     var thumbnailSource: ImageSource?
+    var tags: [String]
 
     // create
-    init(items: [Item], imageSource: ImageSource? = nil) {
+    init(items: [Item], imageSource: ImageSource? = nil, tags: [String] = []) {
         id = UUID().uuidString
         self.items = items
         itemIDs = []
         self.imageSource = imageSource
         thumbnailSource = self.imageSource
+        self.tags = tags
     }
 
     // read
     // Item と異なり、imageSource が nil になることもあるため
-    init(id: String, itemIds: [String], imageSource: ImageSource?, thumbnailSource: ImageSource?) {
+    init(id: String, itemIds: [String], imageSource: ImageSource?, thumbnailSource: ImageSource?, tags: [String] = []) {
         self.id = id
         itemIDs = itemIds
         items = []
         self.imageSource = imageSource
         self.thumbnailSource = thumbnailSource
+        self.tags = tags
     }
 
     static let imageSize: CGFloat = 500

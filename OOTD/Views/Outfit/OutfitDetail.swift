@@ -171,6 +171,12 @@ struct OutfitDetail: HashableView {
             SelectedItemsGrid(
                 items: $outfit.items
             )
+
+            HStack {
+                EditableTagListView(tags: $outfit.tags)
+                Spacer()
+            }
+            .padding(10)
         }
         .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
         .navigationBarHidden(true)

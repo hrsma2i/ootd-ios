@@ -117,6 +117,9 @@
 		88CD55A72C8755E700A9B78A /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 88CD55A62C8755E700A9B78A /* SwiftSoup */; };
 		88E3DC112CC682030006D201 /* OutfitDTOV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC102CC682030006D201 /* OutfitDTOV5.swift */; };
 		88E3DC192CC686830006D201 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC182CC686830006D201 /* main.swift */; };
+		88E3DC362CC68B690006D201 /* ItemDTOV6.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC322CC68B690006D201 /* ItemDTOV6.swift */; };
+		88E3DC372CC68B690006D201 /* OutfitDTOV6.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC332CC68B690006D201 /* OutfitDTOV6.swift */; };
+		88E3DC382CC68B690006D201 /* SchemaV6.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC342CC68B690006D201 /* SchemaV6.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -261,6 +264,9 @@
 		88E3DC102CC682030006D201 /* OutfitDTOV5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutfitDTOV5.swift; sourceTree = "<group>"; };
 		88E3DC162CC686830006D201 /* updateSwiftDataSchema */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = updateSwiftDataSchema; sourceTree = BUILT_PRODUCTS_DIR; };
 		88E3DC182CC686830006D201 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		88E3DC322CC68B690006D201 /* ItemDTOV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDTOV6.swift; sourceTree = "<group>"; };
+		88E3DC332CC68B690006D201 /* OutfitDTOV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitDTOV6.swift; sourceTree = "<group>"; };
+		88E3DC342CC68B690006D201 /* SchemaV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaV6.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -320,6 +326,7 @@
 		883FCB4C2CA5A8C20001DAAF /* Schemas */ = {
 			isa = PBXGroup;
 			children = (
+				88E3DC352CC68B690006D201 /* V6 */,
 				88AAE5B62CC64F5200DAEC0F /* V5 */,
 				88AAE5B52CC64F3900DAEC0F /* V4 */,
 				88AAE5B42CC64F3600DAEC0F /* V3 */,
@@ -666,6 +673,16 @@
 			path = updateSwiftDataSchema;
 			sourceTree = "<group>";
 		};
+		88E3DC352CC68B690006D201 /* V6 */ = {
+			isa = PBXGroup;
+			children = (
+				88E3DC322CC68B690006D201 /* ItemDTOV6.swift */,
+				88E3DC332CC68B690006D201 /* OutfitDTOV6.swift */,
+				88E3DC342CC68B690006D201 /* SchemaV6.swift */,
+			);
+			path = V6;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -835,6 +852,7 @@
 				886232462C7CC11700A1802D /* Logger.swift in Sources */,
 				881B6B602CA650A7008274FF /* ItemDTOV4.swift in Sources */,
 				886232432C7CC0E900A1802D /* HashableView.swift in Sources */,
+				88E3DC372CC68B690006D201 /* OutfitDTOV6.swift in Sources */,
 				881B6B5C2CA5BAD6008274FF /* ItemDTOV3.swift in Sources */,
 				886232A82C7CC7D100A1802D /* View+if.swift in Sources */,
 				88E3DC112CC682030006D201 /* OutfitDTOV5.swift in Sources */,
@@ -895,6 +913,7 @@
 				8862325D2C7CC2FF00A1802D /* OutfitDataSource.swift in Sources */,
 				889F34FE2CBFDAC600C5BD65 /* ScrollableTabView.swift in Sources */,
 				88216DC12CAED676005B53BA /* GuItemDetail.swift in Sources */,
+				88E3DC382CC68B690006D201 /* SchemaV6.swift in Sources */,
 				88004E312CB43BF400A80A80 /* DefaultPurchaseHistory.swift in Sources */,
 				886232AD2C7CC9F500A1802D /* RootView.swift in Sources */,
 				886064112C906B45003C7001 /* SwiftDataOutfitDataSource.swift in Sources */,
@@ -910,6 +929,7 @@
 				886232532C7CC2A700A1802D /* ItemStore.swift in Sources */,
 				884CF6562C7F670200250026 /* LocalStorage.swift in Sources */,
 				886232102C7CBDD900A1802D /* OOTDApp.swift in Sources */,
+				88E3DC362CC68B690006D201 /* ItemDTOV6.swift in Sources */,
 				8862326C2C7CC53C00A1802D /* DependencyInjector.swift in Sources */,
 				88004E2B2CB4337300A80A80 /* UniqloPurchaseHistory.swift in Sources */,
 				886232572C7CC2EE00A1802D /* OutfitStore.swift in Sources */,

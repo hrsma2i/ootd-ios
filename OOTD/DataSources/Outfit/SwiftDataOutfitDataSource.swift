@@ -12,7 +12,7 @@ import UIKit
 
 private let logger = getLogger(#file)
 
-typealias OutfitDTO = SchemaV5.OutfitDTO
+typealias OutfitDTO = SchemaV6.OutfitDTO
 
 final class SwiftDataOutfitDataSource: OutfitDataSource {
     var context: ModelContext

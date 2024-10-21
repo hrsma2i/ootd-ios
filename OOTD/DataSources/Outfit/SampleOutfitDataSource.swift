@@ -33,7 +33,12 @@ let sampleOutfits = [
                 guard case let .url(url) = $0.imageSource else { return false }
                 return url.contains(name)
             }.first
-        }
+        },
+        tags: [
+            "アメカジ",
+            "バギーパンツ",
+            "古着",
+        ]
     ),
     Outfit(
         items: [
@@ -72,7 +77,13 @@ let sampleOutfits = [
                 return url.contains(name)
             }.first
         },
-        imageSource: .url("https://images.wear2.jp/coordinate/rliwyvYY/0r5BWoTz/1679204559_500.jpg")
+        imageSource: .url("https://images.wear2.jp/coordinate/rliwyvYY/0r5BWoTz/1679204559_500.jpg"),
+        tags: [
+            "3Dニット",
+            "古着ストリート",
+            "ワラビーブーツ",
+            "Clarks",
+        ]
     ),
     Outfit(
         items: [],

@@ -11,7 +11,7 @@ import UIKit
 
 private let logger = getLogger(#file)
 
-typealias ItemDTO = SchemaV5.ItemDTO
+typealias ItemDTO = SchemaV6.ItemDTO
 
 final class SwiftDataItemDataSource: ItemDataSource {
     var context: ModelContext
