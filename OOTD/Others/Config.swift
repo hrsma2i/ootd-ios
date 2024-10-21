@@ -33,4 +33,12 @@ enum Config {
         return "unknown"
         #endif
     }
+
+    static var IS_DEBUG_MODE: Bool {
+        guard let value = Bundle.main.object(forInfoDictionaryKey: "Debug Mode") as? String else {
+            fatalError("failed to get Debug Mode from Info.plist")
+        }
+
+        return value == "true"
+    }
 }

@@ -1,11 +1,11 @@
 //
-//  sample.xcconfig
+//  production.xcconfig
 //  OOTD
 //
-//  Created by Hiroshi Matsui on 2024/08/28.
+//  Created by Hiroshi Matsui on 2024/10/21.
 //
 
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
-DATA_SOURCE = sample
-IS_DEBUG_MODE = true
+DATA_SOURCE = swiftData
+IS_DEBUG_MODE = false

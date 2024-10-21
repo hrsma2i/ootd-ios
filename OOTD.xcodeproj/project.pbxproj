@@ -267,6 +267,7 @@
 		88E3DC322CC68B690006D201 /* ItemDTOV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDTOV6.swift; sourceTree = "<group>"; };
 		88E3DC332CC68B690006D201 /* OutfitDTOV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitDTOV6.swift; sourceTree = "<group>"; };
 		88E3DC342CC68B690006D201 /* SchemaV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaV6.swift; sourceTree = "<group>"; };
+		88E3DC392CC68FA10006D201 /* production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = production.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -341,6 +342,7 @@
 			children = (
 				884CF6522C7F597600250026 /* sample.xcconfig */,
 				884CF6532C7F599300250026 /* swiftData.xcconfig */,
+				88E3DC392CC68FA10006D201 /* production.xcconfig */,
 			);
 			path = xcconfig;
 			sourceTree = "<group>";

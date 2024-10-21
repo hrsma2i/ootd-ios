@@ -4,6 +4,8 @@
 <dict>
 	<key>Data Source</key>
 	<string>$(DATA_SOURCE)</string>
+	<key>Debug Mode</key>
+	<string>$(IS_DEBUG_MODE)</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 </dict>

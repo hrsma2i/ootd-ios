@@ -400,27 +400,24 @@ struct ItemDetail: HashableView {
                         
                         section {
                             categoryRow
-                        }
-                        
-                        if items.count == 1, let item = items.first {
-                            section {
-                                priceRow(item)
-                            }
                             
-                            section {
+                            if items.count == 1, let item = items.first {
+                                Divider()
+                                priceRow(item)
+                                Divider()
                                 propertyRow("購入日", item.purchasedOn?.toString(hasTime: false) ?? "----/--/--") {}
                                 Divider()
                                 propertyRow("作成日時", item.createdAt?.toString() ?? "----/--/-- --:--:--")
                                 Divider()
                                 propertyRow("更新日時", item.updatedAt?.toString() ?? "----/--/-- --:--:--")
-                            }
-                            
-                            if let urlString = item.sourceUrl {
-                                section {
+                                if let urlString = item.sourceUrl {
+                                    Divider()
                                     urlRow(urlString)
                                 }
                             }
+                        }
                             
+                        if Config.IS_DEBUG_MODE, items.count == 1, let item = items.first {
                             section {
                                 propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
                                 Divider()

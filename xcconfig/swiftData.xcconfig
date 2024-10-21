@@ -8,3 +8,4 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 DATA_SOURCE = swiftData
+IS_DEBUG_MODE = true

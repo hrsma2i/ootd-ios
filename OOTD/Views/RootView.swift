@@ -28,10 +28,12 @@ struct RootView: View {
                         Label("アイテム", systemImage: "list.bullet")
                     }
 
-                UserInfoScreen()
-                    .tabItem {
-                        Label("ユーザー", systemImage: "person.crop.circle")
-                    }
+                if Config.IS_DEBUG_MODE {
+                    UserInfoScreen()
+                        .tabItem {
+                            Label("ユーザー", systemImage: "person.crop.circle")
+                        }
+                }
             }
             .navigationDestination(for: ItemDetail.self) { $0 }
         }
