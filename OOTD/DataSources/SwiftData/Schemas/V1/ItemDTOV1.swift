@@ -1,5 +1,5 @@
 //
-//  V2.swift
+//  ItemDTO.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/09/26.
@@ -8,13 +8,12 @@
 import Foundation
 import SwiftData
 
-extension SchemaV2 {
+extension SchemaV1 {
     @Model
     class ItemDTO {
         typealias OutfitDTO = SwiftDataOutfitDataSource.OutfitDTO
 
         @Attribute(.unique) var id: String
-        var name: String = ""
         var category: String
         var sourceUrl: String?
         @Relationship(inverse: \OutfitDTO.items) var outfits: [OutfitDTO]
@@ -24,7 +23,6 @@ extension SchemaV2 {
         // この原因は id に @Attribute(.unique) 制約があるから。なので、すでに保存済み（update, delete）の場合は container から取得する。
         init(item: Item) {
             id = item.id
-            name = item.name
             category = item.category.rawValue
             sourceUrl = item.sourceUrl
             outfits = []

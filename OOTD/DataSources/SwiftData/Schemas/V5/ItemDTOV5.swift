@@ -1,14 +1,14 @@
 //
-//  SchemaV4+ItemDTO.swift
+//  ItemDTO.swift
 //  OOTD
 //
-//  Created by Hiroshi Matsui on 2024/09/27.
+//  Created by Hiroshi Matsui on 2024/10/18.
 //
 
 import Foundation
 import SwiftData
 
-extension SchemaV4 {
+extension SchemaV5 {
     @Model
     class ItemDTO {
         typealias OutfitDTO = SwiftDataOutfitDataSource.OutfitDTO
@@ -16,6 +16,7 @@ extension SchemaV4 {
         @Attribute(.unique) var id: String
         var name: String = ""
         var category: String
+        var tags: [String] = []
         var purchasedPrice: Int?
         var purchasedOn: Date?
         var createdAt: Date = Date()
@@ -37,6 +38,7 @@ extension SchemaV4 {
             id = item.id
             name = item.name
             category = item.category.rawValue
+            tags = item.tags
             purchasedPrice = item.purchasedPrice
             purchasedOn = item.purchasedOn
             createdAt = item.createdAt!
@@ -53,6 +55,7 @@ extension SchemaV4 {
         func update(from item: Item) {
             name = item.name
             category = item.category.rawValue
+            tags = item.tags
             purchasedPrice = item.purchasedPrice
             purchasedOn = item.purchasedOn
             updatedAt = item.updatedAt!
@@ -77,6 +80,7 @@ extension SchemaV4 {
                 option: .init(
                     name: name,
                     category: category,
+                    tags: tags,
                     purchasedPrice: purchasedPrice,
                     purchasedOn: purchasedOn,
                     sourceUrl: sourceUrl,

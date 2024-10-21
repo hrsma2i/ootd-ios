@@ -1,5 +1,5 @@
 //
-//  SchemeV3+ItemDTO.swift
+// ItemDTO.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/09/26.
@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-extension SchemaV3 {
+extension SchemaV2 {
     @Model
     class ItemDTO {
         typealias OutfitDTO = SwiftDataOutfitDataSource.OutfitDTO
@@ -17,8 +17,6 @@ extension SchemaV3 {
         var name: String = ""
         var category: String
         var sourceUrl: String?
-        var createdAt: Date = Date()
-        var updatedAt: Date = Date()
         @Relationship(inverse: \OutfitDTO.items) var outfits: [OutfitDTO]
 
         // create 時のみ使う。 update, delete 時は .fetchSingle() を使う。
@@ -29,26 +27,7 @@ extension SchemaV3 {
             name = item.name
             category = item.category.rawValue
             sourceUrl = item.sourceUrl
-            createdAt = item.createdAt!
-            updatedAt = item.updatedAt!
             outfits = []
-        }
-
-        func toItem() throws -> Item {
-            guard let category = Category(rawValue: category) else {
-                throw "[ItemDTO.toItem] failed to convert ItemDTO to Item. unknown category: \(category)"
-            }
-
-            return Item(
-                id: id,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                option: .init(
-                    name: name,
-                    category: category,
-                    sourceUrl: sourceUrl
-                )
-            )
         }
     }
 }
