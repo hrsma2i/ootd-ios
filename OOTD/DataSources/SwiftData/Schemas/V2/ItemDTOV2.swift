@@ -11,7 +11,7 @@ import SwiftData
 extension SchemaV2 {
     @Model
     class ItemDTO {
-        typealias OutfitDTO = SwiftDataOutfitDataSource.OutfitDTO
+        typealias OutfitDTO = SchemaV5.OutfitDTO
 
         @Attribute(.unique) var id: String
         var name: String = ""

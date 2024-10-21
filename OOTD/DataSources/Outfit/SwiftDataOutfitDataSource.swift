@@ -12,60 +12,9 @@ import UIKit
 
 private let logger = getLogger(#file)
 
+typealias OutfitDTO = SchemaV5.OutfitDTO
+
 final class SwiftDataOutfitDataSource: OutfitDataSource {
-    @Model
-    class OutfitDTO {
-        init(id: String, items: [ItemDTO]) {
-            self.id = id
-            self.items = items
-        }
-
-        @Attribute(.unique) var id: String
-        var items: [ItemDTO]
-
-        // create 時のみ使う。 update, delete 時は .fetchSingle() を使う
-        // なぜなら、すでに container 内に保存済みのDTOと同じ id のDTOを生成すると、 DTO.id の参照時に EXC_BREAKPOINT のエラーが発生してしまうから。
-        // この原因は id に @Attribute(.unique) 制約があるから。なので、すでに保存済み（update, delete）の場合は container から取得する。
-        init(outfit: Outfit) {
-            id = outfit.id
-
-            items = []
-            do {
-                items = try SwiftDataItemDataSource.shared.fetch(items: outfit.items)
-            } catch {
-                logger.error("\(error)")
-            }
-        }
-
-        func toOutfit() throws -> Outfit {
-            let imagePath = Outfit.generateImagePath(id, size: Outfit.imageSize)
-            let thumbnailPath = Outfit.generateImagePath(id, size: Outfit.thumbnailSize)
-
-            let imageSource: ImageSource?
-            let thumbnailSource: ImageSource?
-            do {
-                // check there are images in the storage
-                let _ = try LocalStorage.applicationSupport.loadImage(from: imagePath)
-                let _ = try LocalStorage.applicationSupport.loadImage(from: thumbnailPath)
-                imageSource = .applicatinoSupport(imagePath)
-                thumbnailSource = .applicatinoSupport(thumbnailPath)
-            } catch {
-                imageSource = nil
-                thumbnailSource = nil
-            }
-
-            return Outfit(
-                id: id,
-                // そのまま toItem による [Item] を items に渡したい
-                itemIds: items.compactMapWithErrorLog(logger) { itemDto in
-                    try itemDto.toItem().id
-                },
-                imageSource: imageSource,
-                thumbnailSource: thumbnailSource
-            )
-        }
-    }
-
     var context: ModelContext
 
     @MainActor
@@ -136,7 +85,7 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
             do {
                 let dto = try fetchSingle(outfit: outfit)
 
-                dto.items = try SwiftDataItemDataSource.shared.fetch(items: outfit.items)
+                try dto.update(from: outfit)
 
                 context.insert(dto)
                 logger.debug("[SwiftData] insert updated outfit id=\(dto.id)")

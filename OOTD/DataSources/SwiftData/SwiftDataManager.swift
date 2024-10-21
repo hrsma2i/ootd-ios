@@ -18,7 +18,7 @@ class SwiftDataManager {
         container = try! ModelContainer(
             for:
             ItemDTO.self,
-            SwiftDataOutfitDataSource.OutfitDTO.self,
+            OutfitDTO.self,
             migrationPlan: MigrationPlan.self
         )
 
