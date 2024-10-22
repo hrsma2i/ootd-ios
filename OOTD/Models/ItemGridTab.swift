@@ -14,16 +14,22 @@ struct ItemGridTab: Hashable {
 
     enum Sort: String, CaseIterable {
         case category = "カテゴリー順"
-        case purchasedOn = "購入日順"
-        case createdAt = "作成日時順"
+        case purchasedOnDescendant = "購入日が新しい順"
+        case purchasedOnAscendant = "購入日が古い順"
+        case createdAtDescendant = "作成日時が新しい順"
+        case createdAtAscendant = "作成日時が古い順"
 
         func compare(_ lhs: Item, _ rhs: Item) -> Bool {
             switch self {
             case .category:
                 lhs.category < rhs.category
-            case .purchasedOn:
+            case .purchasedOnDescendant:
+                !compareOptional(lhs.purchasedOn, rhs.purchasedOn)
+            case .purchasedOnAscendant:
                 compareOptional(lhs.purchasedOn, rhs.purchasedOn)
-            case .createdAt:
+            case .createdAtDescendant:
+                !compareOptional(lhs.createdAt, rhs.createdAt)
+            case .createdAtAscendant:
                 compareOptional(lhs.createdAt, rhs.createdAt)
             }
         }

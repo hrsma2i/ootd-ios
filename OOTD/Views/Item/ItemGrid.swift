@@ -92,7 +92,7 @@ struct ItemGrid: HashableView {
         ] + categories.map { category in
             ItemGridTab(
                 name: category.rawValue,
-                sort: .purchasedOn,
+                sort: .purchasedOnDescendant,
                 filter: .init(
                     category: category
                 )
@@ -314,7 +314,7 @@ struct ItemGrid: HashableView {
                 }
             }
         }
-        .presentationDetents([.fraction(0.3)]) // 高さを調整
+        .presentationDetents([.fraction(0.4)]) // 高さを調整
     }
 
     var body: some View {
