@@ -143,42 +143,60 @@ struct OutfitDetail: HashableView {
         }
     }
 
+    func section(@ViewBuilder content: @escaping () -> some View) -> some View {
+        ItemDetail.section(content: content)
+    }
+
+    func propertyRow(_ key: String, _ value: String, action: (() -> Void)? = nil) -> some View {
+        ItemDetail.propertyRow(key, value, action: action)
+    }
+
     var body: some View {
         ScrollView {
             // MARK: - バグ回避のための workaround
 
             // 本当はこの部分を snapImage といったメソッドに切り出したいが、メソッドとして呼び出すと OutfitGrid から遷移できずに固まる。
             // AspectRatioContainer と ZStack の相性が悪そう。
-            ZStack {
-                if let imageSource = outfit.imageSource {
-                    // 本当はこっちだけ ZStack でくくりたいが、そうすると OutfitGrid から遷移できずに固まる。
-                    ImageCard(
-                        source: imageSource
-                    )
+            VStack(spacing: 1) {
+                ZStack {
+                    if let imageSource = outfit.imageSource {
+                        // 本当はこっちだけ ZStack でくくりたいが、そうすると OutfitGrid から遷移できずに固まる。
+                        ImageCard(
+                            source: imageSource
+                        )
 
-                    backButton()
+                        backButton()
 
-                    editImageButton
-                } else {
-                    imageEmptyView
+                        editImageButton
+                    } else {
+                        imageEmptyView
 
-                    backButton(isEmpty: true)
+                        backButton(isEmpty: true)
+                    }
+                }
+
+                // MARK: バグ回避のための workaround -
+
+                SelectedItemsGrid(
+                    items: $outfit.items
+                )
+            }
+            .background(Color(gray: 0.95))
+
+            VStack(spacing: 20) {
+                HStack {
+                    EditableTagListView(tags: $outfit.tags)
+                    Spacer()
+                }
+
+                section {
+                    propertyRow("作成日時", outfit.createdAt?.toString() ?? "----/--/-- --:--:--")
+                    Divider()
+                    propertyRow("更新日時", outfit.updatedAt?.toString() ?? "----/--/-- --:--:--")
                 }
             }
-
-            // MARK: バグ回避のための workaround -
-
-            SelectedItemsGrid(
-                items: $outfit.items
-            )
-
-            HStack {
-                EditableTagListView(tags: $outfit.tags)
-                Spacer()
-            }
-            .padding(10)
+            .padding(20)
         }
-        .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
         .navigationBarHidden(true)
         .edgeSwipe { backWithAlertIfChanged() }
         .toolbar {
@@ -242,27 +260,47 @@ struct OutfitDetail: HashableView {
 
 #Preview {
     struct PreviewView: View {
-        @State private var isImageSourceNil: Bool = false
+        @State private var isSheetPresented: Bool = false
+        @State private var outfit: Outfit = outfits.values.first!
+        static let outfits: [String: Outfit] = [
+            "画像あり、日付なし": sampleOutfits.filter { $0.imageSource != nil }.first!,
+            "画像あり、日付あり": sampleOutfits.filter { $0.imageSource != nil }.first!
+                .copyWith(\.createdAt, value: Date())
+                .copyWith(\.updatedAt, value: Date()),
+            "画像なし": sampleOutfits.filter { $0.imageSource == nil }.first!,
+        ]
 
         var body: some View {
             VStack {
-                if isImageSourceNil {
-                    OutfitDetail(
-                        outfit: sampleOutfits.filter { $0.imageSource == nil }.first!,
-                        mode: .update
-                    )
-                } else {
-                    OutfitDetail(
-                        outfit: sampleOutfits.filter { $0.imageSource != nil }.first!,
-                        mode: .update
-                    )
+                // ForEach + if がないと再描画されないため
+                ForEach(PreviewView.outfits.keys.sorted(), id: \.self) { key in
+                    if PreviewView.outfits[key] == outfit {
+                        OutfitDetail(
+                            outfit: outfit,
+                            mode: .update
+                        )
+                    }
                 }
 
                 Button {
-                    isImageSourceNil.toggle()
+                    isSheetPresented = true
                 } label: {
-                    Text("imageSource 有/無 切り替え")
+                    Text("その他のオプションの表示")
                 }
+                .padding(7)
+            }
+            .sheet(isPresented: $isSheetPresented) {
+                Form {
+                    ForEach(PreviewView.outfits.keys.sorted(), id: \.self) { key in
+                        Button {
+                            outfit = PreviewView.outfits[key]!
+                            isSheetPresented = false
+                        } label: {
+                            Text(key)
+                        }
+                    }
+                }
+                .presentationDetents([.fraction(0.3)])
             }
         }
     }

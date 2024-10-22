@@ -30,6 +30,13 @@ class OutfitStore: ObservableObject {
     }
 
     func create(_ outfits: [Outfit]) async throws {
+        let now = Date()
+        let outfits = outfits.map {
+            $0
+                .copyWith(\.createdAt, value: now)
+                .copyWith(\.updatedAt, value: now)
+        }
+
         Task {
             try await dataSource.create(outfits)
         }
@@ -72,7 +79,13 @@ class OutfitStore: ObservableObject {
             return
         }
 
-        for outfit in outfitsToUpdate {
+        let now = Date()
+        let updatedOutfits = outfitsToUpdate.map {
+            $0
+                .copyWith(\.updatedAt, value: now)
+        }
+
+        for outfit in updatedOutfits {
             if let index = outfits.firstIndex(where: { $0.id == outfit.id }) {
                 logger.debug("update local outfit at index=\(index)")
                 DispatchQueue.main.async {
@@ -82,7 +95,7 @@ class OutfitStore: ObservableObject {
         }
 
         Task {
-            try await dataSource.update(outfitsToUpdate)
+            try await dataSource.update(updatedOutfits)
         }
     }
 

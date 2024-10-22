@@ -17,6 +17,7 @@ enum MigrationPlan: SchemaMigrationPlan {
             SchemaV4.self,
             SchemaV5.self,
             SchemaV6.self,
+            SchemaV7.self,
         ]
     }
 
@@ -27,8 +28,14 @@ enum MigrationPlan: SchemaMigrationPlan {
             migrateV3toV4,
             migrateV4toV5,
             migrateV5toV6,
+            migrateV6toV7,
         ]
     }
+
+    static let migrateV6toV7: MigrationStage = .lightweight(
+        fromVersion: SchemaV6.self,
+        toVersion: SchemaV7.self
+    )
 
     static let migrateV5toV6: MigrationStage = .lightweight(
         fromVersion: SchemaV5.self,

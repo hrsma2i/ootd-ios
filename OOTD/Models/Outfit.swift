@@ -18,6 +18,8 @@ struct Outfit: Hashable {
     var imageSource: ImageSource?
     var thumbnailSource: ImageSource?
     var tags: [String]
+    var createdAt: Date?
+    var updatedAt: Date?
 
     // create
     init(items: [Item], imageSource: ImageSource? = nil, tags: [String] = []) {
@@ -27,17 +29,20 @@ struct Outfit: Hashable {
         self.imageSource = imageSource
         thumbnailSource = self.imageSource
         self.tags = tags
+        // createdAt, updatedAt は OutfitStore で書き込み時にセットする
     }
 
     // read
     // Item と異なり、imageSource が nil になることもあるため
-    init(id: String, itemIds: [String], imageSource: ImageSource?, thumbnailSource: ImageSource?, tags: [String] = []) {
+    init(id: String, itemIds: [String], imageSource: ImageSource?, thumbnailSource: ImageSource?, tags: [String] = [], createdAt: Date, updatedAt: Date) {
         self.id = id
         itemIDs = itemIds
         items = []
         self.imageSource = imageSource
         self.thumbnailSource = thumbnailSource
         self.tags = tags
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 
     static let imageSize: CGFloat = 500
