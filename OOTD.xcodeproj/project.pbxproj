@@ -120,6 +120,9 @@
 		88E3DC362CC68B690006D201 /* ItemDTOV6.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC322CC68B690006D201 /* ItemDTOV6.swift */; };
 		88E3DC372CC68B690006D201 /* OutfitDTOV6.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC332CC68B690006D201 /* OutfitDTOV6.swift */; };
 		88E3DC382CC68B690006D201 /* SchemaV6.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC342CC68B690006D201 /* SchemaV6.swift */; };
+		88E3DC3E2CC7D8FF0006D201 /* ItemDTOV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC3A2CC7D8FF0006D201 /* ItemDTOV7.swift */; };
+		88E3DC3F2CC7D8FF0006D201 /* OutfitDTOV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC3B2CC7D8FF0006D201 /* OutfitDTOV7.swift */; };
+		88E3DC402CC7D8FF0006D201 /* SchemaV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC3C2CC7D8FF0006D201 /* SchemaV7.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -268,6 +271,9 @@
 		88E3DC332CC68B690006D201 /* OutfitDTOV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitDTOV6.swift; sourceTree = "<group>"; };
 		88E3DC342CC68B690006D201 /* SchemaV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaV6.swift; sourceTree = "<group>"; };
 		88E3DC392CC68FA10006D201 /* production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = production.xcconfig; sourceTree = "<group>"; };
+		88E3DC3A2CC7D8FF0006D201 /* ItemDTOV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDTOV7.swift; sourceTree = "<group>"; };
+		88E3DC3B2CC7D8FF0006D201 /* OutfitDTOV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitDTOV7.swift; sourceTree = "<group>"; };
+		88E3DC3C2CC7D8FF0006D201 /* SchemaV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaV7.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,6 +333,7 @@
 		883FCB4C2CA5A8C20001DAAF /* Schemas */ = {
 			isa = PBXGroup;
 			children = (
+				88E3DC3D2CC7D8FF0006D201 /* V7 */,
 				88E3DC352CC68B690006D201 /* V6 */,
 				88AAE5B62CC64F5200DAEC0F /* V5 */,
 				88AAE5B52CC64F3900DAEC0F /* V4 */,
@@ -685,6 +692,16 @@
 			path = V6;
 			sourceTree = "<group>";
 		};
+		88E3DC3D2CC7D8FF0006D201 /* V7 */ = {
+			isa = PBXGroup;
+			children = (
+				88E3DC3A2CC7D8FF0006D201 /* ItemDTOV7.swift */,
+				88E3DC3B2CC7D8FF0006D201 /* OutfitDTOV7.swift */,
+				88E3DC3C2CC7D8FF0006D201 /* SchemaV7.swift */,
+			);
+			path = V7;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -884,6 +901,7 @@
 				883FCB432C9B25690001DAAF /* ImageSource.swift in Sources */,
 				886232662C7CC32900A1802D /* OutfitCondition.swift in Sources */,
 				88B012B72CC22FCB00CD9153 /* IconButton.swift in Sources */,
+				88E3DC3F2CC7D8FF0006D201 /* OutfitDTOV7.swift in Sources */,
 				883FCB3D2C986B060001DAAF /* SearchBar.swift in Sources */,
 				88004E272CB430B800A80A80 /* ZozoPurchaseHistory.swift in Sources */,
 				889F34FC2CBF991100C5BD65 /* ItemGridTab.swift in Sources */,
@@ -920,9 +938,11 @@
 				886232AD2C7CC9F500A1802D /* RootView.swift in Sources */,
 				886064112C906B45003C7001 /* SwiftDataOutfitDataSource.swift in Sources */,
 				883FCB3F2C99BB560001DAAF /* Color+gray.swift in Sources */,
+				88E3DC402CC7D8FF0006D201 /* SchemaV7.swift in Sources */,
 				883FCB512CA5A9A20001DAAF /* ItemDTOV1.swift in Sources */,
 				884CF65E2C82018400250026 /* RoundRectangleButton.swift in Sources */,
 				883FCB4E2CA5A8D30001DAAF /* MigrationPlan.swift in Sources */,
+				88E3DC3E2CC7D8FF0006D201 /* ItemDTOV7.swift in Sources */,
 				883FCB372C9671870001DAAF /* String+matches.swift in Sources */,
 				88B012B12CC15F0900CD9153 /* SchemaV5.swift in Sources */,
 				886064132C90790D003C7001 /* Sequence+compactMapWithErrorLog.swift in Sources */,
