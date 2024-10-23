@@ -54,24 +54,21 @@ struct ItemDetail: HashableView {
     }
     
     var saveButton: some View {
-        VStack {
-            Spacer()
-            RoundRectangleButton(
-                text: "保存",
-                systemName: "checkmark",
-                fontSize: 20
-            ) {
-                Task {
-                    switch mode {
-                    case .create:
-                        try await itemStore.create(items)
-                    case .update:
-                        try await itemStore.update(items, originalItems: originalItems)
-                    }
+        RoundRectangleButton(
+            text: "保存",
+            systemName: "checkmark",
+            fontSize: 20
+        ) {
+            Task {
+                switch mode {
+                case .create:
+                    try await itemStore.create(items)
+                case .update:
+                    try await itemStore.update(items, originalItems: originalItems)
                 }
-                
-                navigation.path.removeLast()
             }
+                
+            navigation.path.removeLast()
         }
     }
     
@@ -388,51 +385,50 @@ struct ItemDetail: HashableView {
     }
     
     var body: some View {
-        ZStack {
-            ScrollView {
-                imageArea
+        ScrollView {
+            imageArea
+                
+            VStack(spacing: 20) {
+                nameRow
                     
-                VStack(spacing: 20) {
-                    nameRow
+                tagsRow
+                    
+                section {
+                    categoryRow
                         
-                    tagsRow
-                        
-                    section {
-                        categoryRow
-                            
-                        if items.count == 1, let item = items.first {
+                    if items.count == 1, let item = items.first {
+                        Divider()
+                        priceRow(item)
+                        Divider()
+                        propertyRow("購入日", item.purchasedOn?.toString(hasTime: false) ?? "----/--/--") {}
+                        Divider()
+                        propertyRow("作成日時", item.createdAt?.toString() ?? "----/--/-- --:--:--")
+                        Divider()
+                        propertyRow("更新日時", item.updatedAt?.toString() ?? "----/--/-- --:--:--")
+                        if let urlString = item.sourceUrl {
                             Divider()
-                            priceRow(item)
-                            Divider()
-                            propertyRow("購入日", item.purchasedOn?.toString(hasTime: false) ?? "----/--/--") {}
-                            Divider()
-                            propertyRow("作成日時", item.createdAt?.toString() ?? "----/--/-- --:--:--")
-                            Divider()
-                            propertyRow("更新日時", item.updatedAt?.toString() ?? "----/--/-- --:--:--")
-                            if let urlString = item.sourceUrl {
-                                Divider()
-                                urlRow(urlString)
-                            }
-                        }
-                    }
-                            
-                    if Config.IS_DEBUG_MODE, items.count == 1, let item = items.first {
-                        section {
-                            propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
-                            Divider()
-                            propertyRow("カラー", item.originalColor ?? "-")
-                            Divider()
-                            propertyRow("ブランド", item.originalBrand ?? "-")
-                            Divider()
-                            propertyRow("サイズ", item.originalSize ?? "-")
-                            Divider()
-                            descriptionRow(item.originalDescription ?? "")
+                            urlRow(urlString)
                         }
                     }
                 }
-                .padding(20)
+                    
+                if Config.IS_DEBUG_MODE, items.count == 1, let item = items.first {
+                    section {
+                        propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
+                        Divider()
+                        propertyRow("カラー", item.originalColor ?? "-")
+                        Divider()
+                        propertyRow("ブランド", item.originalBrand ?? "-")
+                        Divider()
+                        propertyRow("サイズ", item.originalSize ?? "-")
+                        Divider()
+                        descriptionRow(item.originalDescription ?? "")
+                    }
+                }
             }
-
+            .padding(20)
+        }
+        .safeAreaInset(edge: .bottom) {
             if hasChanges {
                 saveButton
             }
