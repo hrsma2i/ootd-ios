@@ -167,17 +167,12 @@ struct OutfitGrid: View {
     }
 
     var selectSortSheet: some View {
-        Form {
-            ForEach(OutfitGridTab.Sort.allCases, id: \.self) { sort in
-                Button {
-                    tab.sort = sort
-                    activeSheet = nil
-                } label: {
-                    Text(sort.rawValue)
-                }
-            }
+        SelectSheet(
+            options: OutfitGridTab.Sort.allCases.map(\.rawValue)
+        ) { sort in
+            tab.sort = OutfitGridTab.Sort(rawValue: sort)!
+            activeSheet = nil
         }
-        .presentationDetents([.fraction(0.2)])
     }
 
     var body: some View {

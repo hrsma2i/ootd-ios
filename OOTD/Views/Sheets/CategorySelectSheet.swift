@@ -28,30 +28,18 @@ struct CategorySelectSheet: HashableView {
         return categories
     }
 
-    var height: CGFloat {
-        CGFloat(categories.count) / 15
-    }
-
-    func categoryRow(_ category: Category?) -> some View {
-        HStack {
-            Button {
-                onSelect(category)
-            } label: {
-                Text(category?.rawValue ?? "すべて")
-            }
-            Spacer()
-        }
-    }
-
     var body: some View {
-        Form {
-            Section("カテゴリー選択") {
-                ForEach(categories, id: \.self) { category in
-                    categoryRow(category)
+        SelectSheet(
+            options: categories.map { category in
+                guard let category else {
+                    return "すべて"
                 }
+
+                return category.rawValue
             }
+        ) {
+            onSelect(Category(rawValue: $0))
         }
-        .presentationDetents([.fraction(height)])
     }
 }
 

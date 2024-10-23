@@ -304,17 +304,12 @@ struct ItemGrid: HashableView {
     }
 
     var selectSortSheet: some View {
-        Form {
-            ForEach(ItemGridTab.Sort.allCases, id: \.self) { sort in
-                Button {
-                    sorter = sort
-                    activeSheet = nil
-                } label: {
-                    Text(sort.rawValue)
-                }
-            }
+        SelectSheet(
+            options: ItemGridTab.Sort.allCases.map(\.rawValue)
+        ) { sort in
+            sorter = ItemGridTab.Sort(rawValue: sort)!
+            activeSheet = nil
         }
-        .presentationDetents([.fraction(0.4)]) // 高さを調整
     }
 
     var body: some View {

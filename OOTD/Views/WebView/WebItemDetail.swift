@@ -203,15 +203,11 @@ struct WebItemDetail: HashableView {
     }
 
     func selectSheet(_ options: [String], key: WritableKeyPath<Item, String?>) -> some View {
-        Form {
-            ForEach(options, id: \.self) { value in
-                Button {
-                    item = item.copyWith(key, value: value)
-                    activeSheet = nil
-                } label: {
-                    Text(value)
-                }
-            }
+        SelectSheet(
+            options: options
+        ) { value in
+            item = item.copyWith(key, value: value)
+            activeSheet = nil
         }
     }
 
