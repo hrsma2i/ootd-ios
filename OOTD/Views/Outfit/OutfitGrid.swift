@@ -177,7 +177,7 @@ struct OutfitGrid: View {
                 }
             }
         }
-        .presentationDetents([.fraction(0.4)])
+        .presentationDetents([.fraction(0.2)])
     }
 
     var body: some View {
