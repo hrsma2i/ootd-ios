@@ -283,24 +283,24 @@ struct ItemGrid: HashableView {
     }
 
     var addOptionsSheet: some View {
-        // navigation や sheet を切り替えやすくするため他の View に切り出さない
-        VStack {
-            addOption(
-                "カメラロールから"
-            ) {
-                activeSheet = .imagePicker
-            }
+        enum AddOption: String, CaseIterable {
+            case cameraRoll = "カメラロールから"
+            case web = "Webから"
+        }
 
-            addOption(
-                "Webから"
-            ) {
+        return SelectSheet(
+            options: AddOption.allCases.map(\.rawValue)
+        ) {
+            switch AddOption(rawValue: $0)! {
+            case .cameraRoll:
+                activeSheet = .imagePicker
+            case .web:
                 activeSheet = nil
                 navigation.path.append(
                     ItemAddSelectWebSiteScreen()
                 )
             }
         }
-        .presentationDetents([.fraction(0.18)])
     }
 
     var selectSortSheet: some View {
