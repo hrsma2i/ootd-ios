@@ -17,10 +17,21 @@ struct OutfitGrid: View {
     @State private var isSelectable = false
     @State private var selected: [Outfit] = []
     @State private var isAlertPresented = false
-    @State private var condition = OutfitCondition()
+    @State private var tab = OutfitGridTab(
+        name: "すべて",
+        sort: .createdAtDescendant
+    )
+    @State private var activeSheet: Sheet?
+    enum Sheet: Int, Identifiable {
+        case selectSort
+
+        var id: Int {
+            rawValue
+        }
+    }
 
     var outfits: [Outfit] {
-        outfitStore.filterAndSort(outfitStore.outfits, by: condition)
+        tab.apply(outfitStore.outfits)
     }
 
     func outfitCard(_ outfit: Outfit) -> some View {
@@ -72,9 +83,13 @@ struct OutfitGrid: View {
             text: "絞り込み",
             systemName: "line.horizontal.3.decrease"
         ) {
-            navigation.path.append(OutfitConditionDetail(
-                condition: $condition
-            ))
+            navigation.path.append(
+                OutfitGridTabDetail(
+                    tab: tab
+                ) {
+                    tab = $0
+                }
+            )
         }
     }
 
@@ -82,7 +97,9 @@ struct OutfitGrid: View {
         footerButton(
             text: "並べ替え",
             systemName: "arrow.up.arrow.down"
-        ) {}
+        ) {
+            activeSheet = .selectSort
+        }
     }
 
     var selectButton: some View {
@@ -149,6 +166,20 @@ struct OutfitGrid: View {
         .padding(.bottom, 7)
     }
 
+    var selectSortSheet: some View {
+        Form {
+            ForEach(OutfitGridTab.Sort.allCases, id: \.self) { sort in
+                Button {
+                    tab.sort = sort
+                    activeSheet = nil
+                } label: {
+                    Text(sort.rawValue)
+                }
+            }
+        }
+        .presentationDetents([.fraction(0.4)])
+    }
+
     var body: some View {
         let spacing: CGFloat = 2
         return ZStack(alignment: .bottomTrailing) {
@@ -169,7 +200,7 @@ struct OutfitGrid: View {
             bottomBar
         }
         .navigationDestination(for: OutfitDetail.self) { $0 }
-        .navigationDestination(for: OutfitConditionDetail.self) { $0 }
+        .navigationDestination(for: OutfitGridTabDetail.self) { $0 }
         .alert("本当に削除しますか？", isPresented: $isAlertPresented) {
             Button(role: .cancel) {} label: { Text("戻る") }
             Button(role: .destructive) {
@@ -185,6 +216,12 @@ struct OutfitGrid: View {
             } label: { Text("削除する") }
         } message: {
             Text("選択中のコーデが削除されます。")
+        }
+        .sheet(item: $activeSheet) {
+            switch $0 {
+            case .selectSort:
+                selectSortSheet
+            }
         }
     }
 }

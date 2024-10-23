@@ -127,7 +127,7 @@ class OutfitStore: ObservableObject {
         }
     }
 
-    func filterAndSort(_ outfits: [Outfit], by condition: OutfitCondition) -> [Outfit] {
+    func filterAndSort(_ outfits: [Outfit], by condition: OutfitGridTab) -> [Outfit] {
         var newOutfits: [Outfit] = outfits
 
         newOutfits = newOutfits.filter { outfit in condition.filter.items.allSatisfy { outfit.items.contains($0) } }

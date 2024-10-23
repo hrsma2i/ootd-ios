@@ -29,6 +29,7 @@
 		881B6B642CA6D49A008274FF /* Date+initYMD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B632CA6D49A008274FF /* Date+initYMD.swift */; };
 		881B6B662CA83D77008274FF /* WebItemDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B652CA83D77008274FF /* WebItemDetail.swift */; };
 		88216DC12CAED676005B53BA /* GuItemDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88216DC02CAED676005B53BA /* GuItemDetail.swift */; };
+		882C84652CC9338A007DF349 /* compareOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882C84642CC9338A007DF349 /* compareOptional.swift */; };
 		883B54452C8DD547007DB1E8 /* BrightroomEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 883B54442C8DD547007DB1E8 /* BrightroomEngine */; };
 		883B54472C8DD547007DB1E8 /* BrightroomUI in Frameworks */ = {isa = PBXBuildFile; productRef = 883B54462C8DD547007DB1E8 /* BrightroomUI */; };
 		883B54492C8DD5B8007DB1E8 /* CropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883B54482C8DD5B8007DB1E8 /* CropView.swift */; };
@@ -70,7 +71,7 @@
 		8862325E2C7CC2FF00A1802D /* SampleOutfitDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862325A2C7CC2FF00A1802D /* SampleOutfitDataSource.swift */; };
 		886232632C7CC32900A1802D /* Outfit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862325F2C7CC32900A1802D /* Outfit.swift */; };
 		886232652C7CC32900A1802D /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232612C7CC32900A1802D /* Category.swift */; };
-		886232662C7CC32900A1802D /* OutfitCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232622C7CC32900A1802D /* OutfitCondition.swift */; };
+		886232662C7CC32900A1802D /* OutfitGridTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232622C7CC32900A1802D /* OutfitGridTab.swift */; };
 		886232682C7CC4C600A1802D /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232672C7CC4C600A1802D /* Config.swift */; };
 		8862326A2C7CC4D600A1802D /* DataSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232692C7CC4D600A1802D /* DataSourceType.swift */; };
 		8862326C2C7CC53C00A1802D /* DependencyInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862326B2C7CC53C00A1802D /* DependencyInjector.swift */; };
@@ -93,7 +94,7 @@
 		886232AD2C7CC9F500A1802D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232AC2C7CC9F500A1802D /* RootView.swift */; };
 		886232B22C7CCA7800A1802D /* OutfitDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232AE2C7CCA7800A1802D /* OutfitDetail.swift */; };
 		886232B32C7CCA7800A1802D /* OutfitGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232AF2C7CCA7800A1802D /* OutfitGrid.swift */; };
-		886232B42C7CCA7800A1802D /* OutfitConditionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232B02C7CCA7800A1802D /* OutfitConditionDetail.swift */; };
+		886232B42C7CCA7800A1802D /* OutfitGridTabDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232B02C7CCA7800A1802D /* OutfitGridTabDetail.swift */; };
 		886232B52C7CCA7800A1802D /* UserInfoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232B12C7CCA7800A1802D /* UserInfoScreen.swift */; };
 		886232B92C7CCB5000A1802D /* ItemCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232B82C7CCB5000A1802D /* ItemCard.swift */; };
 		886232BD2C7CCC9100A1802D /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232BC2C7CCC9100A1802D /* NavigationManager.swift */; };
@@ -177,6 +178,7 @@
 		881B6B632CA6D49A008274FF /* Date+initYMD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+initYMD.swift"; sourceTree = "<group>"; };
 		881B6B652CA83D77008274FF /* WebItemDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebItemDetail.swift; sourceTree = "<group>"; };
 		88216DC02CAED676005B53BA /* GuItemDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuItemDetail.swift; sourceTree = "<group>"; };
+		882C84642CC9338A007DF349 /* compareOptional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = compareOptional.swift; sourceTree = "<group>"; };
 		883B54482C8DD5B8007DB1E8 /* CropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropView.swift; sourceTree = "<group>"; };
 		883FCB2D2C90815F0001DAAF /* SwiftDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataManager.swift; sourceTree = "<group>"; };
 		883FCB312C9489780001DAAF /* KeyChainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainHelper.swift; sourceTree = "<group>"; };
@@ -222,7 +224,7 @@
 		8862325A2C7CC2FF00A1802D /* SampleOutfitDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleOutfitDataSource.swift; sourceTree = "<group>"; };
 		8862325F2C7CC32900A1802D /* Outfit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Outfit.swift; sourceTree = "<group>"; };
 		886232612C7CC32900A1802D /* Category.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
-		886232622C7CC32900A1802D /* OutfitCondition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitCondition.swift; sourceTree = "<group>"; };
+		886232622C7CC32900A1802D /* OutfitGridTab.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitGridTab.swift; sourceTree = "<group>"; };
 		886232672C7CC4C600A1802D /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		886232692C7CC4D600A1802D /* DataSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceType.swift; sourceTree = "<group>"; };
 		8862326B2C7CC53C00A1802D /* DependencyInjector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependencyInjector.swift; sourceTree = "<group>"; };
@@ -244,7 +246,7 @@
 		886232AC2C7CC9F500A1802D /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		886232AE2C7CCA7800A1802D /* OutfitDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitDetail.swift; sourceTree = "<group>"; };
 		886232AF2C7CCA7800A1802D /* OutfitGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitGrid.swift; sourceTree = "<group>"; };
-		886232B02C7CCA7800A1802D /* OutfitConditionDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitConditionDetail.swift; sourceTree = "<group>"; };
+		886232B02C7CCA7800A1802D /* OutfitGridTabDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitGridTabDetail.swift; sourceTree = "<group>"; };
 		886232B12C7CCA7800A1802D /* UserInfoScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoScreen.swift; sourceTree = "<group>"; };
 		886232B82C7CCB5000A1802D /* ItemCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCard.swift; sourceTree = "<group>"; };
 		886232BC2C7CCC9100A1802D /* NavigationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationManager.swift; sourceTree = "<group>"; };
@@ -505,6 +507,7 @@
 				883FCB312C9489780001DAAF /* KeyChainHelper.swift */,
 				883FCB3E2C99BB560001DAAF /* Color+gray.swift */,
 				88004E4A2CB9552A00A80A80 /* doWithErrorLog.swift */,
+				882C84642CC9338A007DF349 /* compareOptional.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -515,7 +518,7 @@
 				886232482C7CC14300A1802D /* Item.swift */,
 				886232612C7CC32900A1802D /* Category.swift */,
 				8862325F2C7CC32900A1802D /* Outfit.swift */,
-				886232622C7CC32900A1802D /* OutfitCondition.swift */,
+				886232622C7CC32900A1802D /* OutfitGridTab.swift */,
 				883FCB422C9B25690001DAAF /* ImageSource.swift */,
 				883FCB442C9C5F4C0001DAAF /* DetailMode.swift */,
 				889F34FB2CBF991100C5BD65 /* ItemGridTab.swift */,
@@ -578,7 +581,7 @@
 			isa = PBXGroup;
 			children = (
 				8862327D2C7CC71E00A1802D /* OutfitCard.swift */,
-				886232B02C7CCA7800A1802D /* OutfitConditionDetail.swift */,
+				886232B02C7CCA7800A1802D /* OutfitGridTabDetail.swift */,
 				886232AE2C7CCA7800A1802D /* OutfitDetail.swift */,
 				886232AF2C7CCA7800A1802D /* OutfitGrid.swift */,
 			);
@@ -899,7 +902,7 @@
 				88004E242CB4302100A80A80 /* EcItemDetail.swift in Sources */,
 				886232982C7CC78B00A1802D /* ItemDeleteConfirmOutfitsSheet.swift in Sources */,
 				883FCB432C9B25690001DAAF /* ImageSource.swift in Sources */,
-				886232662C7CC32900A1802D /* OutfitCondition.swift in Sources */,
+				886232662C7CC32900A1802D /* OutfitGridTab.swift in Sources */,
 				88B012B72CC22FCB00CD9153 /* IconButton.swift in Sources */,
 				88E3DC3F2CC7D8FF0006D201 /* OutfitDTOV7.swift in Sources */,
 				883FCB3D2C986B060001DAAF /* SearchBar.swift in Sources */,
@@ -933,6 +936,7 @@
 				8862325D2C7CC2FF00A1802D /* OutfitDataSource.swift in Sources */,
 				889F34FE2CBFDAC600C5BD65 /* ScrollableTabView.swift in Sources */,
 				88216DC12CAED676005B53BA /* GuItemDetail.swift in Sources */,
+				882C84652CC9338A007DF349 /* compareOptional.swift in Sources */,
 				88E3DC382CC68B690006D201 /* SchemaV6.swift in Sources */,
 				88004E312CB43BF400A80A80 /* DefaultPurchaseHistory.swift in Sources */,
 				886232AD2C7CC9F500A1802D /* RootView.swift in Sources */,
@@ -964,7 +968,7 @@
 				883FCB2E2C90815F0001DAAF /* SwiftDataManager.swift in Sources */,
 				8862325E2C7CC2FF00A1802D /* SampleOutfitDataSource.swift in Sources */,
 				886232A62C7CC7D100A1802D /* UIImage+resized.swift in Sources */,
-				886232B42C7CCA7800A1802D /* OutfitConditionDetail.swift in Sources */,
+				886232B42C7CCA7800A1802D /* OutfitGridTabDetail.swift in Sources */,
 				886232912C7CC71F00A1802D /* OutfitsRow.swift in Sources */,
 				8862328A2C7CC71F00A1802D /* ImageCard.swift in Sources */,
 				881B6B662CA83D77008274FF /* WebItemDetail.swift in Sources */,
