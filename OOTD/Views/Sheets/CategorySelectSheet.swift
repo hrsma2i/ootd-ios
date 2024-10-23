@@ -12,12 +12,24 @@ struct CategorySelectSheet: HashableView {
     var allowNil: Bool = false
     var onSelect: (Category?) -> Void = { _ in }
 
-    var categories: [Category] {
+    var categories: [Category?] {
+        var categories: [Category?]
+
         if allowUncategorized {
-            Category.allCases
+            categories = Category.allCases
         } else {
-            Category.allCasesWithoutUncategorized
+            categories = Category.allCasesWithoutUncategorized
         }
+
+        if allowNil {
+            categories.append(nil)
+        }
+
+        return categories
+    }
+
+    var height: CGFloat {
+        CGFloat(categories.count) / 15
     }
 
     func categoryRow(_ category: Category?) -> some View {
@@ -25,31 +37,21 @@ struct CategorySelectSheet: HashableView {
             Button {
                 onSelect(category)
             } label: {
-                Text(category?.rawValue ?? "指定なし")
+                Text(category?.rawValue ?? "すべて")
             }
             Spacer()
         }
     }
 
     var body: some View {
-        VStack {
-            Text("カテゴリー選択")
-                .font(.headline)
-                .padding(.bottom)
-
-            VStack(alignment: .leading, spacing: 20) {
+        Form {
+            Section("カテゴリー選択") {
                 ForEach(categories, id: \.self) { category in
                     categoryRow(category)
                 }
-
-                if allowNil {
-                    categoryRow(nil)
-                }
-
-                Spacer()
             }
         }
-        .padding()
+        .presentationDetents([.fraction(height)])
     }
 }
 
