@@ -49,7 +49,7 @@ public struct MasonryVGrid: Layout {
         for view in subviews {
             let proposed = ProposedViewSize(
                 width: itemWidth,
-                height: view.sizeThatFits(.unspecified).height
+                height: view.sizeThatFits(proposal).height
             )
 
             if let bounds {
