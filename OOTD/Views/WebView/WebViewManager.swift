@@ -28,7 +28,7 @@ final class WebViewManager: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var progress = 0.0
     // 更新は load から webView.url 経由でのみ行う
-    @Published private(set) var url: URL = .init(string: "https://www.example.com")!
+    @Published private(set) var url: URL = .init(string: "https://www.google.co.jp/")!
 
     private var cancellables: Set<AnyCancellable> = []
 
