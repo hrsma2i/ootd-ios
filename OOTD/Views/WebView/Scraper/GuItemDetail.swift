@@ -100,7 +100,7 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
         let priceGroup = try Self.getPriceGroup(detailUrl)
         let apiUrl = "https://www.gu-global.com/jp/api/commerce/v5/ja/products/\(productCode)/price-groups/\(priceGroup)/details"
         
-        let data = try await Self.request(apiUrl)
+        let data = try await request(apiUrl)
         let detail = try JSONDecoder().decode(ProductDetail.self, from: data)
         return .init(url: detailUrl, detail: detail)
     }
@@ -131,24 +131,6 @@ struct GuItemDetail: EcItemDetail, FirstRetailingPage {
         return group
     }
 
-    static func request(_ urlString: String) async throws -> Data {
-        logger.debug("request to \(urlString)")
-        // URLを生成
-        guard let url = URL(string: urlString) else {
-            throw "URLが無効です: \(urlString)"
-        }
-        
-        // URLリクエストを送信し、データを取得
-        let (data, response) = try await URLSession.shared.data(from: url)
-        
-        // HTTPレスポンスのステータスコードを確認
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw "HTTPリクエストが失敗しました: ステータスコード \(response)"
-        }
-        
-        return data
-    }
-    
     func name() throws -> String {
         detail.result.name
     }

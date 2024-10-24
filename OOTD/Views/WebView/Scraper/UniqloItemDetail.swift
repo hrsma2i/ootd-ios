@@ -12,89 +12,89 @@ private let logger = getLogger(#file)
 
 struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
     let url: String
+    let detail: ProductDetail
     let productCode: String
     let priceGroup: String
-    let scraper: Scraper
-    let preloadedState: PreloadedState
-    let product: PreloadedState.Entity.Product_.Product
     
-    struct PreloadedState: Codable {
-        let entity: Entity
+    struct ProductDetail: Codable {
+        let result: Result
         
-        struct Entity: Codable {
-            let pdpEntity: [String: Product_]
+        struct Result: Codable {
+            let images: Images
+            let l1Ids: [String]
+            let breadcrumbs: BreadCrumbs
+            let colors: [Color]
+            let name: String
+            fileprivate let longDescription: String
+            let prices: Prices
+            let sizes: [Size]
             
-            struct Product_: Codable {
-                let product: Product
+            struct BreadCrumbs: Codable {
+                let gender: Gender
+                let class_: Class_
+                let category: GuItemDetail.ProductDetail.Result.BreadCrumbs.Category
+                let subcategory: SubCategory
                 
-                struct Product: Codable {
-                    let breadcrumbs: BreadCrumbs
-                    let colors: [Color]
-                    let designDetail: String
-                    let images: Images
-                    // 同一商品としてまとめられる商品番号
-                    let l1Ids: [String]
-                    let name: String
-                    let prices: Prices
-                    let sizes: [Size]
-                    
-                    struct BreadCrumbs: Codable {
-                        let class_: Class_
-                        let category: GuItemDetail.ProductDetail.Result.BreadCrumbs.Category
-                        let subcategory: SubCategory
-                        
-                        enum CodingKeys: String, CodingKey {
-                            case class_ = "class"
-                            case category
-                            case subcategory
-                        }
-                        
-                        struct Class_: Codable {
-                            let locale: String
-                        }
-                        
-                        struct Category: Codable {
-                            let locale: String
-                        }
-                        
-                        struct SubCategory: Codable {
-                            let locale: String
-                        }
-                    }
-                    
-                    struct Color: Codable {
-                        let displayCode: String
-                        let name: String
-                        
-                        var codeAndName: String {
-                            "\(displayCode) \(name)"
-                        }
-                    }
-
-                    struct Images: Codable {
-                        let main: [String: Main]
-                        
-                        struct Main: Codable {
-                            let image: String
-                        }
-                    }
-                    
-                    struct Prices: Codable {
-                        let base: Base
-                        
-                        struct Base: Codable {
-                            let value: Int
-                        }
-                    }
-                    
-                    struct Size: Codable {
-                        let name: String
-                    }
+                enum CodingKeys: String, CodingKey {
+                    case gender
+                    case class_ = "class"
+                    case category
+                    case subcategory
                 }
+                
+                struct Gender: Codable {
+                    let locale: String
+                }
+                
+                struct Class_: Codable {
+                    let locale: String
+                }
+                
+                struct Category: Codable {
+                    let locale: String
+                }
+                
+                struct SubCategory: Codable {
+                    let locale: String
+                }
+            }
+            
+            struct Color: Codable {
+                let displayCode: String
+                let name: String
+                
+                var codeAndName: String {
+                    "\(displayCode) \(name)"
+                }
+            }
+
+            struct Images: Codable {
+                let main: [String: Main]
+                let sub: [Sub]
+                
+                struct Main: Codable {
+                    let image: String
+                }
+                
+                struct Sub: Codable {
+                    let image: String?
+                }
+            }
+            
+            struct Prices: Codable {
+                let base: Base
+                
+                struct Base: Codable {
+                    let value: Int
+                }
+            }
+            
+            struct Size: Codable {
+                let name: String
             }
         }
     }
-    
+
     static func isValidUrl(_ url: String) -> Bool {
         url.matches(#"https://www\.uniqlo\.com/jp/ja/products/[A-Za-z0-9-]+/\d+(\?.*)?"#)
     }
@@ -102,48 +102,11 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
     static func from(url detailUrl: String) async throws -> UniqloItemDetail {
         let productCode = try Self.getProductCode(detailUrl)
         let priceGroup = try Self.getPriceGroup(detailUrl)
-        let scraper = try await Scraper.from(url: detailUrl)
-        let preloadedState = try Self.decodePreloadedState(scraper.doc)
-        let key = "\(productCode)-\(priceGroup)"
-        guard let product_ = preloadedState.entity.pdpEntity[key] else {
-            throw "no entity.pdpEntity.\(key) in the preloaded state"
-        }
-        return .init(
-            url: detailUrl,
-            productCode: productCode,
-            priceGroup: priceGroup,
-            scraper: scraper,
-            preloadedState: preloadedState,
-            product: product_.product
-        )
-    }
-    
-    static func decodePreloadedState(_ doc: SwiftSoup.Document) throws -> PreloadedState {
-        let scripts = try doc.select("#root > script")
-        // (?s)を追加して、dotallモードにより改行を含む文字列にもマッチ
-        let pattern = #"(?s)window\.__PRELOADED_STATE__ = (\{.*?\})$"#
+        let apiUrl = "https://www.uniqlo.com/jp/api/commerce/v5/ja/products/\(productCode)/price-groups/\(priceGroup)/details"
         
-        for script in scripts {
-            let scriptContent = try script.html()
-            let regex = try NSRegularExpression(pattern: pattern, options: [])
-                   
-            guard let match = regex.firstMatch(in: scriptContent, options: [], range: NSRange(scriptContent.startIndex..., in: scriptContent)) else {
-                continue
-            }
-            
-            guard let range = Range(match.range(at: 1), in: scriptContent) else { continue }
-            
-            let jsonString = String(scriptContent[range])
-                           
-            guard let jsonData = jsonString.data(using: .utf8) else { continue }
-                               
-            let decoder = JSONDecoder()
-            let state = try decoder.decode(PreloadedState.self, from: jsonData)
-            
-            return state
-        }
-        
-        throw "failed to decode a preloaded state"
+        let data = try await request(apiUrl)
+        let detail = try JSONDecoder().decode(ProductDetail.self, from: data)
+        return .init(url: detailUrl, detail: detail, productCode: productCode, priceGroup: priceGroup)
     }
     
     static func getProductCode(_ detailUrl: String) throws -> String {
@@ -165,24 +128,27 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
     }
 
     func name() throws -> String {
-        product.name
+        detail.result.name
     }
     
     func imageUrls() throws -> [String] {
         var imageUrls: [String] = []
         
-        let images = product.images
-            
-        let mainImageUrls = images.main.map { $0.value.image }
+        let mainImageUrls = detail.result.images.main.map { $0.value.image }
         imageUrls.append(contentsOf: mainImageUrls)
+
+        let subImageUrls = detail.result.images.sub.compactMap { $0.image }
+        imageUrls.append(contentsOf: subImageUrls)
         
+        imageUrls = imageUrls.map { removeAspectSuffix($0) }
+
         // also append other productCode images
         guard let productId = try? productCode.extract(#"E(\d+)-\d+"#) else {
             logger.warning("failed to extarct product id from \(productCode)")
             return imageUrls
         }
         
-        for otherId in product.l1Ids {
+        for otherId in detail.result.l1Ids {
             guard otherId != productId else { continue }
             
             let otherImageUrls = mainImageUrls.map {
@@ -227,19 +193,20 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
     
     func categoryPath() throws -> [String] {
         [
-            product.breadcrumbs.class_.locale,
-            product.breadcrumbs.category.locale,
-            product.breadcrumbs.subcategory.locale,
+            detail.result.breadcrumbs.class_.locale,
+            detail.result.breadcrumbs.category.locale,
+            detail.result.breadcrumbs.subcategory.locale,
         ]
     }
     
     func colors() throws -> [String] {
-        product.colors.map { $0.codeAndName }
+        detail.result.colors.map { $0.codeAndName }
     }
     
     func selectColorFromImage(_ imageUrl: String) throws -> String {
+        // main 画像のみ対応。 sub画像のURLにはカラーコードが含まれないので画像から色を判定できない。
         let colorCode = try Self.getColorCode(imageUrl)
-        guard let color = product.colors.filter({ $0.displayCode == colorCode }).first else {
+        guard let color = detail.result.colors.filter({ $0.displayCode == colorCode }).first else {
             throw "no color options matching the image"
         }
         return color.codeAndName
@@ -250,14 +217,14 @@ struct UniqloItemDetail: EcItemDetail, FirstRetailingPage {
     }
     
     func sizes() throws -> [String] {
-        product.sizes.map { $0.name }
+        detail.result.sizes.map { $0.name }
     }
-    
+
     func description() throws -> String {
-        product.designDetail.replacingOccurrences(of: "<br>", with: "\n")
+        detail.result.longDescription.replacingOccurrences(of: "<br>", with: "\n")
     }
     
     func price() throws -> Int {
-        product.prices.base.value
+        detail.result.prices.base.value
     }
 }
