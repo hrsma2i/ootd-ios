@@ -80,6 +80,7 @@ struct SelectWebItemScreen: HashableView {
             ImageCard(
                 source: item.thumbnailSource
             )
+            .border(Color(gray: 0.8))
         }
     }
 
@@ -121,8 +122,8 @@ struct SelectWebItemScreen: HashableView {
                         imageCard(item)
                     }
                 }
+                .padding(.horizontal, spacing)
             }
-            .background(Color(gray: 0.9))
 
             Divider()
 

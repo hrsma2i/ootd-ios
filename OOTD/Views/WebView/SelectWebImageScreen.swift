@@ -50,6 +50,7 @@ struct SelectWebImageScreen: HashableView {
 
             logger.warning("failed to load image from \(url)")
         }
+        .border(Color(gray: 0.8))
     }
 
     @ViewBuilder
@@ -101,8 +102,8 @@ struct SelectWebImageScreen: HashableView {
                         imageCard(url)
                     }
                 }
+                .padding(.horizontal, spacing)
             }
-            .background(Color(gray: 0.9))
 
             Divider()
 
