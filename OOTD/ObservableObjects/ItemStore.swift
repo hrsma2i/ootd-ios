@@ -36,6 +36,7 @@ class ItemStore: ObservableObject {
             $0
                 .copyWith(\.createdAt, value: now)
                 .copyWith(\.updatedAt, value: now)
+                .copyWith(\.purchasedOn, value: $0.purchasedOn ?? now)
         }
 
         Task {
