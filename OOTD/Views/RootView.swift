@@ -20,12 +20,18 @@ struct RootView: View {
             TabView {
                 OutfitGrid()
                     .tabItem {
-                        Label("コーデ", systemImage: "square.split.2x2.fill")
+                        VStack {
+                            Text("コーデ")
+                            Image("outfit")
+                        }
                     }
 
                 ItemGrid()
                     .tabItem {
-                        Label("アイテム", systemImage: "list.bullet")
+                        VStack {
+                            Text("アイテム")
+                            Image("t-shirt")
+                        }
                     }
 
                 if Config.IS_DEBUG_MODE {
