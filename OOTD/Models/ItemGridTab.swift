@@ -14,8 +14,8 @@ struct ItemGridTab: Hashable {
 
     enum Sort: String, CaseIterable {
         case category = "カテゴリー順"
-        case purchasedOnDescendant = "購入日が新しい順"
-        case purchasedOnAscendant = "購入日が古い順"
+//        case purchasedOnDescendant = "購入日が新しい順"
+//        case purchasedOnAscendant = "購入日が古い順"
         case createdAtDescendant = "作成日時が新しい順"
         case createdAtAscendant = "作成日時が古い順"
 
@@ -23,10 +23,10 @@ struct ItemGridTab: Hashable {
             switch self {
             case .category:
                 lhs.category < rhs.category
-            case .purchasedOnDescendant:
-                !compareOptional(lhs.purchasedOn, rhs.purchasedOn)
-            case .purchasedOnAscendant:
-                compareOptional(lhs.purchasedOn, rhs.purchasedOn)
+//            case .purchasedOnDescendant:
+//                !compareOptional(lhs.purchasedOn, rhs.purchasedOn)
+//            case .purchasedOnAscendant:
+//                compareOptional(lhs.purchasedOn, rhs.purchasedOn)
             case .createdAtDescendant:
                 !compareOptional(lhs.createdAt, rhs.createdAt)
             case .createdAtAscendant:
