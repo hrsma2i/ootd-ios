@@ -9,3 +9,5 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 DATA_SOURCE = swiftData
 IS_DEBUG_MODE = true
+// テスト専用広告ユニット
+GOOGLE_ADMOB_AD_UNIT_ID = ca-app-pub-3940256099942544/2435281174

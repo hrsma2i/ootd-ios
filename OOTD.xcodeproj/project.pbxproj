@@ -110,6 +110,7 @@
 		88B012B32CC15F2600CD9153 /* ItemDTOV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012B22CC15F2600CD9153 /* ItemDTOV5.swift */; };
 		88B012B72CC22FCB00CD9153 /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B012B62CC22FCB00CD9153 /* IconButton.swift */; };
 		88B2BCE92C7E0E89008F45B7 /* SwiftDataItemDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B2BCE82C7E0E89008F45B7 /* SwiftDataItemDataSource.swift */; };
+		88B8B7C32CE2417500131843 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 88B8B7C22CE2417500131843 /* GoogleMobileAds */; };
 		88C00C3E2CAD7DF9007D83FF /* ACarousel in Frameworks */ = {isa = PBXBuildFile; productRef = 88C00C3D2CAD7DF9007D83FF /* ACarousel */; };
 		88CD55942C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55932C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift */; };
 		88CD559D2C8749E800A9B78A /* WebViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55972C8749E800A9B78A /* WebViewManager.swift */; };
@@ -118,6 +119,7 @@
 		88CD55A22C874E9800A9B78A /* SelectWebImageScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55A12C874E9800A9B78A /* SelectWebImageScreen.swift */; };
 		88CD55A42C8755CD00A9B78A /* Scraper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CD55A32C8755CD00A9B78A /* Scraper.swift */; };
 		88CD55A72C8755E700A9B78A /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 88CD55A62C8755E700A9B78A /* SwiftSoup */; };
+		88D8EF0E2CE231630070AD8D /* AdBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D8EF0D2CE231630070AD8D /* AdBanner.swift */; };
 		88E3DC112CC682030006D201 /* OutfitDTOV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC102CC682030006D201 /* OutfitDTOV5.swift */; };
 		88E3DC192CC686830006D201 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC182CC686830006D201 /* main.swift */; };
 		88E3DC362CC68B690006D201 /* ItemDTOV6.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC322CC68B690006D201 /* ItemDTOV6.swift */; };
@@ -146,6 +148,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		88B8B7BE2CE2339700131843 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		88E3DC142CC686830006D201 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -270,6 +282,7 @@
 		88CD559A2C8749E800A9B78A /* WKWebView+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+.swift"; sourceTree = "<group>"; };
 		88CD55A12C874E9800A9B78A /* SelectWebImageScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectWebImageScreen.swift; sourceTree = "<group>"; };
 		88CD55A32C8755CD00A9B78A /* Scraper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scraper.swift; sourceTree = "<group>"; };
+		88D8EF0D2CE231630070AD8D /* AdBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBanner.swift; sourceTree = "<group>"; };
 		88E3DC102CC682030006D201 /* OutfitDTOV5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutfitDTOV5.swift; sourceTree = "<group>"; };
 		88E3DC162CC686830006D201 /* updateSwiftDataSchema */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = updateSwiftDataSchema; sourceTree = BUILT_PRODUCTS_DIR; };
 		88E3DC182CC686830006D201 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -287,6 +300,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88B8B7C32CE2417500131843 /* GoogleMobileAds in Frameworks */,
 				883B54452C8DD547007DB1E8 /* BrightroomEngine in Frameworks */,
 				886232772C7CC6CD00A1802D /* CachedAsyncImage in Frameworks */,
 				88CD55A72C8755E700A9B78A /* SwiftSoup in Frameworks */,
@@ -489,6 +503,7 @@
 				88B012AC2CC1341E00CD9153 /* EditableTagListView.swift */,
 				88B012B62CC22FCB00CD9153 /* IconButton.swift */,
 				882D9FC22CC946C5003A1338 /* SelectSheet.swift */,
+				88D8EF0D2CE231630070AD8D /* AdBanner.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -721,6 +736,7 @@
 				886232082C7CBDD900A1802D /* Sources */,
 				886232092C7CBDD900A1802D /* Frameworks */,
 				8862320A2C7CBDD900A1802D /* Resources */,
+				88B8B7BE2CE2339700131843 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -733,6 +749,7 @@
 				883B54442C8DD547007DB1E8 /* BrightroomEngine */,
 				883B54462C8DD547007DB1E8 /* BrightroomUI */,
 				88C00C3D2CAD7DF9007D83FF /* ACarousel */,
+				88B8B7C22CE2417500131843 /* GoogleMobileAds */,
 			);
 			productName = OOTD;
 			productReference = 8862320C2C7CBDD900A1802D /* OOTD.app */;
@@ -831,6 +848,7 @@
 				88CD55A52C8755E700A9B78A /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				883B54432C8DD547007DB1E8 /* XCRemoteSwiftPackageReference "Brightroom" */,
 				88C00C3C2CAD7DF9007D83FF /* XCRemoteSwiftPackageReference "ACarousel" */,
+				88B8B7C12CE2417500131843 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			productRefGroup = 8862320D2C7CBDD900A1802D /* Products */;
 			projectDirPath = "";
@@ -937,6 +955,7 @@
 				881B6B642CA6D49A008274FF /* Date+initYMD.swift in Sources */,
 				883B54492C8DD5B8007DB1E8 /* CropView.swift in Sources */,
 				88B012B32CC15F2600CD9153 /* ItemDTOV5.swift in Sources */,
+				88D8EF0E2CE231630070AD8D /* AdBanner.swift in Sources */,
 				883FCB552CA5AA720001DAAF /* ItemDTOV2.swift in Sources */,
 				886232722C7CC65200A1802D /* ItemDetail.swift in Sources */,
 				886232682C7CC4C600A1802D /* Config.swift in Sources */,
@@ -1081,10 +1100,12 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LD_RUNPATH_SEARCH_PATHS = /usr/lib/swift;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1139,9 +1160,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LD_RUNPATH_SEARCH_PATHS = /usr/lib/swift;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1382,6 +1405,14 @@
 				minimumVersion = 2.1.1;
 			};
 		};
+		88B8B7C12CE2417500131843 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.12.0;
+			};
+		};
 		88C00C3C2CAD7DF9007D83FF /* XCRemoteSwiftPackageReference "ACarousel" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JWAutumn/ACarousel";
@@ -1415,6 +1446,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 886232752C7CC6CD00A1802D /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
 			productName = CachedAsyncImage;
+		};
+		88B8B7C22CE2417500131843 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 88B8B7C12CE2417500131843 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 		88C00C3D2CAD7DF9007D83FF /* ACarousel */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -177,22 +177,24 @@ struct OutfitGrid: View {
 
     var body: some View {
         let spacing: CGFloat = 2
-        return ZStack(alignment: .bottomTrailing) {
-            ScrollView {
-                LazyVGrid(
-                    columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: 2),
-                    spacing: spacing
-                ) {
-                    ForEach(outfits, id: \.self) { outfit in
-                        outfitCard(outfit)
+        return AdBannerContainer {
+            ZStack(alignment: .bottomTrailing) {
+                ScrollView {
+                    LazyVGrid(
+                        columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: 2),
+                        spacing: spacing
+                    ) {
+                        ForEach(outfits, id: \.self) { outfit in
+                            outfitCard(outfit)
+                        }
                     }
+                    .padding(.bottom, 70)
+                    .padding(spacing)
                 }
-                .padding(.bottom, 70)
-                .padding(spacing)
-            }
-            .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
+                .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
 
-            bottomBar
+                bottomBar
+            }
         }
         .navigationDestination(for: OutfitDetail.self) { $0 }
         .navigationDestination(for: OutfitGridTabDetail.self) { $0 }

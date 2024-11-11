@@ -385,52 +385,54 @@ struct ItemDetail: HashableView {
     }
     
     var body: some View {
-        ScrollView {
-            imageArea
+        AdBannerContainer {
+            ScrollView {
+                imageArea
                 
-            VStack(spacing: 20) {
-                nameRow
+                VStack(spacing: 20) {
+                    nameRow
                     
-                tagsRow
+                    tagsRow
                     
-                section {
-                    categoryRow
+                    section {
+                        categoryRow
                         
-                    if items.count == 1, let item = items.first {
-                        Divider()
-                        propertyRow("作成日時", item.createdAt?.toString() ?? "----/--/-- --:--:--")
-                        Divider()
-                        propertyRow("更新日時", item.updatedAt?.toString() ?? "----/--/-- --:--:--")
-                        if let urlString = item.sourceUrl {
+                        if items.count == 1, let item = items.first {
                             Divider()
-                            urlRow(urlString)
+                            propertyRow("作成日時", item.createdAt?.toString() ?? "----/--/-- --:--:--")
+                            Divider()
+                            propertyRow("更新日時", item.updatedAt?.toString() ?? "----/--/-- --:--:--")
+                            if let urlString = item.sourceUrl {
+                                Divider()
+                                urlRow(urlString)
+                            }
+                        }
+                    }
+                    
+                    if Config.IS_DEBUG_MODE, items.count == 1, let item = items.first {
+                        section {
+                            priceRow(item)
+                            Divider()
+                            propertyRow("購入日", item.purchasedOn?.toString(hasTime: false) ?? "----/--/--") {}
+                            Divider()
+                            propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
+                            Divider()
+                            propertyRow("カラー", item.originalColor ?? "-")
+                            Divider()
+                            propertyRow("ブランド", item.originalBrand ?? "-")
+                            Divider()
+                            propertyRow("サイズ", item.originalSize ?? "-")
+                            Divider()
+                            descriptionRow(item.originalDescription ?? "")
                         }
                     }
                 }
-                    
-                if Config.IS_DEBUG_MODE, items.count == 1, let item = items.first {
-                    section {
-                        priceRow(item)
-                        Divider()
-                        propertyRow("購入日", item.purchasedOn?.toString(hasTime: false) ?? "----/--/--") {}
-                        Divider()
-                        propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
-                        Divider()
-                        propertyRow("カラー", item.originalColor ?? "-")
-                        Divider()
-                        propertyRow("ブランド", item.originalBrand ?? "-")
-                        Divider()
-                        propertyRow("サイズ", item.originalSize ?? "-")
-                        Divider()
-                        descriptionRow(item.originalDescription ?? "")
-                    }
-                }
+                .padding(20)
             }
-            .padding(20)
-        }
-        .safeAreaInset(edge: .bottom) {
-            if hasChanges {
-                saveButton
+            .safeAreaInset(edge: .bottom) {
+                if hasChanges {
+                    saveButton
+                }
             }
         }
         .navigationBarHidden(true)

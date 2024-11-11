@@ -111,25 +111,27 @@ struct SelectWebItemScreen: HashableView {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
+        AdBannerContainer {
+            VStack(spacing: 0) {
+                header
 
-            Divider()
+                Divider()
 
-            ScrollView {
-                MasonryVGrid(columns: 3, spacing: spacing) {
-                    ForEach(items, id: \.self) { item in
-                        imageCard(item)
+                ScrollView {
+                    MasonryVGrid(columns: 3, spacing: spacing) {
+                        ForEach(items, id: \.self) { item in
+                            imageCard(item)
+                        }
                     }
+                    .padding(.horizontal, spacing)
                 }
-                .padding(.horizontal, spacing)
+
+                Divider()
+
+                footer
             }
-
-            Divider()
-
-            footer
+            .navigationDestination(for: WebItemDetail.self) { $0 }
         }
-        .navigationDestination(for: WebItemDetail.self) { $0 }
     }
 }
 

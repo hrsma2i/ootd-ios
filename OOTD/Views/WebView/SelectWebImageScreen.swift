@@ -91,23 +91,25 @@ struct SelectWebImageScreen: HashableView {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
+        AdBannerContainer {
+            VStack(spacing: 0) {
+                header
 
-            Divider()
+                Divider()
 
-            ScrollView {
-                MasonryVGrid(columns: 3, spacing: spacing) {
-                    ForEach(imageURLs, id: \.self) { url in
-                        imageCard(url)
+                ScrollView {
+                    MasonryVGrid(columns: 3, spacing: spacing) {
+                        ForEach(imageURLs, id: \.self) { url in
+                            imageCard(url)
+                        }
                     }
+                    .padding(.horizontal, spacing)
                 }
-                .padding(.horizontal, spacing)
+
+                Divider()
+
+                footer
             }
-
-            Divider()
-
-            footer
         }
     }
 }

@@ -212,72 +212,74 @@ struct WebItemDetail: HashableView {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            ScrollView {
-                imageRow
+        AdBannerContainer {
+            ZStack(alignment: .bottom) {
+                ScrollView {
+                    imageRow
 
-                VStack(spacing: 20) {
-                    ItemDetail.NameRow(text: item.name)
+                    VStack(spacing: 20) {
+                        ItemDetail.NameRow(text: item.name)
 
-                    section {
-                        propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
-                        Divider()
-                        selectableRow("カラー", item.originalColor, colorOptions, .selectColor)
-                        Divider()
-                        propertyRow("ブランド", item.originalBrand ?? "-")
-                        Divider()
-                        selectableRow("サイズ", item.originalSize, sizeOptions, .selectSize)
-                        Divider()
-                        propertyRow("URL", item.sourceUrl ?? "-")
-                        Divider()
-                        ItemDetail.priceRow(item)
-                        Divider()
-                        propertyRow("購入日", item.purchasedOn?.toString(hasTime: false) ?? "----/--/--")
-                        Divider()
-                        ItemDetail.descriptionRow(item.originalDescription ?? "")
+                        section {
+                            propertyRow("カテゴリー", item.originalCategoryPath?.joined(separator: " > ") ?? "-")
+                            Divider()
+                            selectableRow("カラー", item.originalColor, colorOptions, .selectColor)
+                            Divider()
+                            propertyRow("ブランド", item.originalBrand ?? "-")
+                            Divider()
+                            selectableRow("サイズ", item.originalSize, sizeOptions, .selectSize)
+                            Divider()
+                            propertyRow("URL", item.sourceUrl ?? "-")
+                            Divider()
+                            ItemDetail.priceRow(item)
+                            Divider()
+                            propertyRow("購入日", item.purchasedOn?.toString(hasTime: false) ?? "----/--/--")
+                            Divider()
+                            ItemDetail.descriptionRow(item.originalDescription ?? "")
+                        }
+                    }.padding(20)
+                }
+
+                saveButton
+            }
+            .navigationBarHidden(true)
+            .sheet(item: $activeSheet) {
+                switch $0 {
+                case .selectColor:
+                    selectSheet(colorOptions!, key: \.originalColor)
+                case .selectSize:
+                    selectSheet(sizeOptions!, key: \.originalSize)
+                }
+            }
+            .edgeSwipe {
+                onBacked_()
+            }
+            .navigationDestination(for: ImageCropView.self) { $0 }
+            .navigationDestination(for: SelectWebImageScreen.self) { $0 }
+            .confirmationDialog("画像を編集する", isPresented: $isImageEditDialogPresented, titleVisibility: .visible) {
+                cropImageButton
+                if !imageUrlOptions.isEmpty {
+                    changeImageButton
+                }
+            }
+            .task {
+                do {
+                    if let sourceUrl = item.sourceUrl {
+                        let detail = try await generateEcItemDetail(url: sourceUrl)
+                        imageUrlOptions = try detail.imageUrls()
                     }
-                }.padding(20)
-            }
-
-            saveButton
-        }
-        .navigationBarHidden(true)
-        .sheet(item: $activeSheet) {
-            switch $0 {
-            case .selectColor:
-                selectSheet(colorOptions!, key: \.originalColor)
-            case .selectSize:
-                selectSheet(sizeOptions!, key: \.originalSize)
-            }
-        }
-        .edgeSwipe {
-            onBacked_()
-        }
-        .navigationDestination(for: ImageCropView.self) { $0 }
-        .navigationDestination(for: SelectWebImageScreen.self) { $0 }
-        .confirmationDialog("画像を編集する", isPresented: $isImageEditDialogPresented, titleVisibility: .visible) {
-            cropImageButton
-            if !imageUrlOptions.isEmpty {
-                changeImageButton
-            }
-        }
-        .task {
-            do {
-                if let sourceUrl = item.sourceUrl {
-                    let detail = try await generateEcItemDetail(url: sourceUrl)
-                    imageUrlOptions = try detail.imageUrls()
+                } catch {
+                    logger.error("\(error)")
                 }
-            } catch {
-                logger.error("\(error)")
             }
-        }
-        .task {
-            do {
-                if item.sourceUrl != nil {
-                    item = try await item.copyWithPropertiesFromSourceUrl()
+            .task {
+                do {
+                    if item.sourceUrl != nil {
+                        item = try await item.copyWithPropertiesFromSourceUrl()
+                    }
+                } catch {
+                    logger.error("\(error)")
                 }
-            } catch {
-                logger.error("\(error)")
             }
         }
     }

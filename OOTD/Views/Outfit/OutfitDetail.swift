@@ -152,50 +152,52 @@ struct OutfitDetail: HashableView {
     }
 
     var body: some View {
-        ScrollView {
-            // MARK: - バグ回避のための workaround
-
-            // 本当はこの部分を snapImage といったメソッドに切り出したいが、メソッドとして呼び出すと OutfitGrid から遷移できずに固まる。
-            // AspectRatioContainer と ZStack の相性が悪そう。
-            VStack(spacing: 1) {
-                ZStack {
-                    if let imageSource = outfit.imageSource {
-                        // 本当はこっちだけ ZStack でくくりたいが、そうすると OutfitGrid から遷移できずに固まる。
-                        ImageCard(
-                            source: imageSource
-                        )
-
-                        backButton()
-
-                        editImageButton
-                    } else {
-                        imageEmptyView
-
-                        backButton(isEmpty: true)
+        AdBannerContainer {
+            ScrollView {
+                // MARK: - バグ回避のための workaround
+                
+                // 本当はこの部分を snapImage といったメソッドに切り出したいが、メソッドとして呼び出すと OutfitGrid から遷移できずに固まる。
+                // AspectRatioContainer と ZStack の相性が悪そう。
+                VStack(spacing: 1) {
+                    ZStack {
+                        if let imageSource = outfit.imageSource {
+                            // 本当はこっちだけ ZStack でくくりたいが、そうすると OutfitGrid から遷移できずに固まる。
+                            ImageCard(
+                                source: imageSource
+                            )
+                            
+                            backButton()
+                            
+                            editImageButton
+                        } else {
+                            imageEmptyView
+                            
+                            backButton(isEmpty: true)
+                        }
+                    }
+                    
+                    // MARK: バグ回避のための workaround -
+                    
+                    SelectedItemsGrid(
+                        items: $outfit.items
+                    )
+                }
+                .background(Color(gray: 0.95))
+                
+                VStack(spacing: 20) {
+                    HStack {
+                        EditableTagListView(tags: $outfit.tags)
+                        Spacer()
+                    }
+                    
+                    section {
+                        propertyRow("作成日時", outfit.createdAt?.toString() ?? "----/--/-- --:--:--")
+                        Divider()
+                        propertyRow("更新日時", outfit.updatedAt?.toString() ?? "----/--/-- --:--:--")
                     }
                 }
-
-                // MARK: バグ回避のための workaround -
-
-                SelectedItemsGrid(
-                    items: $outfit.items
-                )
+                .padding(20)
             }
-            .background(Color(gray: 0.95))
-
-            VStack(spacing: 20) {
-                HStack {
-                    EditableTagListView(tags: $outfit.tags)
-                    Spacer()
-                }
-
-                section {
-                    propertyRow("作成日時", outfit.createdAt?.toString() ?? "----/--/-- --:--:--")
-                    Divider()
-                    propertyRow("更新日時", outfit.updatedAt?.toString() ?? "----/--/-- --:--:--")
-                }
-            }
-            .padding(20)
         }
         .navigationBarHidden(true)
         .edgeSwipe { backWithAlertIfChanged() }

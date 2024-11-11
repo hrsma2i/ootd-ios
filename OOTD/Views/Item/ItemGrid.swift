@@ -322,16 +322,18 @@ struct ItemGrid: HashableView {
                 id: \.name,
                 title: \.name
             ) { tab in
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: spacing) {
-                        ForEach(tabItems(tab), id: \.self) { item in
-                            itemCard(item)
+                AdBannerContainer {
+                    ScrollView {
+                        LazyVGrid(columns: columns, spacing: spacing) {
+                            ForEach(tabItems(tab), id: \.self) { item in
+                                itemCard(item)
+                            }
                         }
+                        .padding(spacing)
+                        .padding(.bottom, 70)
                     }
-                    .padding(spacing)
-                    .padding(.bottom, 70)
+                    .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
                 }
-                .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
             } footer: {
                 innerFooter
                     .padding(.bottom, 7)
