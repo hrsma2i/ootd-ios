@@ -77,8 +77,10 @@ struct AdBannerContainer<Content: View>: View {
             let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(geometry.size.width)
 
             VStack(spacing: 0) {
-                AdBanner(adSize)
-                    .frame(height: adSize.size.height)
+                if Config.IS_SHOW_AD {
+                    AdBanner(adSize)
+                        .frame(height: adSize.size.height)
+                }
 
                 content()
             }

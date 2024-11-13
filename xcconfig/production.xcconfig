@@ -9,4 +9,5 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 DATA_SOURCE = swiftData
 IS_DEBUG_MODE = false
+IS_SHOW_AD = true
 GOOGLE_ADMOB_AD_UNIT_ID = ca-app-pub-3608240631248686/1462351017

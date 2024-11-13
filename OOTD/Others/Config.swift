@@ -42,6 +42,15 @@ enum Config {
         return value == "true"
     }
 
+    static var IS_SHOW_AD: Bool {
+        let key = "Show Ad"
+        guard let value = Bundle.main.object(forInfoDictionaryKey: key) as? String else {
+            fatalError("failed to get \(key) from Info.plist")
+        }
+
+        return value == "true"
+    }
+
     static var GOOGLE_ADMOB_AD_UNIT_ID: String {
         let key = "Google AdMob Ad Unit ID"
         guard let value = Bundle.main.object(forInfoDictionaryKey: key) as? String else {

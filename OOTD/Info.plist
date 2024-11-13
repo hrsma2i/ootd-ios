@@ -181,6 +181,8 @@
 			<string>3qcr597p9d.skadnetwork</string>
 		</dict>
 	</array>
+	<key>Show Ad</key>
+	<string>$(IS_SHOW_AD)</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 </dict>
