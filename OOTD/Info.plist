@@ -10,6 +10,8 @@
 	<string>ca-app-pub-3940256099942544~1458002511</string>
 	<key>Google AdMob Ad Unit ID</key>
 	<string>$(GOOGLE_ADMOB_AD_UNIT_ID)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>
