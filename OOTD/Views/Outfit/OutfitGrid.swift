@@ -30,8 +30,24 @@ struct OutfitGrid: View {
         }
     }
 
+    @State private var searchText: String = ""
+
     var outfits: [Outfit] {
-        tab.apply(outfitStore.outfits)
+        var outfits = outfitStore.outfits
+        let keyword = searchText.lowercased()
+
+        if keyword != "" {
+            outfits = outfits.filter { outfit in
+                outfit.items.map {
+                    $0.name.lowercased().contains(keyword)
+                }.contains(true)
+                    || outfit.tags.map {
+                        $0.lowercased().contains(keyword)
+                    }.contains(true)
+            }
+        }
+
+        return tab.apply(outfits)
     }
 
     func outfitCard(_ outfit: Outfit) -> some View {
@@ -175,25 +191,44 @@ struct OutfitGrid: View {
         }
     }
 
+    var searchBar: some View {
+        SearchBar(text: $searchText, placeholder: "検索")
+            .padding(7)
+            .overlay {
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke()
+                    .foregroundColor(.init(gray: 0.8))
+            }
+            .padding(.horizontal, 15)
+            .padding(.bottom, 10)
+    }
+
     var body: some View {
         let spacing: CGFloat = 2
         return AdBannerContainer {
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    LazyVGrid(
-                        columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: 2),
-                        spacing: spacing
-                    ) {
-                        ForEach(outfits, id: \.self) { outfit in
-                            outfitCard(outfit)
+            VStack(spacing: 0) {
+                ZStack(alignment: .bottomTrailing) {
+                    ScrollView {
+                        LazyVGrid(
+                            columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: 2),
+                            spacing: spacing
+                        ) {
+                            ForEach(outfits, id: \.self) { outfit in
+                                outfitCard(outfit)
+                            }
                         }
+                        .padding(.bottom, 70)
+                        .padding(spacing)
                     }
-                    .padding(.bottom, 70)
-                    .padding(spacing)
-                }
-                .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
+                    .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
 
-                bottomBar
+                    bottomBar
+                }
+
+                Divider()
+
+                searchBar
+                    .padding(.top, 10)
             }
         }
         .navigationDestination(for: OutfitDetail.self) { $0 }
