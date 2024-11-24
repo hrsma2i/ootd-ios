@@ -283,6 +283,7 @@
 		88CD55A12C874E9800A9B78A /* SelectWebImageScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectWebImageScreen.swift; sourceTree = "<group>"; };
 		88CD55A32C8755CD00A9B78A /* Scraper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scraper.swift; sourceTree = "<group>"; };
 		88D8EF0D2CE231630070AD8D /* AdBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBanner.swift; sourceTree = "<group>"; };
+		88DDFC0A2CF359180022BA8F /* qa.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = qa.xcconfig; sourceTree = "<group>"; };
 		88E3DC102CC682030006D201 /* OutfitDTOV5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutfitDTOV5.swift; sourceTree = "<group>"; };
 		88E3DC162CC686830006D201 /* updateSwiftDataSchema */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = updateSwiftDataSchema; sourceTree = BUILT_PRODUCTS_DIR; };
 		88E3DC182CC686830006D201 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -369,6 +370,7 @@
 			children = (
 				884CF6522C7F597600250026 /* sample.xcconfig */,
 				884CF6532C7F599300250026 /* swiftData.xcconfig */,
+				88DDFC0A2CF359180022BA8F /* qa.xcconfig */,
 				88E3DC392CC68FA10006D201 /* production.xcconfig */,
 			);
 			path = xcconfig;
@@ -1114,7 +1116,7 @@
 		};
 		8862322F2C7CBDDA00A1802D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 88E3DC392CC68FA10006D201 /* production.xcconfig */;
+			baseConfigurationReference = 88DDFC0A2CF359180022BA8F /* qa.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
