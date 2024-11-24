@@ -35,14 +35,18 @@ struct OutfitDetail: HashableView {
 
     var imageEmptyView: some View {
         AspectRatioContainer(aspectRatio: 1) {
-            VStack {
-                Image(systemName: "camera.circle.fill")
-                    .font(.system(size: 50))
+            Button {
+                isImagePickerPresented = true
+            } label: {
+                VStack {
+                    Image(systemName: "camera.circle.fill")
+                        .font(.system(size: 50))
 
-                Text("スナップ画像を設定")
-                    .font(.system(size: 10))
+                    Text("スナップ画像を設定")
+                        .font(.system(size: 10))
+                }
+                .foregroundColor(.gray)
             }
-            .foregroundColor(.gray)
         }
     }
 
@@ -155,7 +159,7 @@ struct OutfitDetail: HashableView {
         AdBannerContainer {
             ScrollView {
                 // MARK: - バグ回避のための workaround
-                
+
                 // 本当はこの部分を snapImage といったメソッドに切り出したいが、メソッドとして呼び出すと OutfitGrid から遷移できずに固まる。
                 // AspectRatioContainer と ZStack の相性が悪そう。
                 VStack(spacing: 1) {
@@ -165,31 +169,31 @@ struct OutfitDetail: HashableView {
                             ImageCard(
                                 source: imageSource
                             )
-                            
+
                             backButton()
-                            
+
                             editImageButton
                         } else {
                             imageEmptyView
-                            
+
                             backButton(isEmpty: true)
                         }
                     }
-                    
+
                     // MARK: バグ回避のための workaround -
-                    
+
                     SelectedItemsGrid(
                         items: $outfit.items
                     )
                 }
                 .background(Color(gray: 0.95))
-                
+
                 VStack(spacing: 20) {
                     HStack {
                         EditableTagListView(tags: $outfit.tags)
                         Spacer()
                     }
-                    
+
                     section {
                         propertyRow("作成日時", outfit.createdAt?.toString() ?? "----/--/-- --:--:--")
                         Divider()
