@@ -53,6 +53,7 @@
 		884CF65E2C82018400250026 /* RoundRectangleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF65D2C82018400250026 /* RoundRectangleButton.swift */; };
 		884CF6702C8201F900250026 /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6642C8201F900250026 /* AddButton.swift */; };
 		884CF6762C8201F900250026 /* AspectRatioContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF66A2C8201F900250026 /* AspectRatioContainer.swift */; };
+		884F5A6F2CF63025004228C6 /* GetItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884F5A6E2CF63025004228C6 /* GetItems.swift */; };
 		886064112C906B45003C7001 /* SwiftDataOutfitRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886064102C906B45003C7001 /* SwiftDataOutfitRepository.swift */; };
 		886064132C90790D003C7001 /* Sequence+compactMapWithErrorLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886064122C90790D003C7001 /* Sequence+compactMapWithErrorLog.swift */; };
 		886232102C7CBDD900A1802D /* OOTDApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862320F2C7CBDD900A1802D /* OOTDApp.swift */; };
@@ -217,6 +218,7 @@
 		884CF65D2C82018400250026 /* RoundRectangleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundRectangleButton.swift; sourceTree = "<group>"; };
 		884CF6642C8201F900250026 /* AddButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddButton.swift; sourceTree = "<group>"; };
 		884CF66A2C8201F900250026 /* AspectRatioContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AspectRatioContainer.swift; sourceTree = "<group>"; };
+		884F5A6E2CF63025004228C6 /* GetItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GetItems.swift; path = "../../../../../.Trash/UseCases 1.34.21/Item/GetItems.swift"; sourceTree = "<group>"; };
 		886064102C906B45003C7001 /* SwiftDataOutfitRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataOutfitRepository.swift; sourceTree = "<group>"; };
 		886064122C90790D003C7001 /* Sequence+compactMapWithErrorLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+compactMapWithErrorLog.swift"; sourceTree = "<group>"; };
 		8862320C2C7CBDD900A1802D /* OOTD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OOTD.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -496,6 +498,22 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		884F5A6C2CF63011004228C6 /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				884F5A6D2CF6301E004228C6 /* Item */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		884F5A6D2CF6301E004228C6 /* Item */ = {
+			isa = PBXGroup;
+			children = (
+				884F5A6E2CF63025004228C6 /* GetItems.swift */,
+			);
+			path = Item;
+			sourceTree = "<group>";
+		};
 		886232032C7CBDD900A1802D = {
 			isa = PBXGroup;
 			children = (
@@ -526,6 +544,7 @@
 				8862320F2C7CBDD900A1802D /* OOTDApp.swift */,
 				886232392C7CBF1500A1802D /* Views */,
 				8862323A2C7CBF1C00A1802D /* ObservableObjects */,
+				884F5A6C2CF63011004228C6 /* UseCases */,
 				886232472C7CC12D00A1802D /* Domain */,
 				8862323B2C7CBF3200A1802D /* Repositories */,
 				886232442C7CC10A00A1802D /* Infrastructure */,
@@ -1088,6 +1107,7 @@
 				886232532C7CC2A700A1802D /* ItemStore.swift in Sources */,
 				884CF6562C7F670200250026 /* LocalStorage.swift in Sources */,
 				886232102C7CBDD900A1802D /* OOTDApp.swift in Sources */,
+				884F5A6F2CF63025004228C6 /* GetItems.swift in Sources */,
 				88E3DC362CC68B690006D201 /* ItemDTOV6.swift in Sources */,
 				8862326C2C7CC53C00A1802D /* DependencyInjector.swift in Sources */,
 				88004E2B2CB4337300A80A80 /* UniqloPurchaseHistory.swift in Sources */,

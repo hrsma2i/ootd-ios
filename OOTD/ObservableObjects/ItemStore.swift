@@ -27,7 +27,7 @@ class ItemStore: ObservableObject {
     @MainActor
     func fetch() async throws {
         logger.debug("fetch items")
-        items = try await repository.findAll()
+        items = try await GetItems(repository: repository)()
     }
 
     func create(_ items: [Item]) async throws {
