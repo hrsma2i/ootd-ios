@@ -8,7 +8,7 @@
 import Foundation
 
 protocol ItemRepository {
-    func fetch() async throws -> [Item]
+    func findAll() async throws -> [Item]
 
     func create(_ items: [Item]) async throws
 

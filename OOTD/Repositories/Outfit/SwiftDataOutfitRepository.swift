@@ -40,7 +40,7 @@ final class SwiftDataOutfitRepository: OutfitRepository {
         return dto
     }
 
-    func fetch() async throws -> [Outfit] {
+    func findAll() async throws -> [Outfit] {
         logger.debug("[SwiftData] fetch all outfits")
         let descriptor = FetchDescriptor<OutfitDTO>()
         let dtos = try context.fetch(descriptor)

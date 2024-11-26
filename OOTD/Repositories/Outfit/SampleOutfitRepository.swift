@@ -8,7 +8,7 @@
 import Foundation
 
 class SampleOutfitRepository: OutfitRepository {
-    func fetch() async throws -> [Outfit] {
+    func findAll() async throws -> [Outfit] {
         sampleOutfits
     }
 

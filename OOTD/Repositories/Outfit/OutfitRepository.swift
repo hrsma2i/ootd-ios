@@ -8,7 +8,7 @@
 import Foundation
 
 protocol OutfitRepository {
-    func fetch() async throws -> [Outfit]
+    func findAll() async throws -> [Outfit]
 
     func create(_ outfits: [Outfit]) async throws
 

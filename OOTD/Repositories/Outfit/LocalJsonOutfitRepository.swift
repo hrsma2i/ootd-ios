@@ -46,7 +46,7 @@ struct LocalJsonOutfitRepository: OutfitRepository {
         "backup/\(path)"
     }
 
-    func fetch() async throws -> [Outfit] {
+    func findAll() async throws -> [Outfit] {
         let decoder = JSONDecoder()
         let data = try LocalStorage.documents.load(from: backup("outfits.json"))
         var outfits = try decoder.decode([Outfit].self, from: data)

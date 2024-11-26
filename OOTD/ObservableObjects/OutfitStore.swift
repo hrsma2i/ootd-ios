@@ -26,7 +26,7 @@ class OutfitStore: ObservableObject {
     @MainActor
     func fetch() async throws {
         logger.debug("fetch outfits")
-        outfits = try await repository.fetch()
+        outfits = try await repository.findAll()
     }
 
     func create(_ outfits: [Outfit]) async throws {
@@ -151,7 +151,7 @@ class OutfitStore: ObservableObject {
     func import_(_ source: OutfitRepository) async throws {
         logger.debug("\(String(describing: Self.self)).\(#function) from \(String(describing: type(of: source)))")
 
-        var outfits = try await source.fetch()
+        var outfits = try await source.findAll()
 
         outfits = outfits.filter { outfit in
             !self.outfits.contains { outfit_ in

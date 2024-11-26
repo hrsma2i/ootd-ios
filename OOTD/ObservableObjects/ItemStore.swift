@@ -27,7 +27,7 @@ class ItemStore: ObservableObject {
     @MainActor
     func fetch() async throws {
         logger.debug("fetch items")
-        items = try await repository.fetch()
+        items = try await repository.findAll()
     }
 
     func create(_ items: [Item]) async throws {
@@ -126,7 +126,7 @@ class ItemStore: ObservableObject {
     func import_(_ source: ItemRepository) async throws {
         logger.debug("\(String(describing: Self.self)).\(#function) from \(String(describing: type(of: source)))")
 
-        var items = try await source.fetch()
+        var items = try await source.findAll()
 
         items = items.filter { item in
             !self.items.contains { item_ in

@@ -26,7 +26,7 @@ final class SwiftDataItemRepository: ItemRepository {
         context = SwiftDataManager.shared.context
     }
 
-    func fetch() async throws -> [Item] {
+    func findAll() async throws -> [Item] {
         logger.debug("[SwiftData] fetch all items")
         let descriptor = FetchDescriptor<ItemDTO>()
         let dtos = try context.fetch(descriptor)
