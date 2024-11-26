@@ -1,5 +1,5 @@
 //
-//  OutfitDataSource.swift
+//  OutfitRepository.swift
 //  Closet
 //
 //  Created by Hiroshi Matsui on 2024/07/14.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol OutfitDataSource {
+protocol OutfitRepository {
     func fetch() async throws -> [Outfit]
 
     func create(_ outfits: [Outfit]) async throws

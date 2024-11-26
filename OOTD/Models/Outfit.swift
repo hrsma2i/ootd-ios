@@ -56,7 +56,7 @@ struct Outfit: Hashable {
         return Outfit.generateImagePath(id, size: Outfit.thumbnailSize)
     }
 
-    // init や DataSource.read 内でも使うので id は引数として受け取る
+    // init や Repository.read 内でも使うので id は引数として受け取る
     static func generateImagePath(_ id: String, size: CGFloat) -> String {
         return "dev/outfit_images_\(Int(size))/\(id).jpg"
     }

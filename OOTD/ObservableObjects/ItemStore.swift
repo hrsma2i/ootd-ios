@@ -10,24 +10,24 @@ import Foundation
 private let logger = getLogger(#file)
 
 class ItemStore: ObservableObject {
-    var dataSource: ItemDataSource
+    var repository: ItemRepository
 
     @Published var items: [Item] = []
 
     @MainActor
-    init(_ dataSourceType: DataSourceType = .sample) {
-        switch dataSourceType {
+    init(_ repositoryType: RepositoryType = .sample) {
+        switch repositoryType {
         case .sample:
-            dataSource = SampleItemDataSource()
+            repository = SampleItemRepository()
         case .swiftData:
-            dataSource = SwiftDataItemDataSource.shared
+            repository = SwiftDataItemRepository.shared
         }
     }
 
     @MainActor
     func fetch() async throws {
         logger.debug("fetch items")
-        items = try await dataSource.fetch()
+        items = try await repository.fetch()
     }
 
     func create(_ items: [Item]) async throws {
@@ -40,7 +40,7 @@ class ItemStore: ObservableObject {
         }
 
         Task {
-            try await dataSource.create(items)
+            try await repository.create(items)
         }
 
         await MainActor.run {
@@ -97,7 +97,7 @@ class ItemStore: ObservableObject {
         }
 
         Task {
-            try await dataSource.update(updatedItems)
+            try await repository.update(updatedItems)
         }
     }
 
@@ -106,11 +106,11 @@ class ItemStore: ObservableObject {
             self.items.removeAll { item in items.contains { item.id == $0.id } }
         }
         Task {
-            try await dataSource.delete(items)
+            try await repository.delete(items)
         }
     }
 
-    func export(_ target: ItemDataSource, limit: Int? = nil) async throws {
+    func export(_ target: ItemRepository, limit: Int? = nil) async throws {
         logger.debug("\(String(describing: Self.self)).\(#function) to \(String(describing: type(of: target)))")
 
         let items: [Item]
@@ -123,7 +123,7 @@ class ItemStore: ObservableObject {
         try await target.create(items)
     }
 
-    func import_(_ source: ItemDataSource) async throws {
+    func import_(_ source: ItemRepository) async throws {
         logger.debug("\(String(describing: Self.self)).\(#function) from \(String(describing: type(of: source)))")
 
         var items = try await source.fetch()

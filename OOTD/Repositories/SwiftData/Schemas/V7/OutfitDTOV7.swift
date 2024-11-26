@@ -29,7 +29,7 @@ extension SchemaV7 {
             
             items = []
             do {
-                items = try SwiftDataItemDataSource.shared.fetch(items: outfit.items)
+                items = try SwiftDataItemRepository.shared.fetch(items: outfit.items)
             } catch {
                 logger.error("\(error)")
             }
@@ -40,7 +40,7 @@ extension SchemaV7 {
         }
         
         func update(from outfit: Outfit) throws {
-            items = try SwiftDataItemDataSource.shared.fetch(items: outfit.items)
+            items = try SwiftDataItemRepository.shared.fetch(items: outfit.items)
             tags = outfit.tags
             updatedAt = outfit.updatedAt!
             // createdAt は更新する必要なし

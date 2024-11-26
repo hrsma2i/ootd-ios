@@ -1,5 +1,5 @@
 //
-//  LocalJsonOutfitDataSource.swift
+//  LocalJsonOutfitRepository.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/10/15.
@@ -31,8 +31,8 @@ extension Outfit: Codable {
     }
 }
 
-struct LocalJsonOutfitDataSource: OutfitDataSource {
-    static let shared: LocalJsonOutfitDataSource = .init()
+struct LocalJsonOutfitRepository: OutfitRepository {
+    static let shared: LocalJsonOutfitRepository = .init()
 
     private init() {}
 

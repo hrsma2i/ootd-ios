@@ -10,18 +10,18 @@ import Foundation
 private let logger = getLogger(#file)
 
 enum Config {
-    static var DATA_SOURCE: DataSourceType {
+    static var DATA_SOURCE: RepositoryType {
         guard let value = Bundle.main.object(forInfoDictionaryKey: "Data Source") as? String else {
-            logger.error("failed to get Data Source from Info.plist. SampleDataSource is used.")
+            logger.error("failed to get Data Source from Info.plist. SampleRepository is used.")
             return .sample
         }
 
-        guard let dataSource = DataSourceType(rawValue: value) else {
-            logger.error("unknown DataSource: \(value). SampleDataSource is used")
+        guard let repository = RepositoryType(rawValue: value) else {
+            logger.error("unknown Repository: \(value). SampleRepository is used")
             return .sample
         }
 
-        return dataSource
+        return repository
     }
 
     static var BUILD_CONFIG: String {

@@ -1,5 +1,5 @@
 //
-//  LocalJsonItemDataSource.swift
+//  LocalJsonItemRepository.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/10/13.
@@ -61,8 +61,8 @@ extension Item: Codable {
     }
 }
 
-struct LocalJsonItemDataSource: ItemDataSource {
-    static let shared: LocalJsonItemDataSource = .init()
+struct LocalJsonItemRepository: ItemRepository {
+    static let shared: LocalJsonItemRepository = .init()
 
     private init() {}
 

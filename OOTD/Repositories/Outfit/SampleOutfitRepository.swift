@@ -1,5 +1,5 @@
 //
-//  SampleOutfitDataSource.swift
+//  SampleOutfitRepository.swift
 //  Closet
 //
 //  Created by Hiroshi Matsui on 2024/07/14.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SampleOutfitDataSource: OutfitDataSource {
+class SampleOutfitRepository: OutfitRepository {
     func fetch() async throws -> [Outfit] {
         sampleOutfits
     }

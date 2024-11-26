@@ -1,5 +1,5 @@
 //
-//  SampleItemDataSource.swift
+//  SampleItemRepository.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/07/14.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SampleItemDataSource: ItemDataSource {
+class SampleItemRepository: ItemRepository {
     func fetch() async throws -> [Item] {
         sampleItems
     }

@@ -1,5 +1,5 @@
 //
-//  SwiftDataItemDataSource.swift
+//  SwiftDataItemRepository.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/08/27.
@@ -13,14 +13,14 @@ private let logger = getLogger(#file)
 
 typealias ItemDTO = SchemaV7.ItemDTO
 
-final class SwiftDataItemDataSource: ItemDataSource {
+final class SwiftDataItemRepository: ItemRepository {
     var context: ModelContext
 
     var className: String {
         String(describing: Self.self)
     }
 
-    static let shared = SwiftDataItemDataSource()
+    static let shared = SwiftDataItemRepository()
 
     private init() {
         context = SwiftDataManager.shared.context
@@ -58,7 +58,7 @@ final class SwiftDataItemDataSource: ItemDataSource {
 
     func fetchSingle(item: Item) throws -> ItemDTO {
         // dto.id == item.id としてしまうと、以下のエラーになるので、いったん String だけの変数にしてる
-        // Cannot convert value of type 'PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<SwiftDataItemDataSource.ItemDTO>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Value<Item>, String>>' to closure result type 'any StandardPredicateExpression<Bool>'
+        // Cannot convert value of type 'PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<SwiftDataItemRepository.ItemDTO>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Value<Item>, String>>' to closure result type 'any StandardPredicateExpression<Bool>'
         let id = item.id
         let descriptor = FetchDescriptor<ItemDTO>(predicate: #Predicate { dto in
             dto.id == id

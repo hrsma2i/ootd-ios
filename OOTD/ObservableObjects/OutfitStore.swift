@@ -11,22 +11,22 @@ private let logger = getLogger(#file)
 
 class OutfitStore: ObservableObject {
     @Published var outfits: [Outfit] = []
-    private let dataSource: OutfitDataSource
+    private let repository: OutfitRepository
 
     @MainActor
-    init(_ dataSourceType: DataSourceType = .sample) {
-        switch dataSourceType {
+    init(_ repositoryType: RepositoryType = .sample) {
+        switch repositoryType {
         case .sample:
-            dataSource = SampleOutfitDataSource()
+            repository = SampleOutfitRepository()
         case .swiftData:
-            dataSource = SwiftDataOutfitDataSource.shared
+            repository = SwiftDataOutfitRepository.shared
         }
     }
 
     @MainActor
     func fetch() async throws {
         logger.debug("fetch outfits")
-        outfits = try await dataSource.fetch()
+        outfits = try await repository.fetch()
     }
 
     func create(_ outfits: [Outfit]) async throws {
@@ -38,7 +38,7 @@ class OutfitStore: ObservableObject {
         }
 
         Task {
-            try await dataSource.create(outfits)
+            try await repository.create(outfits)
         }
 
         await MainActor.run {
@@ -95,7 +95,7 @@ class OutfitStore: ObservableObject {
         }
 
         Task {
-            try await dataSource.update(updatedOutfits)
+            try await repository.update(updatedOutfits)
         }
     }
 
@@ -123,7 +123,7 @@ class OutfitStore: ObservableObject {
             self.outfits.removeAll { outfit in outfits.contains { outfit.id == $0.id } }
         }
         Task {
-            try await dataSource.delete(outfits)
+            try await repository.delete(outfits)
         }
     }
 
@@ -135,7 +135,7 @@ class OutfitStore: ObservableObject {
         return newOutfits
     }
 
-    func export(_ target: OutfitDataSource, limit: Int? = nil) async throws {
+    func export(_ target: OutfitRepository, limit: Int? = nil) async throws {
         logger.debug("\(String(describing: Self.self)).\(#function) to \(String(describing: type(of: target)))")
 
         let outfits: [Outfit]
@@ -148,7 +148,7 @@ class OutfitStore: ObservableObject {
         try await target.create(outfits)
     }
 
-    func import_(_ source: OutfitDataSource) async throws {
+    func import_(_ source: OutfitRepository) async throws {
         logger.debug("\(String(describing: Self.self)).\(#function) from \(String(describing: type(of: source)))")
 
         var outfits = try await source.fetch()

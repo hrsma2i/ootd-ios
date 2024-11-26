@@ -1,6 +1,6 @@
 
 //
-//  SwiftDataOutfitDataSource.swift
+//  SwiftDataOutfitRepository.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/08/27.
@@ -14,11 +14,11 @@ private let logger = getLogger(#file)
 
 typealias OutfitDTO = SchemaV7.OutfitDTO
 
-final class SwiftDataOutfitDataSource: OutfitDataSource {
+final class SwiftDataOutfitRepository: OutfitRepository {
     var context: ModelContext
 
     @MainActor
-    static let shared = SwiftDataOutfitDataSource()
+    static let shared = SwiftDataOutfitRepository()
 
     @MainActor
     private init() {
@@ -27,7 +27,7 @@ final class SwiftDataOutfitDataSource: OutfitDataSource {
 
     func fetchSingle(outfit: Outfit) throws -> OutfitDTO {
         // dto.id == outfit.id としてしまうと、以下のエラーになるので、いったん String だけの変数にしてる
-        // Cannot convert value of type 'PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<SwiftDataOutfitDataSource.OutfitDTO>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Value<Outfit>, String>>' to closure result type 'any StandardPredicateExpression<Bool>'
+        // Cannot convert value of type 'PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<SwiftDataOutfitRepository.OutfitDTO>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Value<Outfit>, String>>' to closure result type 'any StandardPredicateExpression<Bool>'
         let id = outfit.id
         let descriptor = FetchDescriptor<OutfitDTO>(predicate: #Predicate { dto in
             dto.id == id
