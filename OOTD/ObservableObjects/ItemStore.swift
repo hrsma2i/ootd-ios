@@ -40,7 +40,7 @@ class ItemStore: ObservableObject {
         }
 
         Task {
-            try await repository.create(items)
+            try await AddItems(repository: repository)(items)
         }
 
         await MainActor.run {
