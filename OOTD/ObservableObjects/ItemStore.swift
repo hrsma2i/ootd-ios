@@ -106,7 +106,7 @@ class ItemStore: ObservableObject {
             self.items.removeAll { item in items.contains { item.id == $0.id } }
         }
         Task {
-            try await repository.delete(items)
+            try await DeleteItems(repository: repository)(items)
         }
     }
 
