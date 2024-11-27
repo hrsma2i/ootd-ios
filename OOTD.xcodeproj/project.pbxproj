@@ -55,6 +55,7 @@
 		884CF6762C8201F900250026 /* AspectRatioContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF66A2C8201F900250026 /* AspectRatioContainer.swift */; };
 		884F5A6F2CF63025004228C6 /* GetItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884F5A6E2CF63025004228C6 /* GetItems.swift */; };
 		884F5A712CF63184004228C6 /* AddItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884F5A702CF63184004228C6 /* AddItems.swift */; };
+		884F5A732CF63626004228C6 /* EditItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884F5A722CF63626004228C6 /* EditItems.swift */; };
 		886064112C906B45003C7001 /* SwiftDataOutfitRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886064102C906B45003C7001 /* SwiftDataOutfitRepository.swift */; };
 		886064132C90790D003C7001 /* Sequence+compactMapWithErrorLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886064122C90790D003C7001 /* Sequence+compactMapWithErrorLog.swift */; };
 		886232102C7CBDD900A1802D /* OOTDApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862320F2C7CBDD900A1802D /* OOTDApp.swift */; };
@@ -221,6 +222,7 @@
 		884CF66A2C8201F900250026 /* AspectRatioContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AspectRatioContainer.swift; sourceTree = "<group>"; };
 		884F5A6E2CF63025004228C6 /* GetItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GetItems.swift; path = "../../../../../.Trash/UseCases 1.34.21/Item/GetItems.swift"; sourceTree = "<group>"; };
 		884F5A702CF63184004228C6 /* AddItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItems.swift; sourceTree = "<group>"; };
+		884F5A722CF63626004228C6 /* EditItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditItems.swift; sourceTree = "<group>"; };
 		886064102C906B45003C7001 /* SwiftDataOutfitRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataOutfitRepository.swift; sourceTree = "<group>"; };
 		886064122C90790D003C7001 /* Sequence+compactMapWithErrorLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+compactMapWithErrorLog.swift"; sourceTree = "<group>"; };
 		8862320C2C7CBDD900A1802D /* OOTD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OOTD.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -513,6 +515,7 @@
 			children = (
 				884F5A6E2CF63025004228C6 /* GetItems.swift */,
 				884F5A702CF63184004228C6 /* AddItems.swift */,
+				884F5A722CF63626004228C6 /* EditItems.swift */,
 			);
 			path = Item;
 			sourceTree = "<group>";
@@ -1087,6 +1090,7 @@
 				883FCB552CA5AA720001DAAF /* ItemDTOV2.swift in Sources */,
 				886232722C7CC65200A1802D /* ItemDetail.swift in Sources */,
 				886232682C7CC4C600A1802D /* Config.swift in Sources */,
+				884F5A732CF63626004228C6 /* EditItems.swift in Sources */,
 				882D9FC52CCA80DD003A1338 /* request.swift in Sources */,
 				8862325D2C7CC2FF00A1802D /* OutfitRepository.swift in Sources */,
 				889F34FE2CBFDAC600C5BD65 /* ScrollableTabView.swift in Sources */,

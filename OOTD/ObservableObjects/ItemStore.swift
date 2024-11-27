@@ -97,7 +97,7 @@ class ItemStore: ObservableObject {
         }
 
         Task {
-            try await repository.update(updatedItems)
+            try await EditItems(repository: repository)(updatedItems)
         }
     }
 
