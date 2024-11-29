@@ -35,9 +35,9 @@ struct ItemGrid: HashableView {
     @State private var isSelectable: Bool
     @State private var isAlertPresented = false
     @State private var searchText: String = ""
-    @State private var sorter: ItemGridTab.Sort? = nil
+    @State private var sorter: ItemQuery.Sort? = nil
 
-    private static let defaultTab = ItemGridTab(
+    private static let defaultTab = ItemQuery(
         name: "すべて",
         sort: .category
     )
@@ -59,7 +59,7 @@ struct ItemGrid: HashableView {
         outfitStore.getOutfits(using: selected)
     }
 
-    func tabItems(_ tab: ItemGridTab) -> [Item] {
+    func tabItems(_ tab: ItemQuery) -> [Item] {
         var items = itemStore.items
         let keyword = searchText.lowercased()
 
@@ -84,13 +84,13 @@ struct ItemGrid: HashableView {
     }
 
     // TODO: TabStore を作って、そこから読み書きする
-    var tabs: [ItemGridTab] {
+    var tabs: [ItemQuery] {
         let categories = itemStore.items.map(\.category).unique().sorted()
 
         let tabs = [
             ItemGrid.defaultTab
         ] + categories.map { category in
-            ItemGridTab(
+            ItemQuery(
                 name: category.rawValue,
                 sort: .createdAtDescendant,
                 filter: .init(
@@ -305,9 +305,9 @@ struct ItemGrid: HashableView {
 
     var selectSortSheet: some View {
         SelectSheet(
-            options: ItemGridTab.Sort.allCases.map(\.rawValue)
+            options: ItemQuery.Sort.allCases.map(\.rawValue)
         ) { sort in
-            sorter = ItemGridTab.Sort(rawValue: sort)!
+            sorter = ItemQuery.Sort(rawValue: sort)!
             activeSheet = nil
         }
     }

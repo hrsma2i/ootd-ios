@@ -1,5 +1,5 @@
 //
-//  ItemGridTab.swift
+//  ItemQuery.swift
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/10/16.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ItemGridTab: Hashable {
+struct ItemQuery: Hashable {
     let name: String
     var sort: Sort
     var filter: Filter?
