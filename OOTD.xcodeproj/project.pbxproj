@@ -195,6 +195,7 @@
 		882C84642CC9338A007DF349 /* compareOptional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = compareOptional.swift; sourceTree = "<group>"; };
 		882D9FC22CC946C5003A1338 /* SelectSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectSheet.swift; sourceTree = "<group>"; };
 		882D9FC42CCA80DD003A1338 /* request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = request.swift; sourceTree = "<group>"; };
+		8834D8852CF9F40200ADEEFE /* screenshot.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = screenshot.xcconfig; sourceTree = "<group>"; };
 		883B54482C8DD5B8007DB1E8 /* CropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropView.swift; sourceTree = "<group>"; };
 		883FCB2D2C90815F0001DAAF /* SwiftDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataManager.swift; sourceTree = "<group>"; };
 		883FCB312C9489780001DAAF /* KeyChainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainHelper.swift; sourceTree = "<group>"; };
@@ -370,6 +371,7 @@
 			children = (
 				884CF6522C7F597600250026 /* sample.xcconfig */,
 				884CF6532C7F599300250026 /* swiftData.xcconfig */,
+				8834D8852CF9F40200ADEEFE /* screenshot.xcconfig */,
 				88DDFC0A2CF359180022BA8F /* qa.xcconfig */,
 				88E3DC392CC68FA10006D201 /* production.xcconfig */,
 			);
@@ -1050,7 +1052,7 @@
 /* Begin XCBuildConfiguration section */
 		8862322E2C7CBDDA00A1802D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 884CF6522C7F597600250026 /* sample.xcconfig */;
+			baseConfigurationReference = 8834D8852CF9F40200ADEEFE /* screenshot.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
