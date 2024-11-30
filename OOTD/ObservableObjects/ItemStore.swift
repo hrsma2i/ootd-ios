@@ -5,6 +5,7 @@
 //  Created by Hiroshi Matsui on 2024/07/14.
 //
 
+import Combine
 import Foundation
 
 private let logger = getLogger(#file)
@@ -13,6 +14,14 @@ class ItemStore: ObservableObject {
     var repository: ItemRepository
 
     @Published var items: [Item] = []
+    @Published var queries: [ItemQuery] = []
+    @Published var tabs: [Tab] = []
+    private var cancellables = Set<AnyCancellable>()
+
+    struct Tab {
+        var query: ItemQuery
+        var items: [Item]
+    }
 
     @MainActor
     init(_ repositoryType: RepositoryType = .sample) {
@@ -22,6 +31,56 @@ class ItemStore: ObservableObject {
         case .swiftData:
             repository = SwiftDataItemRepository.shared
         }
+
+        initQueries()
+
+        // items または queries が更新されるたびに tabs を更新
+        Publishers.CombineLatest($items, $queries)
+            .sink { [weak self] items, queries in
+                Task {
+                    await self?.updateTabs(items: items, queries: queries)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func initQueries() {
+        let defaultQuery = ItemQuery(
+            name: "すべて",
+            sort: .category
+        )
+        queries = [defaultQuery] + Category.allCases.map { category in
+            ItemQuery(
+                name: category.rawValue,
+                sort: .createdAtDescendant,
+                filter: .init(
+                    category: category
+                )
+            )
+        }
+    }
+
+    // TODO: できれば queries のうち、更新のあった tab のみ更新したい
+    @MainActor
+    private func updateTabs(items: [Item], queries: [ItemQuery]) async {
+        logger.debug("updateTabs")
+        let searchItems = InMemorySearchItems(items: items)
+
+        let tabs = await queries.asyncCompactMap(isParallel: false) { query -> Tab? in
+            guard let items = await doWithErrorLog({
+                // TODO: searchText を指定するか、 ItemQuery に searchText を持たせる
+                try await searchItems(query: query)
+            }) else {
+                return nil
+            }
+
+            return Tab(
+                query: query,
+                items: items
+            )
+        }
+
+        self.tabs = tabs
     }
 
     @MainActor

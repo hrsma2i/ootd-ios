@@ -37,11 +37,6 @@ struct ItemGrid: HashableView {
     @State private var searchText: String = ""
     @State private var sorter: ItemQuery.Sort? = nil
 
-    private static let defaultTab = ItemQuery(
-        name: "すべて",
-        sort: .category
-    )
-
     private enum ActiveSheet: Int, Identifiable {
         case itemDeleteConfirmOutfits
         case imagePicker
@@ -57,49 +52,6 @@ struct ItemGrid: HashableView {
 
     var relatedOutfits: [Outfit] {
         outfitStore.getOutfits(using: selected)
-    }
-
-    func tabItems(_ tab: ItemQuery) -> [Item] {
-        var items = itemStore.items
-        let keyword = searchText.lowercased()
-
-        if keyword != "" {
-            items = items.filter { item in
-                item.name.lowercased().contains(keyword)
-                    || item.originalDescription?.lowercased().contains(keyword) ?? false
-                    || item.originalBrand?.lowercased().contains(keyword) ?? false
-                    || item.tags.map {
-                        $0.lowercased().contains(keyword)
-                    }.contains(true)
-            }
-        }
-
-        items = tab.apply(items)
-
-        if let sorter {
-            items = items.sorted { sorter.compare($0, $1) }
-        }
-
-        return items
-    }
-
-    // TODO: TabStore を作って、そこから読み書きする
-    var tabs: [ItemQuery] {
-        let categories = itemStore.items.map(\.category).unique().sorted()
-
-        let tabs = [
-            ItemGrid.defaultTab
-        ] + categories.map { category in
-            ItemQuery(
-                name: category.rawValue,
-                sort: .createdAtDescendant,
-                filter: .init(
-                    category: category
-                )
-            )
-        }
-
-        return tabs
     }
 
     var sortButton: some View {
@@ -318,14 +270,14 @@ struct ItemGrid: HashableView {
 
         VStack(spacing: 0) {
             ScrollableTabView(
-                tabs,
-                id: \.name,
-                title: \.name
+                itemStore.tabs,
+                id: \.query.name,
+                title: \.query.name
             ) { tab in
                 AdBannerContainer {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: spacing) {
-                            ForEach(tabItems(tab), id: \.self) { item in
+                            ForEach(tab.items, id: \.self) { item in
                                 itemCard(item)
                             }
                         }

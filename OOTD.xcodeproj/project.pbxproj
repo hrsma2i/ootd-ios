@@ -49,6 +49,8 @@
 		883FCB512CA5A9A20001DAAF /* ItemDTOV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883FCB502CA5A9A20001DAAF /* ItemDTOV1.swift */; };
 		883FCB532CA5AA340001DAAF /* SchemaV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883FCB522CA5AA340001DAAF /* SchemaV2.swift */; };
 		883FCB552CA5AA720001DAAF /* ItemDTOV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883FCB542CA5AA720001DAAF /* ItemDTOV2.swift */; };
+		884800A12CF7890E00B0E6F1 /* SearchItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884800A02CF7890E00B0E6F1 /* SearchItems.swift */; };
+		884800A32CF78A4500B0E6F1 /* InMemorySearchItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884800A22CF78A4500B0E6F1 /* InMemorySearchItems.swift */; };
 		884CF6562C7F670200250026 /* LocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6552C7F670200250026 /* LocalStorage.swift */; };
 		884CF65E2C82018400250026 /* RoundRectangleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF65D2C82018400250026 /* RoundRectangleButton.swift */; };
 		884CF6702C8201F900250026 /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6642C8201F900250026 /* AddButton.swift */; };
@@ -214,6 +216,8 @@
 		883FCB502CA5A9A20001DAAF /* ItemDTOV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDTOV1.swift; sourceTree = "<group>"; };
 		883FCB522CA5AA340001DAAF /* SchemaV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV2.swift; sourceTree = "<group>"; };
 		883FCB542CA5AA720001DAAF /* ItemDTOV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDTOV2.swift; sourceTree = "<group>"; };
+		884800A02CF7890E00B0E6F1 /* SearchItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchItems.swift; sourceTree = "<group>"; };
+		884800A22CF78A4500B0E6F1 /* InMemorySearchItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemorySearchItems.swift; sourceTree = "<group>"; };
 		884CF6522C7F597600250026 /* sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = sample.xcconfig; sourceTree = "<group>"; };
 		884CF6532C7F599300250026 /* swiftData.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swiftData.xcconfig; sourceTree = "<group>"; };
 		884CF6542C7F5F1800250026 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -519,6 +523,7 @@
 				884F5A702CF63184004228C6 /* AddItems.swift */,
 				884F5A722CF63626004228C6 /* EditItems.swift */,
 				884F5A742CF76033004228C6 /* DeleteItems.swift */,
+				884800A02CF7890E00B0E6F1 /* SearchItems.swift */,
 			);
 			path = Item;
 			sourceTree = "<group>";
@@ -673,6 +678,7 @@
 				883FCB312C9489780001DAAF /* KeyChainHelper.swift */,
 				882D9FC42CCA80DD003A1338 /* request.swift */,
 				886232782C7CC6EC00A1802D /* downloadImage.swift */,
+				884800A22CF78A4500B0E6F1 /* InMemorySearchItems.swift */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -1035,6 +1041,7 @@
 				88E3DC372CC68B690006D201 /* OutfitDTOV6.swift in Sources */,
 				881B6B5C2CA5BAD6008274FF /* ItemDTOV3.swift in Sources */,
 				886232A82C7CC7D100A1802D /* View+if.swift in Sources */,
+				884800A32CF78A4500B0E6F1 /* InMemorySearchItems.swift in Sources */,
 				88E3DC112CC682030006D201 /* OutfitDTOV5.swift in Sources */,
 				88B012AD2CC1341E00CD9153 /* EditableTagListView.swift in Sources */,
 				88004E2F2CB4374E00A80A80 /* ZozoPage.swift in Sources */,
@@ -1127,6 +1134,7 @@
 				8862328B2C7CC71F00A1802D /* OutfitCard.swift in Sources */,
 				88004E4B2CB9552A00A80A80 /* doWithErrorLog.swift in Sources */,
 				881B6B622CA650B1008274FF /* SchemaV4.swift in Sources */,
+				884800A12CF7890E00B0E6F1 /* SearchItems.swift in Sources */,
 				88CD55A42C8755CD00A9B78A /* Scraper.swift in Sources */,
 				883FCB322C9489780001DAAF /* KeyChainHelper.swift in Sources */,
 				883FCB452C9C5F4C0001DAAF /* DetailMode.swift in Sources */,
