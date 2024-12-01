@@ -111,7 +111,7 @@ struct OutfitGrid: View {
 
     var sortButton: some View {
         footerButton(
-            text: "並べ替え",
+            text: tab.sort.rawValue,
             systemName: "arrow.up.arrow.down"
         ) {
             activeSheet = .selectSort
@@ -184,7 +184,8 @@ struct OutfitGrid: View {
 
     var selectSortSheet: some View {
         SelectSheet(
-            options: OutfitGridTab.Sort.allCases.map(\.rawValue)
+            options: OutfitGridTab.Sort.allCases.map(\.rawValue),
+            currentValue: tab.sort.rawValue
         ) { sort in
             tab.sort = OutfitGridTab.Sort(rawValue: sort)!
             activeSheet = nil
