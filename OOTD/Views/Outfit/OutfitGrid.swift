@@ -19,7 +19,7 @@ struct OutfitGrid: View {
     @State private var isAlertPresented = false
     @State private var tab = OutfitGridTab(
         name: "すべて",
-        sort: .createdAtDescendant
+        sort: .createdAtAscendant
     )
     @State private var activeSheet: Sheet?
     enum Sheet: Int, Identifiable {
@@ -220,6 +220,7 @@ struct OutfitGrid: View {
                         .padding(.bottom, 70)
                         .padding(spacing)
                     }
+                    .defaultScrollAnchor(.bottom)
                     .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
 
                     bottomBar

@@ -292,6 +292,7 @@ struct ItemGrid: HashableView {
                         .padding(spacing)
                         .padding(.bottom, 70)
                     }
+                    .defaultScrollAnchor(.bottom)
                     .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
                 }
             } footer: {
