@@ -34,7 +34,6 @@ struct ItemGrid: HashableView {
 
     @State private var isSelectable: Bool
     @State private var isAlertPresented = false
-    @State private var sorter: ItemQuery.Sort? = nil
 
     private enum ActiveSheet: Int, Identifiable {
         case itemDeleteConfirmOutfits
@@ -48,14 +47,22 @@ struct ItemGrid: HashableView {
     }
 
     @State private var activeSheet: ActiveSheet?
+    @State private var activeTabIndex: Int = 0
 
     var relatedOutfits: [Outfit] {
         outfitStore.getOutfits(using: selected)
     }
 
     var sortButton: some View {
-        footerButton(
-            text: sorter?.rawValue ?? "並べ替え",
+        let text: String
+        if itemStore.tabs.indices.contains(activeTabIndex) {
+            text = itemStore.tabs[activeTabIndex].query.sort.rawValue
+        } else {
+            text = "並べ替え"
+        }
+
+        return footerButton(
+            text: text,
             systemName: "arrow.up.arrow.down"
         ) {
             activeSheet = .selectSort
@@ -258,7 +265,9 @@ struct ItemGrid: HashableView {
         SelectSheet(
             options: ItemQuery.Sort.allCases.map(\.rawValue)
         ) { sort in
-            sorter = ItemQuery.Sort(rawValue: sort)!
+            if itemStore.tabs.indices.contains(activeTabIndex) {
+                itemStore.queries[activeTabIndex].sort = ItemQuery.Sort(rawValue: sort)!
+            }
             activeSheet = nil
         }
     }
@@ -270,7 +279,7 @@ struct ItemGrid: HashableView {
         VStack(spacing: 0) {
             ScrollableTabView(
                 itemStore.tabs,
-                id: \.query.name,
+                id: \.query.id,
                 title: \.query.name
             ) { tab in
                 AdBannerContainer {
@@ -288,6 +297,10 @@ struct ItemGrid: HashableView {
             } footer: {
                 innerFooter
                     .padding(.bottom, 7)
+            } onChange: { _, newId in
+                if let index = itemStore.tabs.firstIndex(where: { $0.query.id == newId }) {
+                    activeTabIndex = index
+                }
             }
 
             bottomBar

@@ -16,7 +16,7 @@ class ItemStore: ObservableObject {
     @Published var items: [Item] = []
     @Published var searchText: String = ""
     @Published var queries: [ItemQuery] = []
-    @Published var tabs: [Tab] = []
+    @Published private(set) var tabs: [Tab] = []
     private var cancellables = Set<AnyCancellable>()
 
     struct Tab {
