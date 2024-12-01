@@ -16,32 +16,38 @@ struct RootView: View {
     @StateObject private var navigation = NavigationManager()
 
     var body: some View {
-        NavigationStack(path: $navigation.path) {
-            TabView {
-                OutfitGrid()
-                    .tabItem {
-                        VStack {
-                            Text("コーデ")
-                            Image("outfit")
-                        }
-                    }
-
-                ItemGrid()
-                    .tabItem {
-                        VStack {
-                            Text("アイテム")
-                            Image("t-shirt")
-                        }
-                    }
-
-                if Config.IS_DEBUG_MODE {
-                    UserInfoScreen()
+        ZStack {
+            NavigationStack(path: $navigation.path) {
+                TabView {
+                    OutfitGrid()
                         .tabItem {
-                            Label("ユーザー", systemImage: "person.crop.circle")
+                            VStack {
+                                Text("コーデ")
+                                Image("outfit")
+                            }
                         }
+
+                    ItemGrid()
+                        .tabItem {
+                            VStack {
+                                Text("アイテム")
+                                Image("t-shirt")
+                            }
+                        }
+
+                    if Config.IS_DEBUG_MODE {
+                        UserInfoScreen()
+                            .tabItem {
+                                Label("ユーザー", systemImage: "person.crop.circle")
+                            }
+                    }
                 }
+                .navigationDestination(for: ItemDetail.self) { $0 }
             }
-            .navigationDestination(for: ItemDetail.self) { $0 }
+
+            if itemStore.isWriting {
+                LoadingView()
+            }
         }
         .environmentObject(itemStore)
         .environmentObject(outfitStore)

@@ -158,11 +158,13 @@ struct WebItemDetail: HashableView {
                 systemName: "checkmark",
                 fontSize: 20
             ) {
-                Task {
+                Task { @MainActor in
+                    defer {
+                        navigation.path.removeLast()
+                        onCreated(item)
+                    }
                     try await itemStore.create([item])
                 }
-                navigation.path.removeLast()
-                onCreated(item)
             }
         }
     }
