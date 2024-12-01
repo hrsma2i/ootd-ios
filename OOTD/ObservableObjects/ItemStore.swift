@@ -14,6 +14,7 @@ class ItemStore: ObservableObject {
     var repository: ItemRepository
 
     @Published var items: [Item] = []
+    @Published var searchText: String = ""
     @Published var queries: [ItemQuery] = []
     @Published var tabs: [Tab] = []
     private var cancellables = Set<AnyCancellable>()
@@ -35,10 +36,10 @@ class ItemStore: ObservableObject {
         initQueries()
 
         // items または queries が更新されるたびに tabs を更新
-        Publishers.CombineLatest($items, $queries)
-            .sink { [weak self] items, queries in
+        Publishers.CombineLatest3($items, $searchText, $queries)
+            .sink { [weak self] items, searchText, queries in
                 Task {
-                    await self?.updateTabs(items: items, queries: queries)
+                    try await self?.updateTabs(items: items, searchText: searchText, queries: queries)
                 }
             }
             .store(in: &cancellables)
@@ -62,14 +63,16 @@ class ItemStore: ObservableObject {
 
     // TODO: できれば queries のうち、更新のあった tab のみ更新したい
     @MainActor
-    private func updateTabs(items: [Item], queries: [ItemQuery]) async {
-        logger.debug("updateTabs")
-        let searchItems = InMemorySearchItems(items: items)
+    private func updateTabs(items: [Item], searchText: String, queries: [ItemQuery]) async throws {
+        // 一時的な searchText は ItemQuery として保存したくないので、別で与える
+        var items = items
+        let searchItemsByText = InMemorySearchItems(items: items)
+        items = try await searchItemsByText(text: searchText)
 
+        let searchItemsByQuery = InMemorySearchItems(items: items)
         let tabs = await queries.asyncCompactMap(isParallel: false) { query -> Tab? in
             guard let items = await doWithErrorLog({
-                // TODO: searchText を指定するか、 ItemQuery に searchText を持たせる
-                try await searchItems(query: query)
+                try await searchItemsByQuery(query: query)
             }) else {
                 return nil
             }

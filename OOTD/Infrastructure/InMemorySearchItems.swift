@@ -10,28 +10,10 @@ import Foundation
 struct InMemorySearchItems: SearchItems {
     let items: [Item]
 
-    func callAsFunction(query: ItemQuery, searchText: String? = nil) async throws -> [Item] {
+    func callAsFunction(query: ItemQuery) async throws -> [Item] {
         var items = items
 
-        // TODO: searchText も ItemQuery に持たせたほうが良さそう？
-        if let searchText {
-            let keyword = searchText.lowercased()
-
-            if keyword != "" {
-                items = items.filter { item in
-                    item.name.lowercased().contains(keyword)
-                        || item.originalDescription?.lowercased().contains(keyword) ?? false
-                        || item.originalBrand?.lowercased().contains(keyword) ?? false
-                        || item.tags.map {
-                            $0.lowercased().contains(keyword)
-                        }.contains(true)
-                }
-            }
-        }
-
-        if let filter = query.filter {
-            items = items.filter { filter($0) }
-        }
+        items = items.filter { query.filter.matches($0) }
 
         items = items.sorted {
             query.sort.compare($0, $1)
@@ -39,11 +21,35 @@ struct InMemorySearchItems: SearchItems {
 
         return items
     }
+
+    func callAsFunction(text: String) async throws -> [Item] {
+        var items = items
+
+        items = items.filter { ItemQuery.Filter.matchesSearchText(item: $0, text: text) }
+
+        return items
+    }
 }
 
 private extension ItemQuery.Filter {
-    func callAsFunction(_ item: Item) -> Bool {
-        true
+    static func matchesSearchText(item: Item, text: String?) -> Bool {
+        guard let text, text != "" else {
+            return true
+        }
+
+        let keyword = text.lowercased()
+
+        return item.name.lowercased().contains(keyword)
+            || item.originalDescription?.lowercased().contains(keyword) ?? false
+            || item.originalBrand?.lowercased().contains(keyword) ?? false
+            || item.tags.map {
+                $0.lowercased().contains(keyword)
+            }.contains(true)
+    }
+
+    func matches(_ item: Item) -> Bool {
+        return true
+            && Self.matchesSearchText(item: item, text: searchText)
             && (category == nil || item.category == category)
     }
 }

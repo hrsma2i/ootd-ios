@@ -11,7 +11,7 @@ struct ItemQuery: Hashable, Identifiable {
     let id = UUID()
     let name: String
     var sort: Sort
-    var filter: Filter?
+    var filter: Filter = .init()
 
     enum Sort: String, CaseIterable {
         case category = "カテゴリー順"
@@ -22,6 +22,7 @@ struct ItemQuery: Hashable, Identifiable {
     }
 
     struct Filter: Hashable {
-        let category: Category?
+        var searchText: String?
+        var category: Category?
     }
 }

@@ -34,7 +34,6 @@ struct ItemGrid: HashableView {
 
     @State private var isSelectable: Bool
     @State private var isAlertPresented = false
-    @State private var searchText: String = ""
     @State private var sorter: ItemQuery.Sort? = nil
 
     private enum ActiveSheet: Int, Identifiable {
@@ -174,7 +173,7 @@ struct ItemGrid: HashableView {
     }
 
     var bottomBar: some View {
-        SearchBar(text: $searchText, placeholder: "検索")
+        SearchBar(text: $itemStore.searchText, placeholder: "検索")
             .padding(7)
             .overlay {
                 RoundedRectangle(cornerRadius: 5)

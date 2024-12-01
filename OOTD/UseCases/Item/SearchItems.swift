@@ -12,5 +12,5 @@ protocol SearchItems {
     // N+1問題を回避したいし、データソースごとに最適なクエリを投げたいが、
     // Repository に検索ロジックを持たせて複雑にしたくないので、インターフェースを UseCases/ に定義し、
     // 実装は Infrastructure/ に、データソースごとに用意する。
-    func callAsFunction(query: ItemQuery, searchText: String?) async throws -> [Item]
+    func callAsFunction(query: ItemQuery) async throws -> [Item]
 }
