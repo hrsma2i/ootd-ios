@@ -1,4 +1,4 @@
-//
+// A
 //  ScrollableTabView.swift
 //  OOTD
 //
@@ -24,7 +24,9 @@ struct ScrollableTabView<Data: RandomAccessCollection, Content: View, ID: Hashab
         var id: String { rawValue }
     }
 
-    init(position: Position = .bottom, _ data: Data, id: KeyPath<Data.Element, ID>, title: @escaping (Data.Element) -> String, content: @escaping (Data.Element) -> Content, footer: @escaping () -> Footer = { EmptyView() }) {
+    let onChange: ((ID?, ID?) -> Void)?
+
+    init(position: Position = .bottom, _ data: Data, id: KeyPath<Data.Element, ID>, title: @escaping (Data.Element) -> String, content: @escaping (Data.Element) -> Content, footer: @escaping () -> Footer = { EmptyView() }, onChange: ((ID?, ID?) -> Void)? = nil) {
         self.position = position
         self.data = data
         self.id = id
@@ -32,6 +34,7 @@ struct ScrollableTabView<Data: RandomAccessCollection, Content: View, ID: Hashab
         self.content = content
         _selectedTabId = State(initialValue: data.first?[keyPath: id])
         self.footer = footer
+        self.onChange = onChange
     }
 
     @State private var selectedTabId: ID?
@@ -72,7 +75,7 @@ struct ScrollableTabView<Data: RandomAccessCollection, Content: View, ID: Hashab
                     }
                 }
             }
-            .onChange(of: selectedTabId) { _, newTabId in
+            .onChange(of: selectedTabId) { oldTabId, newTabId in
                 if let newTabId, let index = data.firstIndex(where: { $0[keyPath: id] == newTabId }) {
                     withAnimation(.easeInOut) {
                         scrollProxy.scrollTo(
@@ -82,6 +85,10 @@ struct ScrollableTabView<Data: RandomAccessCollection, Content: View, ID: Hashab
                             )
                         )
                     }
+                }
+
+                if let onChange {
+                    onChange(oldTabId, newTabId)
                 }
             }
         }

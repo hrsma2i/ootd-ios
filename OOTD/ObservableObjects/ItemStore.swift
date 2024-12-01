@@ -5,6 +5,7 @@
 //  Created by Hiroshi Matsui on 2024/07/14.
 //
 
+import Combine
 import Foundation
 
 private let logger = getLogger(#file)
@@ -13,6 +14,15 @@ class ItemStore: ObservableObject {
     var repository: ItemRepository
 
     @Published var items: [Item] = []
+    @Published var searchText: String = ""
+    @Published var queries: [ItemQuery] = []
+    @Published private(set) var tabs: [Tab] = []
+    private var cancellables = Set<AnyCancellable>()
+
+    struct Tab {
+        var query: ItemQuery
+        var items: [Item]
+    }
 
     @MainActor
     init(_ repositoryType: RepositoryType = .sample) {
@@ -22,6 +32,58 @@ class ItemStore: ObservableObject {
         case .swiftData:
             repository = SwiftDataItemRepository.shared
         }
+
+        initQueries()
+
+        // items または queries が更新されるたびに tabs を更新
+        Publishers.CombineLatest3($items, $searchText, $queries)
+            .sink { [weak self] items, searchText, queries in
+                Task {
+                    try await self?.updateTabs(items: items, searchText: searchText, queries: queries)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func initQueries() {
+        let defaultQuery = ItemQuery(
+            name: "すべて",
+            sort: .category
+        )
+        queries = [defaultQuery] + Category.allCases.map { category in
+            ItemQuery(
+                name: category.rawValue,
+                sort: .createdAtDescendant,
+                filter: .init(
+                    category: category
+                )
+            )
+        }
+    }
+
+    // TODO: できれば queries のうち、更新のあった tab のみ更新したい
+    @MainActor
+    private func updateTabs(items: [Item], searchText: String, queries: [ItemQuery]) async throws {
+        // 一時的な searchText は ItemQuery として保存したくないので、別で与える
+        var items = items
+        let searchItemsByText = InMemorySearchItems(items: items)
+        items = try await searchItemsByText(text: searchText)
+
+        let searchItemsByQuery = InMemorySearchItems(items: items)
+        let tabs = await queries.asyncCompactMap(isParallel: false) { query -> Tab? in
+            guard let items = await doWithErrorLog({
+                try await searchItemsByQuery(query: query)
+            }) else {
+                return nil
+            }
+
+            return Tab(
+                query: query,
+                items: items
+            )
+        }
+
+        self.tabs = tabs
     }
 
     @MainActor
