@@ -213,7 +213,11 @@ struct OutfitDetail: HashableView {
                         systemName: "checkmark",
                         fontSize: 20
                     ) {
-                        Task {
+                        Task { @MainActor in
+                            defer {
+                                navigation.path.removeLast()
+                            }
+
                             do {
                                 switch mode {
                                 case .create:
@@ -225,8 +229,6 @@ struct OutfitDetail: HashableView {
                                 logger.error("\(error)")
                             }
                         }
-
-                        navigation.path.removeLast()
                     }
                 }
             }

@@ -45,7 +45,7 @@ struct RootView: View {
                 .navigationDestination(for: ItemDetail.self) { $0 }
             }
 
-            if itemStore.isWriting {
+            if itemStore.isWriting || outfitStore.isWriting {
                 LoadingView()
             }
         }
