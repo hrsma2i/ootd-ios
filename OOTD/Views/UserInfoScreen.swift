@@ -55,8 +55,8 @@ struct UserInfoScreen: View {
             activeSheet = .export
 
             Task {
-                async let exportItemsTask: () = itemStore.export(LocalJsonItemDataSource.shared)
-                async let exportOutfitsTask: () = outfitStore.export(LocalJsonOutfitDataSource.shared)
+                async let exportItemsTask: () = itemStore.export(LocalJsonItemRepository.shared)
+                async let exportOutfitsTask: () = outfitStore.export(LocalJsonOutfitRepository.shared)
 
                 do { try await exportItemsTask } catch { logger.warning("\(error)") }
 
@@ -72,8 +72,8 @@ struct UserInfoScreen: View {
             activeSheet = .import_
 
             Task {
-                async let importItemsTask: () = itemStore.import_(LocalJsonItemDataSource.shared)
-                async let importOutfitsTask: () = outfitStore.import_(LocalJsonOutfitDataSource.shared)
+                async let importItemsTask: () = itemStore.import_(LocalJsonItemRepository.shared)
+                async let importOutfitsTask: () = outfitStore.import_(LocalJsonOutfitRepository.shared)
 
                 do { try await importItemsTask } catch { logger.warning("\(error)") }
 
