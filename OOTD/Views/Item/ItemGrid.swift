@@ -49,20 +49,20 @@ struct ItemGrid: HashableView {
     @State private var activeSheet: ActiveSheet?
     @State private var activeTabIndex: Int = 0
 
+    var activeTab: ItemStore.Tab? {
+        guard itemStore.tabs.indices.contains(activeTabIndex) else {
+            return nil
+        }
+        return itemStore.tabs[activeTabIndex]
+    }
+
     var relatedOutfits: [Outfit] {
         outfitStore.getOutfits(using: selected)
     }
 
     var sortButton: some View {
-        let text: String
-        if itemStore.tabs.indices.contains(activeTabIndex) {
-            text = itemStore.tabs[activeTabIndex].query.sort.rawValue
-        } else {
-            text = "並べ替え"
-        }
-
         return footerButton(
-            text: text,
+            text: activeTab?.query.sort.rawValue ?? "並べ替え",
             systemName: "arrow.up.arrow.down"
         ) {
             activeSheet = .selectSort
@@ -263,7 +263,8 @@ struct ItemGrid: HashableView {
 
     var selectSortSheet: some View {
         SelectSheet(
-            options: ItemQuery.Sort.allCases.map(\.rawValue)
+            options: ItemQuery.Sort.allCases.map(\.rawValue),
+            currentValue: activeTab?.query.sort.rawValue
         ) { sort in
             if itemStore.tabs.indices.contains(activeTabIndex) {
                 itemStore.queries[activeTabIndex].sort = ItemQuery.Sort(rawValue: sort)!
@@ -292,6 +293,7 @@ struct ItemGrid: HashableView {
                         .padding(spacing)
                         .padding(.bottom, 70)
                     }
+                    .defaultScrollAnchor(.bottom)
                     .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
                 }
             } footer: {

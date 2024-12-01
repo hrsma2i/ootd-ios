@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SelectSheet: HashableView {
     let options: [String]
+    var currentValue: String?
     var onSelect: (String) -> Void = { _ in }
 
     var height: CGFloat {
@@ -21,6 +22,9 @@ struct SelectSheet: HashableView {
                 onSelect(option)
             } label: {
                 Text(option)
+                    .if(currentValue == option) {
+                        $0.bold()
+                    }
             }
             Spacer()
         }
@@ -52,7 +56,8 @@ struct SelectSheet: HashableView {
                 SelectSheet(
                     options: Array(0 ..< numOptions).map {
                         "選択肢\($0)"
-                    }
+                    },
+                    currentValue: "選択肢1"
                 )
             }
         }

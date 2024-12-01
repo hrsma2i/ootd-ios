@@ -53,7 +53,7 @@ class ItemStore: ObservableObject {
         queries = [defaultQuery] + Category.allCases.map { category in
             ItemQuery(
                 name: category.rawValue,
-                sort: .createdAtDescendant,
+                sort: .createdAtAscendant,
                 filter: .init(
                     category: category
                 )
