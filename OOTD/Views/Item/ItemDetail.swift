@@ -14,6 +14,7 @@ struct ItemDetail: HashableView {
     let mode: DetailMode
     @EnvironmentObject var itemStore: ItemStore
     @EnvironmentObject var navigation: NavigationManager
+    @EnvironmentObject var snackbarStore: SnackbarStore
     
     // MARK: - private
     
@@ -64,11 +65,13 @@ struct ItemDetail: HashableView {
                     navigation.path.removeLast()
                 }
                 
-                switch mode {
-                case .create:
-                    try await itemStore.create(items)
-                case .update:
-                    try await itemStore.update(items, originalItems: originalItems)
+                await snackbarStore.notify(logger) {
+                    switch mode {
+                    case .create:
+                        try await itemStore.create(items)
+                    case .update:
+                        try await itemStore.update(items, originalItems: originalItems)
+                    }
                 }
             }
         }

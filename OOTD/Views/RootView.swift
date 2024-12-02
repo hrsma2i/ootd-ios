@@ -14,6 +14,7 @@ struct RootView: View {
     @StateObject private var outfitStore = OutfitStore(Config.DATA_SOURCE)
 
     @StateObject private var navigation = NavigationManager()
+    @StateObject private var snackbarStore = SnackbarStore()
 
     var body: some View {
         ZStack {
@@ -49,9 +50,11 @@ struct RootView: View {
                 LoadingView()
             }
         }
+        .snackbar(item: $snackbarStore.active) { $0 }
         .environmentObject(itemStore)
         .environmentObject(outfitStore)
         .environmentObject(navigation)
+        .environmentObject(snackbarStore)
         .task {
             do {
                 async let itemFetch: () = itemStore.fetch()

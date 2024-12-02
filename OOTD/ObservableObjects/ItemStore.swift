@@ -148,9 +148,7 @@ class ItemStore: ObservableObject {
                 return edited
             }
         } else {
-            // TODO: ちゃんと例外を投げる
-            logger.error("originalItems is empty and originalItems.count != editedItems.count")
-            return
+            throw "originalItems is empty and originalItems.count != editedItems.count"
         }
 
         let now = Date()
