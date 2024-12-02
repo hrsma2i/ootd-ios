@@ -22,6 +22,7 @@ struct ItemGrid: HashableView {
     @EnvironmentObject var itemStore: ItemStore
     @EnvironmentObject var outfitStore: OutfitStore
     @EnvironmentObject var navigation: NavigationManager
+    @EnvironmentObject var snackbarStore: SnackbarStore
 
     // MARK: - optional
 
@@ -116,7 +117,7 @@ struct ItemGrid: HashableView {
         footerButton(
             text: "一括削除",
             systemName: "trash.fill",
-            color: Color(red: 255 / 255, green: 117 / 255, blue: 117 / 255)
+            color: .softRed
         ) {
             if relatedOutfits.isEmpty {
                 isAlertPresented = true
@@ -321,10 +322,8 @@ struct ItemGrid: HashableView {
                         isSelectable = false
                     }
 
-                    do {
+                    await snackbarStore.notify(logger) {
                         try await itemStore.delete(selected)
-                    } catch {
-                        logger.error("\(error)")
                     }
                 }
             } label: { Text("削除する") }

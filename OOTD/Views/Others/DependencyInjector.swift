@@ -13,6 +13,7 @@ struct DependencyInjector<Content: View>: View {
     @StateObject private var itemStore = ItemStore()
     @StateObject private var outfitStore = OutfitStore()
     @StateObject private var navigation = NavigationManager()
+    @StateObject private var snackbarStore = SnackbarStore()
 
     var body: some View {
         NavigationStack(path: $navigation.path) {
@@ -21,6 +22,7 @@ struct DependencyInjector<Content: View>: View {
         .environmentObject(itemStore)
         .environmentObject(outfitStore)
         .environmentObject(navigation)
+        .environmentObject(snackbarStore)
         .task {
             Task {
                 do {

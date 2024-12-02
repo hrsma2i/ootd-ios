@@ -16,6 +16,7 @@ struct SelectWebItemScreen: HashableView {
     @State private var selected: [Item] = []
     @EnvironmentObject var navigation: NavigationManager
     @EnvironmentObject var itemStore: ItemStore
+    @EnvironmentObject var snackbarStore: SnackbarStore
 
     var header: some View {
         HStack {
@@ -50,10 +51,12 @@ struct SelectWebItemScreen: HashableView {
                 radius: 5
             ) {
                 Task { @MainActor in
+                    // SourceUrl から情報を取得する間も画面をロックしたいので itemStore.create 内で isWriting = true する前にしている
                     itemStore.isWriting = true
 
                     defer {
                         navigation.path = NavigationPath()
+                        itemStore.isWriting = false
                     }
 
                     let items = await selected.asyncMap { item in
@@ -65,7 +68,9 @@ struct SelectWebItemScreen: HashableView {
                         }
                     }
 
-                    try await itemStore.create(items)
+                    await snackbarStore.notify(logger) {
+                        try await itemStore.create(items)
+                    }
                 }
             }
             .padding(7)

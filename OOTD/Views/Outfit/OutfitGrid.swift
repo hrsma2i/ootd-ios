@@ -12,6 +12,7 @@ private let logger = getLogger(#file)
 struct OutfitGrid: View {
     @EnvironmentObject var outfitStore: OutfitStore
     @EnvironmentObject var navigation: NavigationManager
+    @EnvironmentObject var snackbarStore: SnackbarStore
     let numColumns: Int = 2
 
     @State private var isSelectable = false
@@ -244,10 +245,8 @@ struct OutfitGrid: View {
                         selected = []
                     }
 
-                    do {
+                    await snackbarStore.notify(logger) {
                         try await outfitStore.delete(selected)
-                    } catch {
-                        logger.error("\(error)")
                     }
                 }
             } label: { Text("削除する") }
