@@ -49,7 +49,13 @@ struct SelectWebItemScreen: HashableView {
                 fontSize: 20,
                 radius: 5
             ) {
-                Task {
+                Task { @MainActor in
+                    itemStore.isWriting = true
+
+                    defer {
+                        navigation.path = NavigationPath()
+                    }
+
                     let items = await selected.asyncMap { item in
                         do {
                             return try await item.copyWithPropertiesFromSourceUrl()
@@ -61,7 +67,6 @@ struct SelectWebItemScreen: HashableView {
 
                     try await itemStore.create(items)
                 }
-                navigation.path = NavigationPath()
             }
             .padding(7)
         }

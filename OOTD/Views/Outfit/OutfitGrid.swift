@@ -238,9 +238,12 @@ struct OutfitGrid: View {
         .alert("本当に削除しますか？", isPresented: $isAlertPresented) {
             Button(role: .cancel) {} label: { Text("戻る") }
             Button(role: .destructive) {
-                isSelectable = false
+                Task { @MainActor in
+                    defer {
+                        isSelectable = false
+                        selected = []
+                    }
 
-                Task {
                     do {
                         try await outfitStore.delete(selected)
                     } catch {

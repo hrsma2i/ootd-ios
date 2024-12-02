@@ -106,6 +106,7 @@
 		886232B52C7CCA7800A1802D /* UserInfoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232B12C7CCA7800A1802D /* UserInfoScreen.swift */; };
 		886232B92C7CCB5000A1802D /* ItemCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232B82C7CCB5000A1802D /* ItemCard.swift */; };
 		886232BD2C7CCC9100A1802D /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232BC2C7CCC9100A1802D /* NavigationManager.swift */; };
+		88886D442CFC67C100570687 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88886D432CFC67C100570687 /* LoadingView.swift */; };
 		889F34FC2CBF991100C5BD65 /* ItemQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889F34FB2CBF991100C5BD65 /* ItemQuery.swift */; };
 		889F34FE2CBFDAC600C5BD65 /* ScrollableTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */; };
 		88A350032CA86DD300021FBF /* SelectWebItemScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A350022CA86DD300021FBF /* SelectWebItemScreen.swift */; };
@@ -279,6 +280,7 @@
 		886232B12C7CCA7800A1802D /* UserInfoScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoScreen.swift; sourceTree = "<group>"; };
 		886232B82C7CCB5000A1802D /* ItemCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCard.swift; sourceTree = "<group>"; };
 		886232BC2C7CCC9100A1802D /* NavigationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationManager.swift; sourceTree = "<group>"; };
+		88886D432CFC67C100570687 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		889F34FB2CBF991100C5BD65 /* ItemQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemQuery.swift; sourceTree = "<group>"; };
 		889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollableTabView.swift; sourceTree = "<group>"; };
 		88A350022CA86DD300021FBF /* SelectWebItemScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectWebItemScreen.swift; sourceTree = "<group>"; };
@@ -657,6 +659,7 @@
 				889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */,
 				88B012AC2CC1341E00CD9153 /* EditableTagListView.swift */,
 				88D8EF0D2CE231630070AD8D /* AdBanner.swift */,
+				88886D432CFC67C100570687 /* LoadingView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1060,6 +1063,7 @@
 				883FCB392C9674060001DAAF /* Sequence+unique.swift in Sources */,
 				88CD55A22C874E9800A9B78A /* SelectWebImageScreen.swift in Sources */,
 				886232A72C7CC7D100A1802D /* View+functionalModifier.swift in Sources */,
+				88886D442CFC67C100570687 /* LoadingView.swift in Sources */,
 				88004E2D2CB4363700A80A80 /* ZozoItemDetail.swift in Sources */,
 				88AAE5AC2CC3EF5200DAEC0F /* FlowLayout.swift in Sources */,
 				886232892C7CC71F00A1802D /* SelectedItemsGrid.swift in Sources */,

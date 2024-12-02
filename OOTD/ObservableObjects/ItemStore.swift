@@ -18,6 +18,7 @@ class ItemStore: ObservableObject {
     @Published var queries: [ItemQuery] = []
     @Published private(set) var tabs: [Tab] = []
     private var cancellables = Set<AnyCancellable>()
+    @Published var isWriting: Bool = false
 
     struct Tab {
         var query: ItemQuery
@@ -92,7 +93,13 @@ class ItemStore: ObservableObject {
         items = try await GetItems(repository: repository)()
     }
 
+    @MainActor
     func create(_ items: [Item]) async throws {
+        isWriting = true
+        defer {
+            isWriting = false
+        }
+
         let now = Date()
         let items = items.map {
             $0
@@ -101,17 +108,19 @@ class ItemStore: ObservableObject {
                 .copyWith(\.purchasedOn, value: $0.purchasedOn ?? now)
         }
 
-        Task {
-            try await AddItems(repository: repository)(items)
-        }
+        try await AddItems(repository: repository)(items)
 
-        await MainActor.run {
-            self.items.append(contentsOf: items)
-        }
+        self.items.append(contentsOf: items)
     }
 
+    @MainActor
     func update(_ editedItems: [Item], originalItems: [Item] = []) async throws {
         // originalItems と比較して、フィールドが更新された Item のみ更新する
+
+        isWriting = true
+        defer {
+            isWriting = false
+        }
 
         let itemsToUpdate: [Item]
 
@@ -139,6 +148,7 @@ class ItemStore: ObservableObject {
                 return edited
             }
         } else {
+            // TODO: ちゃんと例外を投げる
             logger.error("originalItems is empty and originalItems.count != editedItems.count")
             return
         }
@@ -149,27 +159,25 @@ class ItemStore: ObservableObject {
                 .copyWith(\.updatedAt, value: now)
         }
 
+        try await EditItems(repository: repository)(updatedItems)
+
         for item in updatedItems {
             if let index = items.firstIndex(where: { $0.id == item.id }) {
                 logger.debug("update local item at index=\(index)")
-                DispatchQueue.main.async {
-                    self.items[index] = item
-                }
+                items[index] = item
             }
-        }
-
-        Task {
-            try await EditItems(repository: repository)(updatedItems)
         }
     }
 
+    @MainActor
     func delete(_ items: [Item]) async throws {
-        DispatchQueue.main.async {
-            self.items.removeAll { item in items.contains { item.id == $0.id } }
+        isWriting = true
+        defer {
+            isWriting = false
         }
-        Task {
-            try await DeleteItems(repository: repository)(items)
-        }
+
+        try await DeleteItems(repository: repository)(items)
+        self.items.removeAll { item in items.contains { item.id == $0.id } }
     }
 
     func export(_ target: ItemRepository, limit: Int? = nil) async throws {

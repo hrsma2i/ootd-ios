@@ -12,6 +12,7 @@ private let logger = getLogger(#file)
 class OutfitStore: ObservableObject {
     @Published var outfits: [Outfit] = []
     private let repository: OutfitRepository
+    @Published var isWriting: Bool = false
 
     @MainActor
     init(_ repositoryType: RepositoryType = .sample) {
@@ -29,7 +30,13 @@ class OutfitStore: ObservableObject {
         outfits = try await repository.findAll()
     }
 
+    @MainActor
     func create(_ outfits: [Outfit]) async throws {
+        isWriting = true
+        defer {
+            isWriting = false
+        }
+
         let now = Date()
         let outfits = outfits.map {
             $0
@@ -37,17 +44,18 @@ class OutfitStore: ObservableObject {
                 .copyWith(\.updatedAt, value: now)
         }
 
-        Task {
-            try await repository.create(outfits)
-        }
+        try await repository.create(outfits)
 
-        await MainActor.run {
-            self.outfits.append(contentsOf: outfits)
-        }
+        self.outfits.append(contentsOf: outfits)
     }
 
+    @MainActor
     func update(_ editedOutfits: [Outfit], originalOutfits: [Outfit] = []) async throws {
         // originalOutfits と比較して、フィールドが更新された Outfit のみ更新する
+        isWriting = true
+        defer {
+            isWriting = false
+        }
 
         let outfitsToUpdate: [Outfit]
 
@@ -75,6 +83,7 @@ class OutfitStore: ObservableObject {
                 return edited
             }
         } else {
+            // TODO: ちゃんと例外を投げる
             logger.error("originalOutfits is empty and originalOutfits.count != editedOutfits.count")
             return
         }
@@ -85,17 +94,13 @@ class OutfitStore: ObservableObject {
                 .copyWith(\.updatedAt, value: now)
         }
 
+        try await repository.update(updatedOutfits)
+
         for outfit in updatedOutfits {
             if let index = outfits.firstIndex(where: { $0.id == outfit.id }) {
                 logger.debug("update local outfit at index=\(index)")
-                DispatchQueue.main.async {
-                    self.outfits[index] = outfit
-                }
+                outfits[index] = outfit
             }
-        }
-
-        Task {
-            try await repository.update(updatedOutfits)
         }
     }
 
@@ -118,13 +123,15 @@ class OutfitStore: ObservableObject {
         }
     }
 
+    @MainActor
     func delete(_ outfits: [Outfit]) async throws {
-        DispatchQueue.main.async {
-            self.outfits.removeAll { outfit in outfits.contains { outfit.id == $0.id } }
+        isWriting = true
+        defer {
+            isWriting = false
         }
-        Task {
-            try await repository.delete(outfits)
-        }
+
+        try await repository.delete(outfits)
+        self.outfits.removeAll { outfit in outfits.contains { outfit.id == $0.id } }
     }
 
     func filterAndSort(_ outfits: [Outfit], by condition: OutfitGridTab) -> [Outfit] {
