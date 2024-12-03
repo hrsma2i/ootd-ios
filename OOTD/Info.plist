@@ -7,7 +7,7 @@
 	<key>Debug Mode</key>
 	<string>$(IS_DEBUG_MODE)</string>
 	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<string>ca-app-pub-5778192776770384~1008086688</string>
 	<key>Google AdMob Ad Unit ID</key>
 	<string>$(GOOGLE_ADMOB_AD_UNIT_ID)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
