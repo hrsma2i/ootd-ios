@@ -14,6 +14,7 @@ struct ItemDetail: HashableView {
     let mode: DetailMode
     @EnvironmentObject var itemStore: ItemStore
     @EnvironmentObject var navigation: NavigationManager
+    @EnvironmentObject var snackbarStore: SnackbarStore
     
     // MARK: - private
     
@@ -59,16 +60,20 @@ struct ItemDetail: HashableView {
             systemName: "checkmark",
             fontSize: 20
         ) {
-            Task {
-                switch mode {
-                case .create:
-                    try await itemStore.create(items)
-                case .update:
-                    try await itemStore.update(items, originalItems: originalItems)
+            Task { @MainActor in
+                defer {
+                    navigation.path.removeLast()
+                }
+                
+                await snackbarStore.notify(logger) {
+                    switch mode {
+                    case .create:
+                        try await itemStore.create(items)
+                    case .update:
+                        try await itemStore.update(items, originalItems: originalItems)
+                    }
                 }
             }
-                
-            navigation.path.removeLast()
         }
     }
     
@@ -388,15 +393,15 @@ struct ItemDetail: HashableView {
         AdBannerContainer {
             ScrollView {
                 imageArea
-                
+                    
                 VStack(spacing: 20) {
                     nameRow
-                    
+                        
                     tagsRow
-                    
+                        
                     section {
                         categoryRow
-                        
+                            
                         if items.count == 1, let item = items.first {
                             Divider()
                             propertyRow("作成日時", item.createdAt?.toString() ?? "----/--/-- --:--:--")
@@ -408,7 +413,7 @@ struct ItemDetail: HashableView {
                             }
                         }
                     }
-                    
+                        
                     if Config.IS_DEBUG_MODE, items.count == 1, let item = items.first {
                         section {
                             priceRow(item)

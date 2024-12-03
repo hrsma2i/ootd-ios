@@ -5,32 +5,101 @@
 //  Created by Hiroshi Matsui on 2024/07/14.
 //
 
+import Combine
 import Foundation
 
 private let logger = getLogger(#file)
 
 class ItemStore: ObservableObject {
-    var dataSource: ItemDataSource
+    var repository: ItemRepository
 
     @Published var items: [Item] = []
+    @Published var searchText: String = ""
+    @Published var queries: [ItemQuery] = []
+    @Published private(set) var tabs: [Tab] = []
+    private var cancellables = Set<AnyCancellable>()
+    @Published var isWriting: Bool = false
+
+    struct Tab {
+        var query: ItemQuery
+        var items: [Item]
+    }
 
     @MainActor
-    init(_ dataSourceType: DataSourceType = .sample) {
-        switch dataSourceType {
+    init(_ repositoryType: RepositoryType = .sample) {
+        switch repositoryType {
         case .sample:
-            dataSource = SampleItemDataSource()
+            repository = SampleItemRepository()
         case .swiftData:
-            dataSource = SwiftDataItemDataSource.shared
+            repository = SwiftDataItemRepository.shared
         }
+
+        initQueries()
+
+        // items または queries が更新されるたびに tabs を更新
+        Publishers.CombineLatest3($items, $searchText, $queries)
+            .sink { [weak self] items, searchText, queries in
+                Task {
+                    try await self?.updateTabs(items: items, searchText: searchText, queries: queries)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func initQueries() {
+        let defaultQuery = ItemQuery(
+            name: "すべて",
+            sort: .category
+        )
+        queries = [defaultQuery] + Category.allCases.map { category in
+            ItemQuery(
+                name: category.rawValue,
+                sort: .createdAtAscendant,
+                filter: .init(
+                    category: category
+                )
+            )
+        }
+    }
+
+    // TODO: できれば queries のうち、更新のあった tab のみ更新したい
+    @MainActor
+    private func updateTabs(items: [Item], searchText: String, queries: [ItemQuery]) async throws {
+        // 一時的な searchText は ItemQuery として保存したくないので、別で与える
+        var items = items
+        let searchItemsByText = InMemorySearchItems(items: items)
+        items = try await searchItemsByText(text: searchText)
+
+        let searchItemsByQuery = InMemorySearchItems(items: items)
+        let tabs = await queries.asyncCompactMap(isParallel: false) { query -> Tab? in
+            guard let items = await doWithErrorLog({
+                try await searchItemsByQuery(query: query)
+            }) else {
+                return nil
+            }
+
+            return Tab(
+                query: query,
+                items: items
+            )
+        }
+
+        self.tabs = tabs
     }
 
     @MainActor
     func fetch() async throws {
         logger.debug("fetch items")
-        items = try await dataSource.fetch()
+        items = try await GetItems(repository: repository)()
     }
 
+    @MainActor
     func create(_ items: [Item]) async throws {
+        isWriting = true
+        defer {
+            isWriting = false
+        }
+
         let now = Date()
         let items = items.map {
             $0
@@ -39,17 +108,19 @@ class ItemStore: ObservableObject {
                 .copyWith(\.purchasedOn, value: $0.purchasedOn ?? now)
         }
 
-        Task {
-            try await dataSource.create(items)
-        }
+        try await AddItems(repository: repository)(items)
 
-        await MainActor.run {
-            self.items.append(contentsOf: items)
-        }
+        self.items.append(contentsOf: items)
     }
 
+    @MainActor
     func update(_ editedItems: [Item], originalItems: [Item] = []) async throws {
         // originalItems と比較して、フィールドが更新された Item のみ更新する
+
+        isWriting = true
+        defer {
+            isWriting = false
+        }
 
         let itemsToUpdate: [Item]
 
@@ -77,8 +148,7 @@ class ItemStore: ObservableObject {
                 return edited
             }
         } else {
-            logger.error("originalItems is empty and originalItems.count != editedItems.count")
-            return
+            throw "originalItems is empty and originalItems.count != editedItems.count"
         }
 
         let now = Date()
@@ -87,30 +157,28 @@ class ItemStore: ObservableObject {
                 .copyWith(\.updatedAt, value: now)
         }
 
+        try await EditItems(repository: repository)(updatedItems)
+
         for item in updatedItems {
             if let index = items.firstIndex(where: { $0.id == item.id }) {
                 logger.debug("update local item at index=\(index)")
-                DispatchQueue.main.async {
-                    self.items[index] = item
-                }
+                items[index] = item
             }
         }
-
-        Task {
-            try await dataSource.update(updatedItems)
-        }
     }
 
+    @MainActor
     func delete(_ items: [Item]) async throws {
-        DispatchQueue.main.async {
-            self.items.removeAll { item in items.contains { item.id == $0.id } }
+        isWriting = true
+        defer {
+            isWriting = false
         }
-        Task {
-            try await dataSource.delete(items)
-        }
+
+        try await DeleteItems(repository: repository)(items)
+        self.items.removeAll { item in items.contains { item.id == $0.id } }
     }
 
-    func export(_ target: ItemDataSource, limit: Int? = nil) async throws {
+    func export(_ target: ItemRepository, limit: Int? = nil) async throws {
         logger.debug("\(String(describing: Self.self)).\(#function) to \(String(describing: type(of: target)))")
 
         let items: [Item]
@@ -123,10 +191,10 @@ class ItemStore: ObservableObject {
         try await target.create(items)
     }
 
-    func import_(_ source: ItemDataSource) async throws {
+    func import_(_ source: ItemRepository) async throws {
         logger.debug("\(String(describing: Self.self)).\(#function) from \(String(describing: type(of: source)))")
 
-        var items = try await source.fetch()
+        var items = try await source.findAll()
 
         items = items.filter { item in
             !self.items.contains { item_ in

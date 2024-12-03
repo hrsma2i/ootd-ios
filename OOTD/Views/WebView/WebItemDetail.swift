@@ -30,6 +30,7 @@ struct WebItemDetail: HashableView {
 
     @EnvironmentObject var navigation: NavigationManager
     @EnvironmentObject var itemStore: ItemStore
+    @EnvironmentObject var snackbarStore: SnackbarStore
 
     func itemCard(_ item: Item) -> some View {
         ZStack(alignment: .bottomTrailing) {
@@ -158,11 +159,16 @@ struct WebItemDetail: HashableView {
                 systemName: "checkmark",
                 fontSize: 20
             ) {
-                Task {
-                    try await itemStore.create([item])
+                Task { @MainActor in
+                    defer {
+                        navigation.path.removeLast()
+                    }
+
+                    await snackbarStore.notify(logger) {
+                        try await itemStore.create([item])
+                        onCreated(item)
+                    }
                 }
-                navigation.path.removeLast()
-                onCreated(item)
             }
         }
     }

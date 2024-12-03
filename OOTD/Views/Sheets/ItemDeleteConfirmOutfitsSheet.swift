@@ -14,6 +14,7 @@ struct ItemDeleteConfirmOutfitsSheet: HashableView {
     let relatedOutfits: [Outfit]
     @EnvironmentObject var itemStore: ItemStore
     @EnvironmentObject var outfitStore: OutfitStore
+    @EnvironmentObject var snackbarStore: SnackbarStore
 
     // MARK: - optional
 
@@ -124,14 +125,19 @@ struct ItemDeleteConfirmOutfitsSheet: HashableView {
             Button(role: .cancel) {} label: { Text("戻る") }
             Button(role: .destructive) {
                 Task {
-                    do {
-                        try await outfitStore.delete(relatedOutfits)
-                        try await itemStore.delete(items)
-                    } catch {
-                        logger.error("\(error)")
+                    defer {
+                        onDecided()
+                    }
+
+                    // TODO: トランザクションにまとめて1つのユースケースにしたほうが良さそう？
+                    await snackbarStore.notify(logger) {
+                        async let deleteOutfits: Void = await outfitStore.delete(relatedOutfits)
+                        async let deleteItems: Void = await itemStore.delete(items)
+
+                        try await deleteOutfits
+                        try await deleteItems
                     }
                 }
-                onDecided()
             } label: { Text("削除する") }
         } message: {
             Text("選択したアイテムと、それを使った表示中のコーデも全て削除されます")
@@ -140,14 +146,19 @@ struct ItemDeleteConfirmOutfitsSheet: HashableView {
             Button(role: .cancel) {} label: { Text("戻る") }
             Button(role: .destructive) {
                 Task {
-                    do {
-                        try await outfitStore.update(onlyItemDeletedOutfits, originalOutfits: relatedOutfits)
-                        try await itemStore.delete(items)
-                    } catch {
-                        logger.error("\(error)")
+                    defer {
+                        onDecided()
+                    }
+
+                    // TODO: トランザクションにまとめて1つのユースケースにしたほうが良さそう？
+                    await snackbarStore.notify(logger) {
+                        async let updateOutfits: Void = await outfitStore.update(onlyItemDeletedOutfits, originalOutfits: relatedOutfits)
+                        async let deleteItems: Void = await itemStore.delete(items)
+
+                        try await updateOutfits
+                        try await deleteItems
                     }
                 }
-                onDecided()
             } label: { Text("削除する") }
         } message: {
             Text("選択したアイテムだけ削除され、それを使ったコーデは表示中のように残ります")

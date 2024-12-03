@@ -22,6 +22,7 @@ struct ItemGrid: HashableView {
     @EnvironmentObject var itemStore: ItemStore
     @EnvironmentObject var outfitStore: OutfitStore
     @EnvironmentObject var navigation: NavigationManager
+    @EnvironmentObject var snackbarStore: SnackbarStore
 
     // MARK: - optional
 
@@ -34,13 +35,6 @@ struct ItemGrid: HashableView {
 
     @State private var isSelectable: Bool
     @State private var isAlertPresented = false
-    @State private var searchText: String = ""
-    @State private var sorter: ItemGridTab.Sort? = nil
-
-    private static let defaultTab = ItemGridTab(
-        name: "すべて",
-        sort: .category
-    )
 
     private enum ActiveSheet: Int, Identifiable {
         case itemDeleteConfirmOutfits
@@ -54,57 +48,22 @@ struct ItemGrid: HashableView {
     }
 
     @State private var activeSheet: ActiveSheet?
+    @State private var activeTabIndex: Int = 0
+
+    var activeTab: ItemStore.Tab? {
+        guard itemStore.tabs.indices.contains(activeTabIndex) else {
+            return nil
+        }
+        return itemStore.tabs[activeTabIndex]
+    }
 
     var relatedOutfits: [Outfit] {
         outfitStore.getOutfits(using: selected)
     }
 
-    func tabItems(_ tab: ItemGridTab) -> [Item] {
-        var items = itemStore.items
-        let keyword = searchText.lowercased()
-
-        if keyword != "" {
-            items = items.filter { item in
-                item.name.lowercased().contains(keyword)
-                    || item.originalDescription?.lowercased().contains(keyword) ?? false
-                    || item.originalBrand?.lowercased().contains(keyword) ?? false
-                    || item.tags.map {
-                        $0.lowercased().contains(keyword)
-                    }.contains(true)
-            }
-        }
-
-        items = tab.apply(items)
-
-        if let sorter {
-            items = items.sorted { sorter.compare($0, $1) }
-        }
-
-        return items
-    }
-
-    // TODO: TabStore を作って、そこから読み書きする
-    var tabs: [ItemGridTab] {
-        let categories = itemStore.items.map(\.category).unique().sorted()
-
-        let tabs = [
-            ItemGrid.defaultTab
-        ] + categories.map { category in
-            ItemGridTab(
-                name: category.rawValue,
-                sort: .createdAtDescendant,
-                filter: .init(
-                    category: category
-                )
-            )
-        }
-
-        return tabs
-    }
-
     var sortButton: some View {
-        footerButton(
-            text: sorter?.rawValue ?? "並べ替え",
+        return footerButton(
+            text: activeTab?.query.sort.rawValue ?? "並べ替え",
             systemName: "arrow.up.arrow.down"
         ) {
             activeSheet = .selectSort
@@ -158,7 +117,7 @@ struct ItemGrid: HashableView {
         footerButton(
             text: "一括削除",
             systemName: "trash.fill",
-            color: Color(red: 255 / 255, green: 117 / 255, blue: 117 / 255)
+            color: .softRed
         ) {
             if relatedOutfits.isEmpty {
                 isAlertPresented = true
@@ -222,7 +181,7 @@ struct ItemGrid: HashableView {
     }
 
     var bottomBar: some View {
-        SearchBar(text: $searchText, placeholder: "検索")
+        SearchBar(text: $itemStore.searchText, placeholder: "検索")
             .padding(7)
             .overlay {
                 RoundedRectangle(cornerRadius: 5)
@@ -305,9 +264,12 @@ struct ItemGrid: HashableView {
 
     var selectSortSheet: some View {
         SelectSheet(
-            options: ItemGridTab.Sort.allCases.map(\.rawValue)
+            options: ItemQuery.Sort.allCases.map(\.rawValue),
+            currentValue: activeTab?.query.sort.rawValue
         ) { sort in
-            sorter = ItemGridTab.Sort(rawValue: sort)!
+            if itemStore.tabs.indices.contains(activeTabIndex) {
+                itemStore.queries[activeTabIndex].sort = ItemQuery.Sort(rawValue: sort)!
+            }
             activeSheet = nil
         }
     }
@@ -318,25 +280,30 @@ struct ItemGrid: HashableView {
 
         VStack(spacing: 0) {
             ScrollableTabView(
-                tabs,
-                id: \.name,
-                title: \.name
+                itemStore.tabs,
+                id: \.query.id,
+                title: \.query.name
             ) { tab in
                 AdBannerContainer {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: spacing) {
-                            ForEach(tabItems(tab), id: \.self) { item in
+                            ForEach(tab.items, id: \.self) { item in
                                 itemCard(item)
                             }
                         }
                         .padding(spacing)
                         .padding(.bottom, 70)
                     }
+                    .defaultScrollAnchor(.bottom)
                     .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
                 }
             } footer: {
                 innerFooter
                     .padding(.bottom, 7)
+            } onChange: { _, newId in
+                if let index = itemStore.tabs.firstIndex(where: { $0.query.id == newId }) {
+                    activeTabIndex = index
+                }
             }
 
             bottomBar
@@ -349,15 +316,16 @@ struct ItemGrid: HashableView {
         .alert("本当に削除しますか？", isPresented: $isAlertPresented) {
             Button(role: .cancel) {} label: { Text("戻る") }
             Button(role: .destructive) {
-                Task {
-                    do {
-                        try await itemStore.delete(selected)
+                Task { @MainActor in
+                    defer {
                         selected = []
-                    } catch {
-                        logger.error("\(error)")
+                        isSelectable = false
+                    }
+
+                    await snackbarStore.notify(logger) {
+                        try await itemStore.delete(selected)
                     }
                 }
-                isSelectable = false
             } label: { Text("削除する") }
         } message: {
             Text("選択中のアイテムが削除されます。")

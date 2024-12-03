@@ -12,6 +12,7 @@ private let logger = getLogger(#file)
 struct OutfitGrid: View {
     @EnvironmentObject var outfitStore: OutfitStore
     @EnvironmentObject var navigation: NavigationManager
+    @EnvironmentObject var snackbarStore: SnackbarStore
     let numColumns: Int = 2
 
     @State private var isSelectable = false
@@ -19,7 +20,7 @@ struct OutfitGrid: View {
     @State private var isAlertPresented = false
     @State private var tab = OutfitGridTab(
         name: "すべて",
-        sort: .createdAtDescendant
+        sort: .createdAtAscendant
     )
     @State private var activeSheet: Sheet?
     enum Sheet: Int, Identifiable {
@@ -111,7 +112,7 @@ struct OutfitGrid: View {
 
     var sortButton: some View {
         footerButton(
-            text: "並べ替え",
+            text: tab.sort.rawValue,
             systemName: "arrow.up.arrow.down"
         ) {
             activeSheet = .selectSort
@@ -184,7 +185,8 @@ struct OutfitGrid: View {
 
     var selectSortSheet: some View {
         SelectSheet(
-            options: OutfitGridTab.Sort.allCases.map(\.rawValue)
+            options: OutfitGridTab.Sort.allCases.map(\.rawValue),
+            currentValue: tab.sort.rawValue
         ) { sort in
             tab.sort = OutfitGridTab.Sort(rawValue: sort)!
             activeSheet = nil
@@ -220,6 +222,7 @@ struct OutfitGrid: View {
                         .padding(.bottom, 70)
                         .padding(spacing)
                     }
+                    .defaultScrollAnchor(.bottom)
                     .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
 
                     bottomBar
@@ -236,13 +239,14 @@ struct OutfitGrid: View {
         .alert("本当に削除しますか？", isPresented: $isAlertPresented) {
             Button(role: .cancel) {} label: { Text("戻る") }
             Button(role: .destructive) {
-                isSelectable = false
+                Task { @MainActor in
+                    defer {
+                        isSelectable = false
+                        selected = []
+                    }
 
-                Task {
-                    do {
+                    await snackbarStore.notify(logger) {
                         try await outfitStore.delete(selected)
-                    } catch {
-                        logger.error("\(error)")
                     }
                 }
             } label: { Text("削除する") }

@@ -1,5 +1,5 @@
 {
-  "originHash" : "aadbda28f807f55306946e31fc8a3f8227e5a07d56a3d150273f22db7b931463",
+  "originHash" : "be5352aef5b58c03e49b64f2ef8e3c52f55efdb5597a9def494da7783e6c773f",
   "pins" : [
     {
       "identity" : "acarousel",
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git",
       "state" : {
-        "revision" : "74f2ec169551c3b924947b473716142a0b983e10",
-        "version" : "2.6.0"
+        "revision" : "708a282840c2171ee63bd93b87afa49fe507d70e",
+        "version" : "2.7.0"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scinfu/SwiftSoup",
       "state" : {
-        "revision" : "3c2c7e1e72b8abd96eafbae80323c5c1e5317437",
-        "version" : "2.7.5"
+        "revision" : "0837db354faf9c9deb710dc597046edaadf5360f",
+        "version" : "2.7.6"
       }
     },
     {

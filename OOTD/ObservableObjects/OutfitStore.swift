@@ -11,25 +11,32 @@ private let logger = getLogger(#file)
 
 class OutfitStore: ObservableObject {
     @Published var outfits: [Outfit] = []
-    private let dataSource: OutfitDataSource
+    private let repository: OutfitRepository
+    @Published var isWriting: Bool = false
 
     @MainActor
-    init(_ dataSourceType: DataSourceType = .sample) {
-        switch dataSourceType {
+    init(_ repositoryType: RepositoryType = .sample) {
+        switch repositoryType {
         case .sample:
-            dataSource = SampleOutfitDataSource()
+            repository = SampleOutfitRepository()
         case .swiftData:
-            dataSource = SwiftDataOutfitDataSource.shared
+            repository = SwiftDataOutfitRepository.shared
         }
     }
 
     @MainActor
     func fetch() async throws {
         logger.debug("fetch outfits")
-        outfits = try await dataSource.fetch()
+        outfits = try await repository.findAll()
     }
 
+    @MainActor
     func create(_ outfits: [Outfit]) async throws {
+        isWriting = true
+        defer {
+            isWriting = false
+        }
+
         let now = Date()
         let outfits = outfits.map {
             $0
@@ -37,17 +44,18 @@ class OutfitStore: ObservableObject {
                 .copyWith(\.updatedAt, value: now)
         }
 
-        Task {
-            try await dataSource.create(outfits)
-        }
+        try await repository.create(outfits)
 
-        await MainActor.run {
-            self.outfits.append(contentsOf: outfits)
-        }
+        self.outfits.append(contentsOf: outfits)
     }
 
+    @MainActor
     func update(_ editedOutfits: [Outfit], originalOutfits: [Outfit] = []) async throws {
         // originalOutfits と比較して、フィールドが更新された Outfit のみ更新する
+        isWriting = true
+        defer {
+            isWriting = false
+        }
 
         let outfitsToUpdate: [Outfit]
 
@@ -75,8 +83,7 @@ class OutfitStore: ObservableObject {
                 return edited
             }
         } else {
-            logger.error("originalOutfits is empty and originalOutfits.count != editedOutfits.count")
-            return
+            throw "originalOutfits is empty and originalOutfits.count != editedOutfits.count"
         }
 
         let now = Date()
@@ -85,17 +92,13 @@ class OutfitStore: ObservableObject {
                 .copyWith(\.updatedAt, value: now)
         }
 
+        try await repository.update(updatedOutfits)
+
         for outfit in updatedOutfits {
             if let index = outfits.firstIndex(where: { $0.id == outfit.id }) {
                 logger.debug("update local outfit at index=\(index)")
-                DispatchQueue.main.async {
-                    self.outfits[index] = outfit
-                }
+                outfits[index] = outfit
             }
-        }
-
-        Task {
-            try await dataSource.update(updatedOutfits)
         }
     }
 
@@ -118,13 +121,15 @@ class OutfitStore: ObservableObject {
         }
     }
 
+    @MainActor
     func delete(_ outfits: [Outfit]) async throws {
-        DispatchQueue.main.async {
-            self.outfits.removeAll { outfit in outfits.contains { outfit.id == $0.id } }
+        isWriting = true
+        defer {
+            isWriting = false
         }
-        Task {
-            try await dataSource.delete(outfits)
-        }
+
+        try await repository.delete(outfits)
+        self.outfits.removeAll { outfit in outfits.contains { outfit.id == $0.id } }
     }
 
     func filterAndSort(_ outfits: [Outfit], by condition: OutfitGridTab) -> [Outfit] {
@@ -135,7 +140,7 @@ class OutfitStore: ObservableObject {
         return newOutfits
     }
 
-    func export(_ target: OutfitDataSource, limit: Int? = nil) async throws {
+    func export(_ target: OutfitRepository, limit: Int? = nil) async throws {
         logger.debug("\(String(describing: Self.self)).\(#function) to \(String(describing: type(of: target)))")
 
         let outfits: [Outfit]
@@ -148,10 +153,10 @@ class OutfitStore: ObservableObject {
         try await target.create(outfits)
     }
 
-    func import_(_ source: OutfitDataSource) async throws {
+    func import_(_ source: OutfitRepository) async throws {
         logger.debug("\(String(describing: Self.self)).\(#function) from \(String(describing: type(of: source)))")
 
-        var outfits = try await source.fetch()
+        var outfits = try await source.findAll()
 
         outfits = outfits.filter { outfit in
             !self.outfits.contains { outfit_ in

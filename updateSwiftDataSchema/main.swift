@@ -13,7 +13,7 @@ private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "unknown"
 let fileManager = FileManager.default
 
 let home = FileManager.default.homeDirectoryForCurrentUser
-let schemasPath = "\(home.path)/XCodeProjects/OOTD/OOTD/DataSources/SwiftData/Schemas"
+let schemasPath = "\(home.path)/XCodeProjects/OOTD/OOTD/Repositories/SwiftData/Schemas"
 logger.debug("\(schemasPath)")
 
 // Schemas ディレクトリ内の V で始まるディレクトリを取得
