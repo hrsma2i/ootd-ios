@@ -224,8 +224,8 @@
 		883FCB542CA5AA720001DAAF /* ItemDTOV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDTOV2.swift; sourceTree = "<group>"; };
 		884800A02CF7890E00B0E6F1 /* SearchItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchItems.swift; sourceTree = "<group>"; };
 		884800A22CF78A4500B0E6F1 /* InMemorySearchItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemorySearchItems.swift; sourceTree = "<group>"; };
-		884CF6522C7F597600250026 /* sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = sample.xcconfig; sourceTree = "<group>"; };
-		884CF6532C7F599300250026 /* swiftData.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swiftData.xcconfig; sourceTree = "<group>"; };
+		884CF6522C7F597600250026 /* dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = dev.xcconfig; sourceTree = "<group>"; };
+		884CF6532C7F599300250026 /* personal.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = personal.xcconfig; sourceTree = "<group>"; };
 		884CF6542C7F5F1800250026 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		884CF6552C7F670200250026 /* LocalStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorage.swift; sourceTree = "<group>"; };
 		884CF65D2C82018400250026 /* RoundRectangleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundRectangleButton.swift; sourceTree = "<group>"; };
@@ -237,7 +237,7 @@
 		884F5A742CF76033004228C6 /* DeleteItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteItems.swift; sourceTree = "<group>"; };
 		886064102C906B45003C7001 /* SwiftDataOutfitRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataOutfitRepository.swift; sourceTree = "<group>"; };
 		886064122C90790D003C7001 /* Sequence+compactMapWithErrorLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+compactMapWithErrorLog.swift"; sourceTree = "<group>"; };
-		8862320C2C7CBDD900A1802D /* OOTD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OOTD.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8862320C2C7CBDD900A1802D /* OOTD.Debug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OOTD.Debug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8862320F2C7CBDD900A1802D /* OOTDApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OOTDApp.swift; sourceTree = "<group>"; };
 		886232132C7CBDDA00A1802D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		886232162C7CBDDA00A1802D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -313,7 +313,7 @@
 		88E3DC322CC68B690006D201 /* ItemDTOV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDTOV6.swift; sourceTree = "<group>"; };
 		88E3DC332CC68B690006D201 /* OutfitDTOV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitDTOV6.swift; sourceTree = "<group>"; };
 		88E3DC342CC68B690006D201 /* SchemaV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaV6.swift; sourceTree = "<group>"; };
-		88E3DC392CC68FA10006D201 /* production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = production.xcconfig; sourceTree = "<group>"; };
+		88E3DC392CC68FA10006D201 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		88E3DC3A2CC7D8FF0006D201 /* ItemDTOV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDTOV7.swift; sourceTree = "<group>"; };
 		88E3DC3B2CC7D8FF0006D201 /* OutfitDTOV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitDTOV7.swift; sourceTree = "<group>"; };
 		88E3DC3C2CC7D8FF0006D201 /* SchemaV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaV7.swift; sourceTree = "<group>"; };
@@ -391,11 +391,11 @@
 		884CF6512C7F596000250026 /* xcconfig */ = {
 			isa = PBXGroup;
 			children = (
-				884CF6522C7F597600250026 /* sample.xcconfig */,
-				884CF6532C7F599300250026 /* swiftData.xcconfig */,
+				884CF6522C7F597600250026 /* dev.xcconfig */,
+				884CF6532C7F599300250026 /* personal.xcconfig */,
 				8834D8852CF9F40200ADEEFE /* screenshot.xcconfig */,
 				88DDFC0A2CF359180022BA8F /* qa.xcconfig */,
-				88E3DC392CC68FA10006D201 /* production.xcconfig */,
+				88E3DC392CC68FA10006D201 /* release.xcconfig */,
 			);
 			path = xcconfig;
 			sourceTree = "<group>";
@@ -558,7 +558,7 @@
 		8862320D2C7CBDD900A1802D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8862320C2C7CBDD900A1802D /* OOTD.app */,
+				8862320C2C7CBDD900A1802D /* OOTD.Debug.app */,
 				8862321C2C7CBDDA00A1802D /* OOTDTests.xctest */,
 				886232262C7CBDDA00A1802D /* OOTDUITests.xctest */,
 				88E3DC162CC686830006D201 /* updateSwiftDataSchema */,
@@ -909,7 +909,7 @@
 				88B8B7C22CE2417500131843 /* GoogleMobileAds */,
 			);
 			productName = OOTD;
-			productReference = 8862320C2C7CBDD900A1802D /* OOTD.app */;
+			productReference = 8862320C2C7CBDD900A1802D /* OOTD.Debug.app */;
 			productType = "com.apple.product-type.application";
 		};
 		8862321B2C7CBDDA00A1802D /* OOTDTests */ = {
@@ -1216,7 +1216,7 @@
 /* Begin XCBuildConfiguration section */
 		8862322E2C7CBDDA00A1802D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8834D8852CF9F40200ADEEFE /* screenshot.xcconfig */;
+			baseConfigurationReference = 884CF6522C7F597600250026 /* dev.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -1282,7 +1282,7 @@
 		};
 		8862322F2C7CBDDA00A1802D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 884CF6532C7F599300250026 /* swiftData.xcconfig */;
+			baseConfigurationReference = 88E3DC392CC68FA10006D201 /* release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -1364,8 +1364,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.hrsma2i.OOTD;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hrsma2i.OOTD.Debug;
+				PRODUCT_NAME = "$(TARGET_NAME).Debug";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
