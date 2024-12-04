@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct OutfitGridTabDetail: HashableView {
-    let originalTab: OutfitGridTab
-    var onDecided: (OutfitGridTab) -> Void
+    let originalTab: OutfitQuery
+    var onDecided: (OutfitQuery) -> Void
 
-    @State private var tab: OutfitGridTab
+    @State private var tab: OutfitQuery
     @State private var isAlertPresented: Bool = false
     @EnvironmentObject var navigation: NavigationManager
 
-    init(tab: OutfitGridTab, onDecided: @escaping (OutfitGridTab) -> Void = { _ in }) {
+    init(tab: OutfitQuery, onDecided: @escaping (OutfitQuery) -> Void = { _ in }) {
         originalTab = tab
         self.tab = tab
         self.onDecided = onDecided
@@ -105,7 +105,7 @@ struct OutfitGridTabDetail: HashableView {
 
 #Preview {
     struct PreviewView: View {
-        @State var tab = OutfitGridTab(
+        @State var tab = OutfitQuery(
             name: "デフォルト",
             sort: .createdAtDescendant
         )

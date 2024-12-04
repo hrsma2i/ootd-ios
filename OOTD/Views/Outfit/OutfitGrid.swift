@@ -18,10 +18,6 @@ struct OutfitGrid: View {
     @State private var isSelectable = false
     @State private var selected: [Outfit] = []
     @State private var isAlertPresented = false
-    @State private var tab = OutfitGridTab(
-        name: "すべて",
-        sort: .createdAtAscendant
-    )
     @State private var activeSheet: Sheet?
     enum Sheet: Int, Identifiable {
         case selectSort
@@ -29,26 +25,6 @@ struct OutfitGrid: View {
         var id: Int {
             rawValue
         }
-    }
-
-    @State private var searchText: String = ""
-
-    var outfits: [Outfit] {
-        var outfits = outfitStore.outfits
-        let keyword = searchText.lowercased()
-
-        if keyword != "" {
-            outfits = outfits.filter { outfit in
-                outfit.items.map {
-                    $0.name.lowercased().contains(keyword)
-                }.contains(true)
-                    || outfit.tags.map {
-                        $0.lowercased().contains(keyword)
-                    }.contains(true)
-            }
-        }
-
-        return tab.apply(outfits)
     }
 
     func outfitCard(_ outfit: Outfit) -> some View {
@@ -102,9 +78,9 @@ struct OutfitGrid: View {
         ) {
             navigation.path.append(
                 OutfitGridTabDetail(
-                    tab: tab
+                    tab: outfitStore.query
                 ) {
-                    tab = $0
+                    outfitStore.query = $0
                 }
             )
         }
@@ -112,7 +88,7 @@ struct OutfitGrid: View {
 
     var sortButton: some View {
         footerButton(
-            text: tab.sort.rawValue,
+            text: outfitStore.query.sort.rawValue,
             systemName: "arrow.up.arrow.down"
         ) {
             activeSheet = .selectSort
@@ -185,16 +161,16 @@ struct OutfitGrid: View {
 
     var selectSortSheet: some View {
         SelectSheet(
-            options: OutfitGridTab.Sort.allCases.map(\.rawValue),
-            currentValue: tab.sort.rawValue
+            options: OutfitQuery.Sort.allCases.map(\.rawValue),
+            currentValue: outfitStore.query.sort.rawValue
         ) { sort in
-            tab.sort = OutfitGridTab.Sort(rawValue: sort)!
+            outfitStore.query.sort = OutfitQuery.Sort(rawValue: sort)!
             activeSheet = nil
         }
     }
 
     var searchBar: some View {
-        SearchBar(text: $searchText, placeholder: "検索")
+        SearchBar(text: $outfitStore.searchText, placeholder: "検索")
             .padding(7)
             .overlay {
                 RoundedRectangle(cornerRadius: 5)
@@ -215,7 +191,7 @@ struct OutfitGrid: View {
                             columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: 2),
                             spacing: spacing
                         ) {
-                            ForEach(outfits, id: \.self) { outfit in
+                            ForEach(outfitStore.displayedOutfits, id: \.self) { outfit in
                                 outfitCard(outfit)
                             }
                         }

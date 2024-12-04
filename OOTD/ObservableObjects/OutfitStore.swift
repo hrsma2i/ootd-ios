@@ -5,13 +5,22 @@
 //  Created by Hiroshi Matsui on 2024/07/14.
 //
 
+import Combine
 import Foundation
 
 private let logger = getLogger(#file)
 
 class OutfitStore: ObservableObject {
-    @Published var outfits: [Outfit] = []
     private let repository: OutfitRepository
+
+    @Published var outfits: [Outfit] = []
+    @Published var searchText: String = ""
+    @Published var query = OutfitQuery(
+        name: "すべて",
+        sort: .createdAtAscendant
+    )
+    @Published var displayedOutfits: [Outfit] = []
+    private var cancellables = Set<AnyCancellable>()
     @Published var isWriting: Bool = false
 
     @MainActor
@@ -22,6 +31,28 @@ class OutfitStore: ObservableObject {
         case .swiftData:
             repository = SwiftDataOutfitRepository.shared
         }
+
+        // outfits または query が更新されるたびに tabs を更新
+        Publishers.CombineLatest3($outfits, $searchText, $query)
+            .sink { [weak self] outfits, searchText, query in
+                Task {
+                    try await self?.updateDisplayedOutfits(outfits: outfits, searchText: searchText, query: query)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    @MainActor
+    private func updateDisplayedOutfits(outfits: [Outfit], searchText: String, query: OutfitQuery) async throws {
+        // 一時的な searchText は ItemQuery として保存したくないので、別で与える
+        var outfits = outfits
+        let searchOutfitsByText = InMemorySearchOutfits(outfits: outfits)
+        outfits = try await searchOutfitsByText(text: searchText)
+
+        let searchOutfitsByQuery = InMemorySearchOutfits(outfits: outfits)
+        outfits = try await searchOutfitsByQuery(query: query)
+
+        displayedOutfits = outfits
     }
 
     @MainActor
@@ -99,7 +130,7 @@ class OutfitStore: ObservableObject {
     }
 
     // TODO: InMemorySearchOutfits use-case を追加し、 OutfitStore.outfits を注入するのがよさそう
-    func filterAndSort(_ outfits: [Outfit], by condition: OutfitGridTab) -> [Outfit] {
+    func filterAndSort(_ outfits: [Outfit], by condition: OutfitQuery) -> [Outfit] {
         var newOutfits: [Outfit] = outfits
 
         newOutfits = newOutfits.filter { outfit in condition.filter.items.allSatisfy { outfit.items.contains($0) } }
