@@ -55,7 +55,6 @@
 		884CF65E2C82018400250026 /* RoundRectangleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF65D2C82018400250026 /* RoundRectangleButton.swift */; };
 		884CF6702C8201F900250026 /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF6642C8201F900250026 /* AddButton.swift */; };
 		884CF6762C8201F900250026 /* AspectRatioContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884CF66A2C8201F900250026 /* AspectRatioContainer.swift */; };
-		884F5A6F2CF63025004228C6 /* GetItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884F5A6E2CF63025004228C6 /* GetItems.swift */; };
 		884F5A712CF63184004228C6 /* AddItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884F5A702CF63184004228C6 /* AddItems.swift */; };
 		884F5A732CF63626004228C6 /* EditItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884F5A722CF63626004228C6 /* EditItems.swift */; };
 		884F5A752CF76033004228C6 /* DeleteItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884F5A742CF76033004228C6 /* DeleteItems.swift */; };
@@ -108,6 +107,11 @@
 		886232BD2C7CCC9100A1802D /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886232BC2C7CCC9100A1802D /* NavigationManager.swift */; };
 		887E631A2CFD4EE5006F52C0 /* Snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 887E63192CFD4EE5006F52C0 /* Snackbar.swift */; };
 		887E631C2CFD745C006F52C0 /* View+snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 887E631B2CFD745C006F52C0 /* View+snackbar.swift */; };
+		888257532D0091CD004A98F6 /* AddOutfits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8882574E2D0091CD004A98F6 /* AddOutfits.swift */; };
+		888257542D0091CD004A98F6 /* DeleteOutfits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8882574F2D0091CD004A98F6 /* DeleteOutfits.swift */; };
+		888257552D0091CD004A98F6 /* EditOutfits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888257502D0091CD004A98F6 /* EditOutfits.swift */; };
+		888257582D009279004A98F6 /* GetItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888257572D009279004A98F6 /* GetItems.swift */; };
+		8882575A2D0092E0004A98F6 /* GetOutfits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888257592D0092E0004A98F6 /* GetOutfits.swift */; };
 		88886D442CFC67C100570687 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88886D432CFC67C100570687 /* LoadingView.swift */; };
 		889F34FC2CBF991100C5BD65 /* ItemQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889F34FB2CBF991100C5BD65 /* ItemQuery.swift */; };
 		889F34FE2CBFDAC600C5BD65 /* ScrollableTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */; };
@@ -231,7 +235,6 @@
 		884CF65D2C82018400250026 /* RoundRectangleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundRectangleButton.swift; sourceTree = "<group>"; };
 		884CF6642C8201F900250026 /* AddButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddButton.swift; sourceTree = "<group>"; };
 		884CF66A2C8201F900250026 /* AspectRatioContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AspectRatioContainer.swift; sourceTree = "<group>"; };
-		884F5A6E2CF63025004228C6 /* GetItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GetItems.swift; path = "../../../../../.Trash/UseCases 1.34.21/Item/GetItems.swift"; sourceTree = "<group>"; };
 		884F5A702CF63184004228C6 /* AddItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItems.swift; sourceTree = "<group>"; };
 		884F5A722CF63626004228C6 /* EditItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditItems.swift; sourceTree = "<group>"; };
 		884F5A742CF76033004228C6 /* DeleteItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteItems.swift; sourceTree = "<group>"; };
@@ -286,6 +289,11 @@
 		886232BC2C7CCC9100A1802D /* NavigationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationManager.swift; sourceTree = "<group>"; };
 		887E63192CFD4EE5006F52C0 /* Snackbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snackbar.swift; sourceTree = "<group>"; };
 		887E631B2CFD745C006F52C0 /* View+snackbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+snackbar.swift"; sourceTree = "<group>"; };
+		8882574E2D0091CD004A98F6 /* AddOutfits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddOutfits.swift; sourceTree = "<group>"; };
+		8882574F2D0091CD004A98F6 /* DeleteOutfits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteOutfits.swift; sourceTree = "<group>"; };
+		888257502D0091CD004A98F6 /* EditOutfits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditOutfits.swift; sourceTree = "<group>"; };
+		888257572D009279004A98F6 /* GetItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetItems.swift; sourceTree = "<group>"; };
+		888257592D0092E0004A98F6 /* GetOutfits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetOutfits.swift; sourceTree = "<group>"; };
 		88886D432CFC67C100570687 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		889F34FB2CBF991100C5BD65 /* ItemQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemQuery.swift; sourceTree = "<group>"; };
 		889F34FD2CBFDAC600C5BD65 /* ScrollableTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollableTabView.swift; sourceTree = "<group>"; };
@@ -525,6 +533,7 @@
 		884F5A6C2CF63011004228C6 /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				888257522D0091CD004A98F6 /* Outfit */,
 				884F5A6D2CF6301E004228C6 /* Item */,
 			);
 			path = UseCases;
@@ -533,7 +542,7 @@
 		884F5A6D2CF6301E004228C6 /* Item */ = {
 			isa = PBXGroup;
 			children = (
-				884F5A6E2CF63025004228C6 /* GetItems.swift */,
+				888257572D009279004A98F6 /* GetItems.swift */,
 				884F5A702CF63184004228C6 /* AddItems.swift */,
 				884F5A722CF63626004228C6 /* EditItems.swift */,
 				884F5A742CF76033004228C6 /* DeleteItems.swift */,
@@ -762,6 +771,17 @@
 				886232B02C7CCA7800A1802D /* OutfitGridTabDetail.swift */,
 				886232AE2C7CCA7800A1802D /* OutfitDetail.swift */,
 				886232AF2C7CCA7800A1802D /* OutfitGrid.swift */,
+			);
+			path = Outfit;
+			sourceTree = "<group>";
+		};
+		888257522D0091CD004A98F6 /* Outfit */ = {
+			isa = PBXGroup;
+			children = (
+				888257592D0092E0004A98F6 /* GetOutfits.swift */,
+				8882574E2D0091CD004A98F6 /* AddOutfits.swift */,
+				8882574F2D0091CD004A98F6 /* DeleteOutfits.swift */,
+				888257502D0091CD004A98F6 /* EditOutfits.swift */,
 			);
 			path = Outfit;
 			sourceTree = "<group>";
@@ -1053,6 +1073,7 @@
 				8862324D2C7CC23100A1802D /* SampleItemRepository.swift in Sources */,
 				8862324E2C7CC23100A1802D /* ItemRepository.swift in Sources */,
 				886232462C7CC11700A1802D /* Logger.swift in Sources */,
+				888257552D0091CD004A98F6 /* EditOutfits.swift in Sources */,
 				881B6B602CA650A7008274FF /* ItemDTOV4.swift in Sources */,
 				886232432C7CC0E900A1802D /* HashableView.swift in Sources */,
 				88E3DC372CC68B690006D201 /* OutfitDTOV6.swift in Sources */,
@@ -1070,6 +1091,7 @@
 				8862329A2C7CC7A900A1802D /* CategorySelectSheet.swift in Sources */,
 				886232BD2C7CCC9100A1802D /* NavigationManager.swift in Sources */,
 				883FCB532CA5AA340001DAAF /* SchemaV2.swift in Sources */,
+				8882575A2D0092E0004A98F6 /* GetOutfits.swift in Sources */,
 				88CD559F2C8749E800A9B78A /* CustomWebView.swift in Sources */,
 				884CF6702C8201F900250026 /* AddButton.swift in Sources */,
 				883FCB392C9674060001DAAF /* Sequence+unique.swift in Sources */,
@@ -1114,6 +1136,7 @@
 				881B6B5A2CA5BAC7008274FF /* SchemaV3.swift in Sources */,
 				88CD559D2C8749E800A9B78A /* WebViewManager.swift in Sources */,
 				881B6B642CA6D49A008274FF /* Date+initYMD.swift in Sources */,
+				888257582D009279004A98F6 /* GetItems.swift in Sources */,
 				883B54492C8DD5B8007DB1E8 /* CropView.swift in Sources */,
 				88B012B32CC15F2600CD9153 /* ItemDTOV5.swift in Sources */,
 				88D8EF0E2CE231630070AD8D /* AdBanner.swift in Sources */,
@@ -1147,7 +1170,6 @@
 				886232532C7CC2A700A1802D /* ItemStore.swift in Sources */,
 				884CF6562C7F670200250026 /* LocalStorage.swift in Sources */,
 				886232102C7CBDD900A1802D /* OOTDApp.swift in Sources */,
-				884F5A6F2CF63025004228C6 /* GetItems.swift in Sources */,
 				88E3DC362CC68B690006D201 /* ItemDTOV6.swift in Sources */,
 				8862326C2C7CC53C00A1802D /* DependencyInjector.swift in Sources */,
 				88004E2B2CB4337300A80A80 /* UniqloPurchaseHistory.swift in Sources */,
@@ -1155,6 +1177,7 @@
 				8862328B2C7CC71F00A1802D /* OutfitCard.swift in Sources */,
 				88004E4B2CB9552A00A80A80 /* doWithErrorLog.swift in Sources */,
 				881B6B622CA650B1008274FF /* SchemaV4.swift in Sources */,
+				888257532D0091CD004A98F6 /* AddOutfits.swift in Sources */,
 				884800A12CF7890E00B0E6F1 /* SearchItems.swift in Sources */,
 				88CD55A42C8755CD00A9B78A /* Scraper.swift in Sources */,
 				883FCB322C9489780001DAAF /* KeyChainHelper.swift in Sources */,
@@ -1170,6 +1193,7 @@
 				88A350032CA86DD300021FBF /* SelectWebItemScreen.swift in Sources */,
 				884CF6762C8201F900250026 /* AspectRatioContainer.swift in Sources */,
 				88004E4D2CBBF82400A80A80 /* LocalJsonItemRepository.swift in Sources */,
+				888257542D0091CD004A98F6 /* DeleteOutfits.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1216,7 +1240,7 @@
 /* Begin XCBuildConfiguration section */
 		8862322E2C7CBDDA00A1802D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 884CF6522C7F597600250026 /* dev.xcconfig */;
+			baseConfigurationReference = 88DDFC0A2CF359180022BA8F /* qa.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
