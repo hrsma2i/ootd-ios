@@ -17,7 +17,7 @@ class OutfitStore: ObservableObject {
     @Published var searchText: String = ""
     @Published var query = OutfitQuery(
         name: "すべて",
-        sort: .createdAtAscendant
+        sort: .createdAtDescendant
     )
     @Published var displayedOutfits: [Outfit] = []
     private var cancellables = Set<AnyCancellable>()
