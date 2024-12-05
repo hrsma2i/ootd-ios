@@ -29,6 +29,12 @@ struct InMemorySearchOutfits: SearchOutfits {
 
         return outfits
     }
+
+    func callAsFunction(usingAny items: [Item]) async throws -> [Outfit] {
+        outfits.filter { outfit in
+            outfit.items.contains { item in items.contains { $0.id == item.id }}
+        }
+    }
 }
 
 private extension OutfitQuery.Filter {

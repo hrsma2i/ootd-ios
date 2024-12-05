@@ -111,13 +111,6 @@ class OutfitStore: ObservableObject {
         }
     }
 
-    // TODO: InMemorySearchOutfits use-case を追加し、 OutfitStore.outfits を注入するのがよさそう
-    func getOutfits(using items: [Item]) -> [Outfit] {
-        outfits.filter { outfit in
-            outfit.items.contains { item in items.contains { $0.id == item.id }}
-        }
-    }
-
     @MainActor
     func delete(_ outfits: [Outfit]) async throws {
         isWriting = true
@@ -127,15 +120,6 @@ class OutfitStore: ObservableObject {
 
         try await DeleteOutfits(repository: repository)(outfits)
         self.outfits.removeAll { outfit in outfits.contains { outfit.id == $0.id } }
-    }
-
-    // TODO: InMemorySearchOutfits use-case を追加し、 OutfitStore.outfits を注入するのがよさそう
-    func filterAndSort(_ outfits: [Outfit], by condition: OutfitQuery) -> [Outfit] {
-        var newOutfits: [Outfit] = outfits
-
-        newOutfits = newOutfits.filter { outfit in condition.filter.items.allSatisfy { outfit.items.contains($0) } }
-
-        return newOutfits
     }
 
     func export(_ target: OutfitRepository, limit: Int? = nil) async throws {
