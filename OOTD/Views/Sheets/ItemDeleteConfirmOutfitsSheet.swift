@@ -9,7 +9,7 @@ import SwiftUI
 
 private let logger = getLogger(#file)
 
-struct ItemDeleteConfirmOutfitsSheet: HashableView {
+struct ItemDeleteConfirmOutfitsSheet: View {
     let items: [Item]
     let relatedOutfits: [Outfit]
     @EnvironmentObject var itemStore: ItemStore
@@ -194,11 +194,11 @@ struct ItemDeleteConfirmOutfitsSheet: HashableView {
                     do {
                         try await itemStore.fetch()
                         try await outfitStore.fetch()
+
+                        outfitStore.joinItems(itemStore.items)
+
+                        outfits = try await InMemorySearchOutfits(outfits: outfitStore.outfits)(usingAny: items)
                     } catch {}
-
-                    outfitStore.joinItems(itemStore.items)
-
-                    outfits = outfitStore.getOutfits(using: items)
                 }
             }
             .environmentObject(itemStore)
