@@ -198,7 +198,6 @@ struct OutfitGrid: View {
                         .padding(.bottom, 70)
                         .padding(spacing)
                     }
-                    .defaultScrollAnchor(.bottom)
                     .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
 
                     bottomBar
