@@ -49,7 +49,7 @@ struct EditOutfits {
                 .copyWith(\.updatedAt, value: now)
         }
 
-        try await repository.update(editedOutfits)
+        try await repository.save(editedOutfits)
 
         return updatedOutfits
     }

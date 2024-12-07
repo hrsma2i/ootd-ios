@@ -86,7 +86,7 @@ struct LocalJsonItemRepository: ItemRepository {
         return items
     }
 
-    func create(_ items: [Item]) async throws {
+    func save(_ items: [Item]) async throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted // オプション: JSONを読みやすくフォーマット
         let jsonData = try encoder.encode(items)
@@ -97,10 +97,6 @@ struct LocalJsonItemRepository: ItemRepository {
         }
 
         try await LocalStorage.documents.save(data: jsonData, to: backup("items.json"))
-    }
-
-    func update(_ items: [Item]) async throws {
-        throw "\(header()) not implemented"
     }
 
     func delete(_ items: [Item]) async throws {

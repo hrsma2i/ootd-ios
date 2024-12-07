@@ -12,9 +12,7 @@ class SampleItemRepository: ItemRepository {
         sampleItems
     }
 
-    func create(_: [Item]) {}
-
-    func update(_: [Item]) {}
+    func save(_: [Item]) {}
 
     func delete(_: [Item]) {}
 }
