@@ -46,7 +46,7 @@ extension SchemaV7 {
             // createdAt は更新する必要なし
         }
         
-        func toOutfit() throws -> Outfit {
+        func toOutfit() async throws -> Outfit {
             let imagePath = Outfit.generateImagePath(id, size: Outfit.imageSize)
             let thumbnailPath = Outfit.generateImagePath(id, size: Outfit.thumbnailSize)
             
@@ -54,8 +54,8 @@ extension SchemaV7 {
             let thumbnailSource: ImageSource?
             do {
                 // check there are images in the storage
-                let _ = try LocalStorage.applicationSupport.loadImage(from: imagePath)
-                let _ = try LocalStorage.applicationSupport.loadImage(from: thumbnailPath)
+                let _ = try await LocalStorage.applicationSupport.loadImage(from: imagePath)
+                let _ = try await LocalStorage.applicationSupport.loadImage(from: thumbnailPath)
                 imageSource = .applicatinoSupport(imagePath)
                 thumbnailSource = .applicatinoSupport(thumbnailPath)
             } catch {

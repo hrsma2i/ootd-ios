@@ -78,7 +78,7 @@ struct LocalJsonItemRepository: ItemRepository {
 
     func findAll() async throws -> [Item] {
         let decoder = JSONDecoder()
-        let data = try LocalStorage.documents.load(from: backup("items.json"))
+        let data = try await LocalStorage.documents.load(from: backup("items.json"))
         var items = try decoder.decode([Item].self, from: data)
         items = items.map { item in
             item.copyWith(\.imageSource, value: .documents(backup(item.imagePath)))
@@ -93,10 +93,10 @@ struct LocalJsonItemRepository: ItemRepository {
 
         for item in items {
             let image = try await item.imageSource.getUiImage()
-            try LocalStorage.documents.save(image: image, to: backup(item.imagePath))
+            try await LocalStorage.documents.saveImage(image: image, to: backup(item.imagePath))
         }
 
-        try LocalStorage.documents.save(data: jsonData, to: backup("items.json"))
+        try await LocalStorage.documents.save(data: jsonData, to: backup("items.json"))
     }
 
     func update(_ items: [Item]) async throws {
