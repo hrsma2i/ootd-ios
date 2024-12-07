@@ -11,6 +11,6 @@ struct AddOutfits {
     let repository: OutfitRepository
 
     func callAsFunction(_ outfits: [Outfit]) async throws {
-        try await repository.create(outfits)
+        try await repository.save(outfits)
     }
 }

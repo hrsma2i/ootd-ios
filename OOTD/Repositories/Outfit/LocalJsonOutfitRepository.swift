@@ -63,7 +63,7 @@ struct LocalJsonOutfitRepository: OutfitRepository {
         return outfits
     }
 
-    func create(_ outfits: [Outfit]) async throws {
+    func save(_ outfits: [Outfit]) async throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted // オプション: JSONを読みやすくフォーマット
         let jsonData = try encoder.encode(outfits)
@@ -82,10 +82,6 @@ struct LocalJsonOutfitRepository: OutfitRepository {
         }
 
         try await LocalStorage.documents.save(data: jsonData, to: backup("outfits.json"))
-    }
-
-    func update(_ outfits: [Outfit]) async throws {
-        throw "\(header()) not implemented"
     }
 
     func delete(_ outfits: [Outfit]) async throws {

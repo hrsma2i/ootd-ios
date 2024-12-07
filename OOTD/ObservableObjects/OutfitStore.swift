@@ -132,7 +132,7 @@ class OutfitStore: ObservableObject {
             outfits = self.outfits
         }
 
-        try await target.create(outfits)
+        try await target.save(outfits)
     }
 
     func import_(_ source: OutfitRepository) async throws {
