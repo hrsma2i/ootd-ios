@@ -50,7 +50,7 @@ struct EditItems {
                 .copyWith(\.updatedAt, value: now)
         }
 
-        try await repository.update(editedItems)
+        try await repository.save(editedItems)
 
         return updatedItems
     }
