@@ -44,8 +44,13 @@ final class SwiftDataOutfitRepository: OutfitRepository {
         logger.debug("[SwiftData] fetch all outfits")
         let descriptor = FetchDescriptor<OutfitDTO>()
         let dtos = try context.fetch(descriptor)
-        let outfits = dtos.compactMapWithErrorLog(logger) {
-            try $0.toOutfit()
+        let outfits = await dtos.asyncCompactMap(isParallel: false) {
+            do {
+                return try await $0.toOutfit()
+            } catch {
+                logger.warning("\(error)")
+                return nil
+            }
         }
         return outfits
     }
@@ -75,8 +80,8 @@ final class SwiftDataOutfitRepository: OutfitRepository {
             return
         }
 
-        try LocalStorage.applicationSupport.save(image: image.resized(to: Outfit.imageSize), to: outfit.imagePath)
-        try LocalStorage.applicationSupport.save(image: image.resized(to: Outfit.thumbnailSize), to: outfit.thumbnailPath)
+        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Outfit.imageSize), to: outfit.imagePath)
+        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Outfit.thumbnailSize), to: outfit.thumbnailPath)
     }
 
     func update(_ outfits: [Outfit]) async throws {
@@ -115,8 +120,8 @@ final class SwiftDataOutfitRepository: OutfitRepository {
                 // LocalStorage に保存した画像が削除されなくなる
                 // Item と異なり、 imageSource = nil の場合が普通にあり、その場合は削除不要。
                 if outfit.imageSource != nil {
-                    try LocalStorage.applicationSupport.remove(at: outfit.imagePath)
-                    try LocalStorage.applicationSupport.remove(at: outfit.thumbnailPath)
+                    try await LocalStorage.applicationSupport.remove(at: outfit.imagePath)
+                    try await LocalStorage.applicationSupport.remove(at: outfit.thumbnailPath)
                 }
             } catch {
                 logger.error("\(error)")

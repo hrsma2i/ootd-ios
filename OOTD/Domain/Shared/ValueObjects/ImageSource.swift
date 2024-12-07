@@ -22,10 +22,10 @@ enum ImageSource: Hashable {
             let image = try await downloadImage(url)
             return image
         case .applicatinoSupport(let path):
-            let image = try LocalStorage.applicationSupport.loadImage(from: path)
+            let image = try await LocalStorage.applicationSupport.loadImage(from: path)
             return image
         case .documents(let path):
-            let image = try LocalStorage.documents.loadImage(from: path)
+            let image = try await LocalStorage.documents.loadImage(from: path)
             return image
         }
     }

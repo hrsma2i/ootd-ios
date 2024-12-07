@@ -48,11 +48,12 @@ struct LocalJsonOutfitRepository: OutfitRepository {
 
     func findAll() async throws -> [Outfit] {
         let decoder = JSONDecoder()
-        let data = try LocalStorage.documents.load(from: backup("outfits.json"))
+        let data = try await LocalStorage.documents.load(from: backup("outfits.json"))
         var outfits = try decoder.decode([Outfit].self, from: data)
-        outfits = outfits.map { outfit in
+        outfits = await outfits.asyncMap(isParallel: false) { outfit in
             let imagePath = backup(outfit.imagePath)
-            if LocalStorage.documents.exists(at: imagePath) {
+            let imageExists = (try? await LocalStorage.documents.exists(at: imagePath)) ?? false
+            if imageExists {
                 return outfit.copyWith(\.imageSource, value: .documents(backup(outfit.imagePath)))
             } else {
                 // 画像がない場合は imageSource = nil のままにする。 ImageCard で読み込みエラーが出たりするから。
@@ -74,13 +75,13 @@ struct LocalJsonOutfitRepository: OutfitRepository {
                     // 画像がない場合は特に何もしない
                     continue
                 }
-                try LocalStorage.documents.save(image: image, to: backup(outfit.imagePath))
+                try await LocalStorage.documents.saveImage(image: image, to: backup(outfit.imagePath))
             } catch {
                 logger.warning("\(error)")
             }
         }
 
-        try LocalStorage.documents.save(data: jsonData, to: backup("outfits.json"))
+        try await LocalStorage.documents.save(data: jsonData, to: backup("outfits.json"))
     }
 
     func update(_ outfits: [Outfit]) async throws {
