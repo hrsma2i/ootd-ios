@@ -1,5 +1,5 @@
 //
-//  sample.xcconfig
+//  personal.xcconfig
 //  OOTD
 //
 //  Created by Hiroshi Matsui on 2024/08/28.
@@ -7,7 +7,7 @@
 
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
-DATA_SOURCE = sample
+DATA_SOURCE = swiftData
 IS_DEBUG_MODE = true
 IS_SHOW_AD = false
 // テスト専用広告ユニット

@@ -25,7 +25,7 @@ final class SwiftDataOutfitRepository: OutfitRepository {
         context = SwiftDataManager.shared.context
     }
 
-    func fetchSingle(outfit: Outfit) throws -> OutfitDTO {
+    func fetchSingle(outfit: Outfit) throws -> OutfitDTO? {
         // dto.id == outfit.id としてしまうと、以下のエラーになるので、いったん String だけの変数にしてる
         // Cannot convert value of type 'PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<SwiftDataOutfitRepository.OutfitDTO>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Value<Outfit>, String>>' to closure result type 'any StandardPredicateExpression<Bool>'
         let id = outfit.id
@@ -33,10 +33,7 @@ final class SwiftDataOutfitRepository: OutfitRepository {
             dto.id == id
         })
 
-        guard let dto = try context.fetch(descriptor).first else {
-            throw "[OutfitDTO.fetch(outfit)] there is no OutfitDTO with id=\(id) in container"
-        }
-        logger.debug("[OutfitDTO.from(Outfit)] OutfitDTO with id=\(id) has alraedy exists, so get it from the container")
+        let dto = try context.fetch(descriptor).first
         return dto
     }
 
@@ -44,29 +41,46 @@ final class SwiftDataOutfitRepository: OutfitRepository {
         logger.debug("[SwiftData] fetch all outfits")
         let descriptor = FetchDescriptor<OutfitDTO>()
         let dtos = try context.fetch(descriptor)
-        let outfits = dtos.compactMapWithErrorLog(logger) {
-            try $0.toOutfit()
+        let outfits = await dtos.asyncCompactMap(isParallel: false) {
+            do {
+                return try await $0.toOutfit()
+            } catch {
+                logger.warning("\(error)")
+                return nil
+            }
         }
         return outfits
     }
 
-    func create(_ outfits: [Outfit]) async throws {
+    func save(_ outfits: [Outfit]) async throws {
         for outfit in outfits {
             do {
+                // TODO: 画像を編集したときだけ更新したい
                 // Item と異なり、 imageSource = nil はよくあることなので、 Outfit 自体の保存は中断されないようにする
                 if outfit.imageSource != nil {
                     try await saveImage(outfit)
                 }
 
-                let dto = OutfitDTO(outfit: outfit)
+                let dto: OutfitDTO
+                let message: String
+                if let existing = try fetchSingle(outfit: outfit) {
+                    dto = existing
+                    try dto.update(from: outfit)
+                    message = "update an existing outfit"
+                } else {
+                    dto = OutfitDTO(outfit: outfit)
+                    message = "create a new outfit"
+                }
+
+                // SwiftData は context に同一idのオブジェクトが複数存在する場合、 save 時点の最後のオブジェクトが採用されるので、 update の場合も insert でよい。
                 context.insert(dto)
-                logger.debug("[SwiftData] insert new outfit id=\(dto.id)")
+                logger.debug("[SwiftData] \(message) id=\(dto.id)")
             } catch {
                 logger.error("\(error)")
             }
         }
         try context.save()
-        logger.debug("[SwiftData] save")
+        logger.debug("[SwiftData] save context")
     }
 
     func saveImage(_ outfit: Outfit) async throws {
@@ -75,37 +89,16 @@ final class SwiftDataOutfitRepository: OutfitRepository {
             return
         }
 
-        try LocalStorage.applicationSupport.save(image: image.resized(to: Outfit.imageSize), to: outfit.imagePath)
-        try LocalStorage.applicationSupport.save(image: image.resized(to: Outfit.thumbnailSize), to: outfit.thumbnailPath)
-    }
-
-    func update(_ outfits: [Outfit]) async throws {
-        // SwiftData は context に同一idのオブジェクトが複数存在する場合、 save 時点の最後のオブジェクトが採用されるので、 insert でよい。
-        for outfit in outfits {
-            do {
-                let dto = try fetchSingle(outfit: outfit)
-
-                try dto.update(from: outfit)
-
-                context.insert(dto)
-                logger.debug("[SwiftData] insert updated outfit id=\(dto.id)")
-
-                // TODO: 画像を編集したときだけ更新したい
-                if outfit.imageSource != nil {
-                    try await saveImage(outfit)
-                }
-            } catch {
-                logger.error("\(error)")
-            }
-        }
-        try context.save()
-        logger.debug("[SwiftData] save")
+        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Outfit.imageSize), to: outfit.imagePath)
+        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Outfit.thumbnailSize), to: outfit.thumbnailPath)
     }
 
     func delete(_ outfits: [Outfit]) async throws {
         for outfit in outfits {
             do {
-                let dto = try fetchSingle(outfit: outfit)
+                guard let dto = try fetchSingle(outfit: outfit) else {
+                    throw "[SwiftData] no item id=\(outfit.id)"
+                }
 
                 context.delete(dto)
                 logger.debug("[SwiftData] delete outfit id=\(outfit.id)")
@@ -115,8 +108,8 @@ final class SwiftDataOutfitRepository: OutfitRepository {
                 // LocalStorage に保存した画像が削除されなくなる
                 // Item と異なり、 imageSource = nil の場合が普通にあり、その場合は削除不要。
                 if outfit.imageSource != nil {
-                    try LocalStorage.applicationSupport.remove(at: outfit.imagePath)
-                    try LocalStorage.applicationSupport.remove(at: outfit.thumbnailPath)
+                    try await LocalStorage.applicationSupport.remove(at: outfit.imagePath)
+                    try await LocalStorage.applicationSupport.remove(at: outfit.thumbnailPath)
                 }
             } catch {
                 logger.error("\(error)")

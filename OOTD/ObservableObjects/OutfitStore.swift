@@ -5,13 +5,22 @@
 //  Created by Hiroshi Matsui on 2024/07/14.
 //
 
+import Combine
 import Foundation
 
 private let logger = getLogger(#file)
 
 class OutfitStore: ObservableObject {
-    @Published var outfits: [Outfit] = []
     private let repository: OutfitRepository
+
+    @Published var outfits: [Outfit] = []
+    @Published var searchText: String = ""
+    @Published var query = OutfitQuery(
+        name: "すべて",
+        sort: .createdAtDescendant
+    )
+    @Published var displayedOutfits: [Outfit] = []
+    private var cancellables = Set<AnyCancellable>()
     @Published var isWriting: Bool = false
 
     @MainActor
@@ -22,12 +31,34 @@ class OutfitStore: ObservableObject {
         case .swiftData:
             repository = SwiftDataOutfitRepository.shared
         }
+
+        // outfits または query が更新されるたびに tabs を更新
+        Publishers.CombineLatest3($outfits, $searchText, $query)
+            .sink { [weak self] outfits, searchText, query in
+                Task {
+                    try await self?.updateDisplayedOutfits(outfits: outfits, searchText: searchText, query: query)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    @MainActor
+    private func updateDisplayedOutfits(outfits: [Outfit], searchText: String, query: OutfitQuery) async throws {
+        // 一時的な searchText は ItemQuery として保存したくないので、別で与える
+        var outfits = outfits
+        let searchOutfitsByText = InMemorySearchOutfits(outfits: outfits)
+        outfits = try await searchOutfitsByText(text: searchText)
+
+        let searchOutfitsByQuery = InMemorySearchOutfits(outfits: outfits)
+        outfits = try await searchOutfitsByQuery(query: query)
+
+        displayedOutfits = outfits
     }
 
     @MainActor
     func fetch() async throws {
         logger.debug("fetch outfits")
-        outfits = try await repository.findAll()
+        outfits = try await GetOutfits(repository: repository)()
     }
 
     @MainActor
@@ -44,7 +75,7 @@ class OutfitStore: ObservableObject {
                 .copyWith(\.updatedAt, value: now)
         }
 
-        try await repository.create(outfits)
+        try await AddOutfits(repository: repository)(outfits)
 
         self.outfits.append(contentsOf: outfits)
     }
@@ -57,42 +88,7 @@ class OutfitStore: ObservableObject {
             isWriting = false
         }
 
-        let outfitsToUpdate: [Outfit]
-
-        if originalOutfits.isEmpty {
-            outfitsToUpdate = editedOutfits
-        } else if editedOutfits.count == originalOutfits.count {
-            outfitsToUpdate = zip(originalOutfits, editedOutfits).compactMap { original, edited -> Outfit? in
-
-                if original == edited {
-                    return nil
-                }
-
-                logger.debug("""
-                original outfit:
-                    id: \(original.id)
-                    items:
-                    - \(original.items.map(\.id).joined(separator: "\n    - "))
-
-                edited outfit:
-                    id: \(edited.id)
-                    items:
-                    - \(edited.items.map(\.id).joined(separator: "\n    - "))
-                """)
-
-                return edited
-            }
-        } else {
-            throw "originalOutfits is empty and originalOutfits.count != editedOutfits.count"
-        }
-
-        let now = Date()
-        let updatedOutfits = outfitsToUpdate.map {
-            $0
-                .copyWith(\.updatedAt, value: now)
-        }
-
-        try await repository.update(updatedOutfits)
+        let updatedOutfits = try await EditOutfits(repository: repository)(editedOutfits, originalOutfits: originalOutfits)
 
         for outfit in updatedOutfits {
             if let index = outfits.firstIndex(where: { $0.id == outfit.id }) {
@@ -115,12 +111,6 @@ class OutfitStore: ObservableObject {
         }
     }
 
-    func getOutfits(using items: [Item]) -> [Outfit] {
-        outfits.filter { outfit in
-            outfit.items.contains { item in items.contains { $0.id == item.id }}
-        }
-    }
-
     @MainActor
     func delete(_ outfits: [Outfit]) async throws {
         isWriting = true
@@ -128,16 +118,8 @@ class OutfitStore: ObservableObject {
             isWriting = false
         }
 
-        try await repository.delete(outfits)
+        try await DeleteOutfits(repository: repository)(outfits)
         self.outfits.removeAll { outfit in outfits.contains { outfit.id == $0.id } }
-    }
-
-    func filterAndSort(_ outfits: [Outfit], by condition: OutfitGridTab) -> [Outfit] {
-        var newOutfits: [Outfit] = outfits
-
-        newOutfits = newOutfits.filter { outfit in condition.filter.items.allSatisfy { outfit.items.contains($0) } }
-
-        return newOutfits
     }
 
     func export(_ target: OutfitRepository, limit: Int? = nil) async throws {
@@ -150,7 +132,7 @@ class OutfitStore: ObservableObject {
             outfits = self.outfits
         }
 
-        try await target.create(outfits)
+        try await target.save(outfits)
     }
 
     func import_(_ source: OutfitRepository) async throws {

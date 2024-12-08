@@ -12,9 +12,7 @@ class SampleOutfitRepository: OutfitRepository {
         sampleOutfits
     }
 
-    func create(_: [Outfit]) {}
-
-    func update(_: [Outfit]) async throws {}
+    func save(_: [Outfit]) async throws {}
 
     func delete(_: [Outfit]) async throws {}
 }

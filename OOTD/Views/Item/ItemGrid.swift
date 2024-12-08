@@ -36,14 +36,15 @@ struct ItemGrid: HashableView {
     @State private var isSelectable: Bool
     @State private var isAlertPresented = false
 
-    private enum ActiveSheet: Int, Identifiable {
-        case itemDeleteConfirmOutfits
+    private enum ActiveSheet: Identifiable {
+        case itemDeleteConfirmOutfits(outfits: [Outfit])
         case imagePicker
         case addOptions
         case selectSort
 
-        var id: Int {
-            rawValue
+        var id: String {
+            let mirror = Mirror(reflecting: self)
+            return mirror.children.first?.label ?? "unknown"
         }
     }
 
@@ -55,10 +56,6 @@ struct ItemGrid: HashableView {
             return nil
         }
         return itemStore.tabs[activeTabIndex]
-    }
-
-    var relatedOutfits: [Outfit] {
-        outfitStore.getOutfits(using: selected)
     }
 
     var sortButton: some View {
@@ -119,10 +116,18 @@ struct ItemGrid: HashableView {
             systemName: "trash.fill",
             color: .softRed
         ) {
-            if relatedOutfits.isEmpty {
-                isAlertPresented = true
-            } else {
-                activeSheet = .itemDeleteConfirmOutfits
+            Task {
+                do {
+                    let outfits = try await InMemorySearchOutfits(outfits: outfitStore.outfits)(usingAny: selected)
+
+                    if outfits.isEmpty {
+                        isAlertPresented = true
+                    } else {
+                        activeSheet = .itemDeleteConfirmOutfits(outfits: outfits)
+                    }
+                } catch {
+                    logger.error("\(error)")
+                }
             }
         }
     }
@@ -232,15 +237,6 @@ struct ItemGrid: HashableView {
         }
     }
 
-    func addOption(_ text: String, action: @escaping () -> Void = {}) -> some View {
-        return RoundRectangleButton(
-            text: text,
-            fontSize: 20,
-            radius: 5,
-            action: action
-        )
-    }
-
     var addOptionsSheet: some View {
         enum AddOption: String, CaseIterable {
             case cameraRoll = "カメラロールから"
@@ -294,7 +290,6 @@ struct ItemGrid: HashableView {
                         .padding(spacing)
                         .padding(.bottom, 70)
                     }
-                    .defaultScrollAnchor(.bottom)
                     .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
                 }
             } footer: {
@@ -330,16 +325,17 @@ struct ItemGrid: HashableView {
         } message: {
             Text("選択中のアイテムが削除されます。")
         }
-        .sheet(item: $activeSheet) { item in
-            switch item {
-            case .itemDeleteConfirmOutfits:
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .itemDeleteConfirmOutfits(let outfits):
                 ItemDeleteConfirmOutfitsSheet(
                     items: selected,
-                    relatedOutfits: relatedOutfits
+                    relatedOutfits: outfits
                 ) {
                     activeSheet = nil
                 }
                 .onDisappear {
+                    // キャンセルしたときも発動したいので onDecided ではなく、 onDisappear である必要がある
                     isSelectable = false
                     selected = []
                 }
