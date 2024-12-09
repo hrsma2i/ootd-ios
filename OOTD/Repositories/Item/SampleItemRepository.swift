@@ -12,7 +12,9 @@ class SampleItemRepository: ItemRepository {
         sampleItems
     }
 
-    func save(_: [Item]) {}
+    func save(_ items: [Item]) async throws -> [(item: Item, error: Error?)] {
+        items.map { (item: $0, error: nil) }
+    }
 
     func delete(_: [Item]) {}
 }
