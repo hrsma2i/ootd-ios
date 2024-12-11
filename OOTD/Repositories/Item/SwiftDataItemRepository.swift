@@ -41,15 +41,12 @@ final class SwiftDataItemRepository: ItemRepository {
         return items
     }
 
-    func save(_ items: [Item]) async throws {
-        for item in items {
+    func save(_ items: [Item]) async throws -> [(item: Item, error: Error?)] {
+        let results: [(item: Item, error: Error?)] = await items.asyncMap(isParallel: false) { item in
             do {
-                // TODO: 画像を編集したときだけ更新したい
-                try await saveImage(item)
-
                 let dto: ItemDTO
                 let message: String
-                if let existing = try fetchSingle(item: item) {
+                if let existing = try self.fetchSingle(item: item) {
                     dto = existing
                     dto.update(from: item)
                     message = "update an existing item"
@@ -59,14 +56,16 @@ final class SwiftDataItemRepository: ItemRepository {
                 }
 
                 // SwiftData は context に同一idのオブジェクトが複数存在する場合、 save 時点の最後のオブジェクトが採用されるので、 update の場合も insert でよい。
-                context.insert(dto)
+                self.context.insert(dto)
                 logger.debug("[SwiftData] \(message) id=\(dto.id)")
+                return (item: item, error: nil)
             } catch {
-                logger.error("\(error)")
+                return (item: item, error: error)
             }
         }
         try context.save()
         logger.debug("[SwiftData] save context")
+        return results
     }
 
     func fetch(items: [Item]) throws -> [ItemDTO] {
@@ -96,31 +95,20 @@ final class SwiftDataItemRepository: ItemRepository {
         return dto
     }
 
-    func saveImage(_ item: Item) async throws {
-        let image = try await item.imageSource.getUiImage()
-
-        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Item.imageSize), to: item.imagePath)
-        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Item.thumbnailSize), to: item.thumbnailPath)
-    }
-
     func delete(_ items: [Item]) async throws {
         for item in items {
             do {
                 guard let dto = try fetchSingle(item: item) else {
                     throw "[SwiftData] no item id=\(item.id)"
                 }
-                // Item.imageSource == .localPath のときだけ削除するのはダメ
-                // create したばかりのアイテムをすぐ削除しようとすると imageSource = .uiImage | .url となり、
-                // LocalStorage に保存した画像が削除されなくなる
-                try await LocalStorage.applicationSupport.remove(at: item.imagePath)
-                try await LocalStorage.applicationSupport.remove(at: item.thumbnailPath)
-
                 context.delete(dto)
                 logger.debug("[SwiftData] delete item id=\(item.id)")
             } catch {
                 logger.error("\(error)")
             }
         }
+        try context.save()
+        logger.debug("[SwiftData] save context")
     }
 
     func deleteAll() throws {

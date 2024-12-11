@@ -86,17 +86,28 @@ struct LocalJsonItemRepository: ItemRepository {
         return items
     }
 
-    func save(_ items: [Item]) async throws {
+    func save(_ items: [Item]) async throws -> [(item: Item, error: Error?)] {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted // オプション: JSONを読みやすくフォーマット
-        let jsonData = try encoder.encode(items)
 
-        for item in items {
-            let image = try await item.imageSource.getUiImage()
-            try await LocalStorage.documents.saveImage(image: image, to: backup(item.imagePath))
+        let imageSaveResults: [(item: Item, error: Error?)] = await items.asyncMap(isParallel: false) { item in
+            do {
+                let image = try await item.imageSource.getUiImage()
+                try await LocalStorage.documents.saveImage(image: image, to: backup(item.imagePath))
+                return (item: item, error: nil)
+            } catch {
+                return (item: item, error: error)
+            }
         }
 
+        let itemsImageSaveSuccess: [Item] = imageSaveResults.compactMap {
+            $0.error == nil ? $0.item : nil
+        }
+
+        let jsonData = try encoder.encode(itemsImageSaveSuccess)
         try await LocalStorage.documents.save(data: jsonData, to: backup("items.json"))
+
+        return imageSaveResults
     }
 
     func delete(_ items: [Item]) async throws {

@@ -94,7 +94,7 @@ class ItemStore: ObservableObject {
     }
 
     @MainActor
-    func create(_ items: [Item]) async throws {
+    func create(_ items: [Item]) async throws -> [(item: Item, error: Error?)] {
         isWriting = true
         defer {
             isWriting = false
@@ -108,9 +108,14 @@ class ItemStore: ObservableObject {
                 .copyWith(\.purchasedOn, value: $0.purchasedOn ?? now)
         }
 
-        try await AddItems(repository: repository)(items)
+        let results = try await AddItems(repository: repository, storage: LocalStorage.applicationSupport)(items)
+        let succeses: [Item] = results.compactMap {
+            $0.error == nil ? $0.item : nil
+        }
 
-        self.items.append(contentsOf: items)
+        self.items.append(contentsOf: succeses)
+
+        return results
     }
 
     @MainActor
@@ -122,13 +127,42 @@ class ItemStore: ObservableObject {
             isWriting = false
         }
 
-        let updatedItems = try await EditItems(repository: repository)(editedItems, originalItems: originalItems)
+        // TODO: View 側で生成する
+        var editCommandItems: [EditItems.CommandItem] = []
+        if editedItems.count != originalItems.count {
+            throw "editedItems.count != originalItems.count"
+        }
+        for (edited, original) in zip(editedItems, originalItems) {
+            editCommandItems.append(
+                .init(
+                    edited: edited,
+                    original: original,
+                    // TODO: View 側で適切な値を設定する
+                    isImageEdited: true
+                )
+            )
+        }
 
-        for item in updatedItems {
-            if let index = items.firstIndex(where: { $0.id == item.id }) {
+        let results = try await EditItems(
+            repository: repository,
+            storage: LocalStorage.applicationSupport
+        )(editCommandItems)
+
+        for result in results {
+            if result.error == nil,
+               let index = items.firstIndex(where: { $0.id == result.item.edited.id })
+            {
                 logger.debug("update local item at index=\(index)")
-                items[index] = item
+                items[index] = result.item.edited
             }
+        }
+
+        // TODO: throws をやめて、 reuslts を返し、適切な Snackbar を表示する（例：N/M件失敗しました等）
+        // とりあえず、1件でも失敗したら、失敗のスナックバーを出すようにしている
+        let failures = results
+            .filter { $0.error != nil }
+        if !failures.isEmpty {
+            throw "there are some failure items to edit"
         }
     }
 
