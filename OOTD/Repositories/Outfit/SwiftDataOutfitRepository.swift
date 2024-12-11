@@ -55,12 +55,6 @@ final class SwiftDataOutfitRepository: OutfitRepository {
     func save(_ outfits: [Outfit]) async throws {
         for outfit in outfits {
             do {
-                // TODO: 画像を編集したときだけ更新したい
-                // Item と異なり、 imageSource = nil はよくあることなので、 Outfit 自体の保存は中断されないようにする
-                if outfit.imageSource != nil {
-                    try await saveImage(outfit)
-                }
-
                 let dto: OutfitDTO
                 let message: String
                 if let existing = try fetchSingle(outfit: outfit) {
@@ -81,16 +75,6 @@ final class SwiftDataOutfitRepository: OutfitRepository {
         }
         try context.save()
         logger.debug("[SwiftData] save context")
-    }
-
-    func saveImage(_ outfit: Outfit) async throws {
-        guard let image = try await outfit.imageSource?.getUiImage() else {
-            // 画像がない場合は特に何もしない
-            return
-        }
-
-        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Outfit.imageSize), to: outfit.imagePath)
-        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Outfit.thumbnailSize), to: outfit.thumbnailPath)
     }
 
     func delete(_ outfits: [Outfit]) async throws {
