@@ -127,7 +127,10 @@ class OutfitStore: ObservableObject {
             isWriting = false
         }
 
-        try await DeleteOutfits(repository: repository)(outfits)
+        try await DeleteOutfits(
+            repository: repository,
+            storage: storage
+        )(outfits)
         self.outfits.removeAll { outfit in outfits.contains { outfit.id == $0.id } }
     }
 
