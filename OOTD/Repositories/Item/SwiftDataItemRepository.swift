@@ -101,18 +101,14 @@ final class SwiftDataItemRepository: ItemRepository {
                 guard let dto = try fetchSingle(item: item) else {
                     throw "[SwiftData] no item id=\(item.id)"
                 }
-                // Item.imageSource == .localPath のときだけ削除するのはダメ
-                // create したばかりのアイテムをすぐ削除しようとすると imageSource = .uiImage | .url となり、
-                // LocalStorage に保存した画像が削除されなくなる
-                try await LocalStorage.applicationSupport.remove(at: item.imagePath)
-                try await LocalStorage.applicationSupport.remove(at: item.thumbnailPath)
-
                 context.delete(dto)
                 logger.debug("[SwiftData] delete item id=\(item.id)")
             } catch {
                 logger.error("\(error)")
             }
         }
+        try context.save()
+        logger.debug("[SwiftData] save context")
     }
 
     func deleteAll() throws {
