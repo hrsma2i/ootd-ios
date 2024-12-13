@@ -70,7 +70,7 @@ final class SwiftDataOutfitRepository: OutfitRepository {
                 context.insert(dto)
                 logger.debug("[SwiftData] \(message) id=\(dto.id)")
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
         try context.save()
@@ -87,7 +87,7 @@ final class SwiftDataOutfitRepository: OutfitRepository {
                 context.delete(dto)
                 logger.debug("[SwiftData] delete outfit id=\(outfit.id)")
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
 

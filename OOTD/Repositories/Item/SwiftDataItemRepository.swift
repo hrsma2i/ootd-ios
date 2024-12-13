@@ -34,7 +34,7 @@ final class SwiftDataItemRepository: ItemRepository {
             do {
                 return try $0.toItem()
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
                 return nil
             }
         }
@@ -104,7 +104,7 @@ final class SwiftDataItemRepository: ItemRepository {
                 context.delete(dto)
                 logger.debug("[SwiftData] delete item id=\(item.id)")
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
         try context.save()

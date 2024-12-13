@@ -32,7 +32,7 @@ struct ImageCropView: HashableView {
                     let uiImage: UIImage = try editingStack.makeRenderer().render().uiImage
                     onCropped(uiImage)
                 } catch {
-                    logger.error("\(error)")
+                    logger.critical("\(error)")
                 }
             }
         }

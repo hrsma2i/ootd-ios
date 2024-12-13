@@ -13,7 +13,7 @@ extension Sequence {
             do {
                 return try transform($0)
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
                 return nil
             }
         }
@@ -28,7 +28,7 @@ extension Sequence {
                     do {
                         return try await transform(element)
                     } catch {
-                        logger.error("\(error.localizedDescription)")
+                        logger.critical("\(error.localizedDescription)")
                         return nil
                     }
                 }

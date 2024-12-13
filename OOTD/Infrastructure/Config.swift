@@ -12,12 +12,12 @@ private let logger = CustomLogger(#file)
 enum Config {
     static var DATA_SOURCE: RepositoryType {
         guard let value = Bundle.main.object(forInfoDictionaryKey: "Data Source") as? String else {
-            logger.error("failed to get Data Source from Info.plist. SampleRepository is used.")
+            logger.critical("failed to get Data Source from Info.plist. SampleRepository is used.")
             return .sample
         }
 
         guard let repository = RepositoryType(rawValue: value) else {
-            logger.error("unknown Repository: \(value). SampleRepository is used")
+            logger.critical("unknown Repository: \(value). SampleRepository is used")
             return .sample
         }
 

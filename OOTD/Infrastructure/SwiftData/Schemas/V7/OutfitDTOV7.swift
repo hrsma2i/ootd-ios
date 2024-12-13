@@ -31,7 +31,7 @@ extension SchemaV7 {
             do {
                 items = try SwiftDataItemRepository.shared.fetch(items: outfit.items)
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
             
             tags = outfit.tags

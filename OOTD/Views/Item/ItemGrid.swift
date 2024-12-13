@@ -126,7 +126,7 @@ struct ItemGrid: HashableView {
                         activeSheet = .itemDeleteConfirmOutfits(outfits: outfits)
                     }
                 } catch {
-                    logger.error("\(error)")
+                    logger.critical("\(error)")
                 }
             }
         }

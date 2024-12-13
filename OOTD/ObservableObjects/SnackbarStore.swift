@@ -21,7 +21,7 @@ class SnackbarStore: ObservableObject {
             try await process()
             notifySuccess()
         } catch {
-            logger.error("\(error)")
+            logger.critical("\(error)")
             notifyFailure()
         }
     }

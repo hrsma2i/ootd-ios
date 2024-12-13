@@ -34,7 +34,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
 
     private func extractedItemsToSelectScreen(_ webView: WKWebView) {
         guard let url = webView.url?.absoluteString else {
-            logger.error("webView.url is nil")
+            logger.critical("webView.url is nil")
             return
         }
 
@@ -51,7 +51,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                     try createItemFromAnyWebPage(html: html, url: url, title: title)
                 }
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
     }

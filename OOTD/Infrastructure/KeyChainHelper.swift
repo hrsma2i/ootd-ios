@@ -61,7 +61,7 @@ class KeyChainHelper {
                   let path = cookieDict["path"] as? String,
                   let secure = cookieDict["secure"] as? Bool
             else {
-                logger.error("convert cookieDict=\(cookieDict) has some nil value")
+                logger.critical("convert cookieDict=\(cookieDict) has some nil value")
                 return nil
             }
             

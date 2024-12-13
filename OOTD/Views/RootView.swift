@@ -65,7 +65,7 @@ struct RootView: View {
 
                 outfitStore.joinItems(itemStore.items)
             } catch {
-                logger.error("\(error.localizedDescription)")
+                logger.critical("\(error.localizedDescription)")
             }
         }
     }
