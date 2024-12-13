@@ -7,14 +7,8 @@
 
 import Foundation
 
-private let logger = getLogger(#file)
-
 class InMemoryItemRepository: ItemRepository {
     private var items: [Item]
-
-    private var className: String {
-        String(describing: Self.self)
-    }
 
     init(items: [Item]) {
         self.items = items
@@ -29,10 +23,10 @@ class InMemoryItemRepository: ItemRepository {
 
         for newItem in items {
             if let index = self.items.firstIndex(where: { $0.id == newItem.id }) {
-                logger.info("[\(self.className)] update an existing item id=\(newItem.id)")
+                logger.debug("update an existing item id=\(newItem.id)")
                 self.items[index] = newItem
             } else {
-                logger.info("[\(self.className)] create a new item id=\(newItem.id)")
+                logger.debug("create a new item id=\(newItem.id)")
                 self.items.append(newItem)
             }
 

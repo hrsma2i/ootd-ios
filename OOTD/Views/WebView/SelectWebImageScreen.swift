@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 struct SelectWebImageScreen: HashableView {
     @State var imageURLs: [String]

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 struct WebItemDetail: HashableView {
     @State var item: Item
@@ -275,7 +275,7 @@ struct WebItemDetail: HashableView {
                         imageUrlOptions = try detail.imageUrls()
                     }
                 } catch {
-                    logger.error("\(error)")
+                    logger.critical("\(error)")
                 }
             }
             .task {
@@ -284,7 +284,7 @@ struct WebItemDetail: HashableView {
                         item = try await item.copyWithPropertiesFromSourceUrl()
                     }
                 } catch {
-                    logger.error("\(error)")
+                    logger.critical("\(error)")
                 }
             }
         }

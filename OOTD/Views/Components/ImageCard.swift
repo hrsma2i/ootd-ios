@@ -9,7 +9,7 @@ import CachedAsyncImage
 import SwiftUI
 import UIKit
 
-private let logger = getLogger(#file)
+
 
 struct ImageCard: View {
     let source: ImageSource
@@ -78,7 +78,7 @@ struct ImageCard: View {
                     } else if let error = phase.error {
                         errorView
                             .task {
-                                logger.error("\(error.localizedDescription). url: \(url)")
+                                logger.critical("\(error.localizedDescription). url: \(url)")
                             }
                     } else {
                         loadingView

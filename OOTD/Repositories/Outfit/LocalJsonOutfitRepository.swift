@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let logger = getLogger(#file)
+
 
 extension Outfit: Codable {
     enum CodingKeys: String, CodingKey {

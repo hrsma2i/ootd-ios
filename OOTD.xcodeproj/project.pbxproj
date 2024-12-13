@@ -18,7 +18,7 @@
 		88004E372CB5496000A80A80 /* UniqloItemDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E362CB5496000A80A80 /* UniqloItemDetail.swift */; };
 		88004E472CB58D2000A80A80 /* FirstRetailingPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E462CB58D2000A80A80 /* FirstRetailingPage.swift */; };
 		88004E492CB7E8F600A80A80 /* String+extract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E482CB7E8F600A80A80 /* String+extract.swift */; };
-		88004E4B2CB9552A00A80A80 /* doWithErrorLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E4A2CB9552A00A80A80 /* doWithErrorLog.swift */; };
+		88004E4B2CB9552A00A80A80 /* safeDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E4A2CB9552A00A80A80 /* safeDo.swift */; };
 		88004E4D2CBBF82400A80A80 /* LocalJsonItemRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E4C2CBBF82400A80A80 /* LocalJsonItemRepository.swift */; };
 		88004E4F2CBE35EF00A80A80 /* LocalJsonOutfitRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E4E2CBE35EF00A80A80 /* LocalJsonOutfitRepository.swift */; };
 		880083A12D09E75F008FF387 /* SaveOutfitImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880083A02D09E75F008FF387 /* SaveOutfitImage.swift */; };
@@ -204,7 +204,7 @@
 		88004E362CB5496000A80A80 /* UniqloItemDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqloItemDetail.swift; sourceTree = "<group>"; };
 		88004E462CB58D2000A80A80 /* FirstRetailingPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstRetailingPage.swift; sourceTree = "<group>"; };
 		88004E482CB7E8F600A80A80 /* String+extract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extract.swift"; sourceTree = "<group>"; };
-		88004E4A2CB9552A00A80A80 /* doWithErrorLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = doWithErrorLog.swift; sourceTree = "<group>"; };
+		88004E4A2CB9552A00A80A80 /* safeDo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = safeDo.swift; sourceTree = "<group>"; };
 		88004E4C2CBBF82400A80A80 /* LocalJsonItemRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalJsonItemRepository.swift; sourceTree = "<group>"; };
 		88004E4E2CBE35EF00A80A80 /* LocalJsonOutfitRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalJsonOutfitRepository.swift; sourceTree = "<group>"; };
 		880083A02D09E75F008FF387 /* SaveOutfitImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveOutfitImage.swift; sourceTree = "<group>"; };
@@ -501,7 +501,7 @@
 			isa = PBXGroup;
 			children = (
 				882C84642CC9338A007DF349 /* compareOptional.swift */,
-				88004E4A2CB9552A00A80A80 /* doWithErrorLog.swift */,
+				88004E4A2CB9552A00A80A80 /* safeDo.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1228,7 +1228,7 @@
 				88004E2B2CB4337300A80A80 /* UniqloPurchaseHistory.swift in Sources */,
 				886232572C7CC2EE00A1802D /* OutfitStore.swift in Sources */,
 				8862328B2C7CC71F00A1802D /* OutfitCard.swift in Sources */,
-				88004E4B2CB9552A00A80A80 /* doWithErrorLog.swift in Sources */,
+				88004E4B2CB9552A00A80A80 /* safeDo.swift in Sources */,
 				881B6B622CA650B1008274FF /* SchemaV4.swift in Sources */,
 				888257532D0091CD004A98F6 /* AddOutfits.swift in Sources */,
 				884800A12CF7890E00B0E6F1 /* SearchItems.swift in Sources */,

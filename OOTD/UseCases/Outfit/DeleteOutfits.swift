@@ -17,7 +17,7 @@ struct DeleteOutfits {
         try await repository.delete(outfits)
 
         for outfit in outfits {
-            await doWithErrorLog {
+            await safeDo {
                 try await deleteImage(outfit)
             }
         }

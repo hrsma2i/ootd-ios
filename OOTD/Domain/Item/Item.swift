@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-private let logger = getLogger(#file)
+
 
 struct Item: Hashable, Identifiable {
     let id: String

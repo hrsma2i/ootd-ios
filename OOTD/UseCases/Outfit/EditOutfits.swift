@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let logger = getLogger(#file)
+
 
 struct EditOutfits {
     let repository: OutfitRepository
@@ -64,7 +64,7 @@ struct EditOutfits {
 
         for outfit in commandOutfits {
             if outfit.isToSave {
-                logger.info("\(outfit.diff)")
+                logger.debug("\(outfit.diff)")
             }
         }
 
@@ -76,7 +76,7 @@ struct EditOutfits {
 
         var successOutfits: [CommandOutfit] = []
         for outfit in outfits {
-            await doWithErrorLog {
+            await safeDo {
                 try await saveOutfitImage(outfit.edited)
                 successOutfits.append(outfit)
             }

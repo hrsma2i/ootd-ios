@@ -6,21 +6,20 @@
 //
 
 import Foundation
-import os
 
 extension Sequence {
-    func compactMapWithErrorLog<T>(_ logger: Logger, _ transform: @escaping (Element) throws -> T) -> [T] {
+    func compactMapWithErrorLog<T>(_ logger: CustomLogger, _ transform: @escaping (Element) throws -> T) -> [T] {
         return compactMap {
             do {
                 return try transform($0)
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
                 return nil
             }
         }
     }
 
-    func asyncCompactMapWithErrorLog<T>(_ logger: Logger, _ transform: @escaping (Element) async throws -> T) async -> [T] {
+    func asyncCompactMapWithErrorLog<T>(_ logger: CustomLogger, _ transform: @escaping (Element) async throws -> T) async -> [T] {
         return await withTaskGroup(of: T?.self) { group in
             var results: [T] = []
 
@@ -29,7 +28,7 @@ extension Sequence {
                     do {
                         return try await transform(element)
                     } catch {
-                        logger.error("\(error.localizedDescription)")
+                        logger.critical("\(error.localizedDescription)")
                         return nil
                     }
                 }

@@ -40,16 +40,16 @@ struct AddItems {
     }
 
     private func rollback(_ items: [Item]) async {
-        await doWithErrorLog {
+        await safeDo {
             try await repository.delete(items)
         }
 
         for item in items {
-            await doWithErrorLog {
+            await safeDo {
                 try await storage.remove(at: item.imagePath)
             }
 
-            await doWithErrorLog {
+            await safeDo {
                 try await storage.remove(at: item.thumbnailPath)
             }
         }

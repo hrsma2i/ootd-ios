@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 struct ItemGrid: HashableView {
     init(isOnlySelectable: Bool = false, numColumns: Int = 3, selected: [Item] = [], onSelected: @escaping ([Item]) -> Void = { _ in }) {
@@ -126,7 +126,7 @@ struct ItemGrid: HashableView {
                         activeSheet = .itemDeleteConfirmOutfits(outfits: outfits)
                     }
                 } catch {
-                    logger.error("\(error)")
+                    logger.critical("\(error)")
                 }
             }
         }

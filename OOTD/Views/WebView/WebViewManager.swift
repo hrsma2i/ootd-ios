@@ -9,7 +9,7 @@ import Combine
 import Foundation
 import WebKit
 
-private let logger = getLogger(#file)
+
 
 enum URLDomain: String, CaseIterable {
     case zozo = "zozo.jp"

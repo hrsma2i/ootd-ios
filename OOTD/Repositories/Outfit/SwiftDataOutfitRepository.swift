@@ -10,7 +10,7 @@ import Foundation
 import SwiftData
 import UIKit
 
-private let logger = getLogger(#file)
+
 
 typealias OutfitDTO = SchemaV7.OutfitDTO
 
@@ -38,7 +38,7 @@ final class SwiftDataOutfitRepository: OutfitRepository {
     }
 
     func findAll() async throws -> [Outfit] {
-        logger.debug("[SwiftData] fetch all outfits")
+        logger.debug("fetch all outfits")
         let descriptor = FetchDescriptor<OutfitDTO>()
         let dtos = try context.fetch(descriptor)
         let outfits = await dtos.asyncCompactMap(isParallel: false) {
@@ -68,13 +68,13 @@ final class SwiftDataOutfitRepository: OutfitRepository {
 
                 // SwiftData は context に同一idのオブジェクトが複数存在する場合、 save 時点の最後のオブジェクトが採用されるので、 update の場合も insert でよい。
                 context.insert(dto)
-                logger.debug("[SwiftData] \(message) id=\(dto.id)")
+                logger.debug("\(message) id=\(dto.id)")
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
         try context.save()
-        logger.debug("[SwiftData] save context")
+        logger.debug("save context")
     }
 
     func delete(_ outfits: [Outfit]) async throws {
@@ -85,18 +85,18 @@ final class SwiftDataOutfitRepository: OutfitRepository {
                 }
 
                 context.delete(dto)
-                logger.debug("[SwiftData] delete outfit id=\(outfit.id)")
+                logger.debug("delete outfit id=\(outfit.id)")
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
 
         try context.save()
-        logger.debug("[SwiftData] save context")
+        logger.debug("save context")
     }
 
     func deleteAll() throws {
-        logger.warning("[SwiftData] delete all outfits")
+        logger.warning("delete all outfits")
         try context.delete(model: OutfitDTO.self)
     }
 }

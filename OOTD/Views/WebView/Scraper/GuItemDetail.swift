@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let logger = getLogger(#file)
+
 
 struct GuItemDetail: EcItemDetail, FirstRetailingPage {
     let url: String

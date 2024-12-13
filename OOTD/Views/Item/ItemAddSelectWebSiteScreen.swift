@@ -8,7 +8,7 @@
 import SwiftUI
 import WebKit
 
-private let logger = getLogger(#file)
+
 
 struct ItemAddSelectWebSiteScreen: HashableView {
     @State private var searchQuery: String = ""
@@ -34,7 +34,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
 
     private func extractedItemsToSelectScreen(_ webView: WKWebView) {
         guard let url = webView.url?.absoluteString else {
-            logger.error("webView.url is nil")
+            logger.critical("webView.url is nil")
             return
         }
 
@@ -43,15 +43,15 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                 let html = try await webView.getHtml()
                 let title = webView.title
 
-                if let history = doWithErrorLog({ try generateEcPurchaseHisotry(html: html, url: url) }) {
+                if let history = safeDo({ try generateEcPurchaseHisotry(html: html, url: url) }) {
                     try await createItemsFromEcPurchaseHisotry(history)
-                } else if let detail = await doWithErrorLog({ try await generateEcItemDetail(url: url) }) {
+                } else if let detail = await safeDo({ try await generateEcItemDetail(url: url) }) {
                     try createItemFromEcDetail(detail)
                 } else {
                     try createItemFromAnyWebPage(html: html, url: url, title: title)
                 }
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
     }
@@ -68,10 +68,10 @@ struct ItemAddSelectWebSiteScreen: HashableView {
         let imageUrls = try detail.imageUrls()
         let name = try detail.name()
 
-        let colorOptions = doWithErrorLog { try detail.colors() }
-        let brand = doWithErrorLog { try detail.brand() }
-        let sizeOptions = doWithErrorLog { try detail.sizes() }
-        let price = doWithErrorLog { try detail.price() }
+        let colorOptions = safeDo { try detail.colors() }
+        let brand = safeDo { try detail.brand() }
+        let sizeOptions = safeDo { try detail.sizes() }
+        let price = safeDo { try detail.price() }
 
         navigation.path.append(
             SelectWebImageScreen(
@@ -79,7 +79,7 @@ struct ItemAddSelectWebSiteScreen: HashableView {
                 limit: 1
             ) { selected in
                 let imageUrl = selected.first!
-                let color = doWithErrorLog { try detail.selectColorFromImage(imageUrl) }
+                let color = safeDo { try detail.selectColorFromImage(imageUrl) }
                 var item = Item(
                     imageSource: .url(imageUrl),
                     option: .init(

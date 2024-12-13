@@ -9,8 +9,6 @@ import Foundation
 import SwiftData
 import UIKit
 
-private let logger = getLogger(#file)
-
 typealias ItemDTO = SchemaV7.ItemDTO
 
 final class SwiftDataItemRepository: ItemRepository {
@@ -27,14 +25,14 @@ final class SwiftDataItemRepository: ItemRepository {
     }
 
     func findAll() async throws -> [Item] {
-        logger.debug("[SwiftData] fetch all items")
+        logger.debug("fetch all items")
         let descriptor = FetchDescriptor<ItemDTO>()
         let dtos = try context.fetch(descriptor)
         let items = dtos.compactMap {
             do {
                 return try $0.toItem()
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
                 return nil
             }
         }
@@ -57,19 +55,18 @@ final class SwiftDataItemRepository: ItemRepository {
 
                 // SwiftData は context に同一idのオブジェクトが複数存在する場合、 save 時点の最後のオブジェクトが採用されるので、 update の場合も insert でよい。
                 self.context.insert(dto)
-                logger.debug("[SwiftData] \(message) id=\(dto.id)")
+                logger.debug("\(message) id=\(dto.id)")
                 return (item: item, error: nil)
             } catch {
                 return (item: item, error: error)
             }
         }
         try context.save()
-        logger.debug("[SwiftData] save context")
+        logger.debug("save context")
         return results
     }
 
     func fetch(items: [Item]) throws -> [ItemDTO] {
-        let logHeader = "[\(className).\(#function)]"
         // dto.id == item.id としてしまうと、以下のエラーになるので、いったん String だけの変数にしてる
         // Cannot convert value of type 'PredicateExpressions.SequenceContainsWhere<PredicateExpressions.Value<[Item]>, PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<Item>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Variable<ItemDTO>, String>>>' (aka 'PredicateExpressions.SequenceContainsWhere<PredicateExpressions.Value<Array<Item>>, PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<Item>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Variable<SchemaV4.ItemDTO>, String>>>') to closure result type 'any StandardPredicateExpression<Bool>'
         let ids = items.map(\.id)
@@ -79,7 +76,7 @@ final class SwiftDataItemRepository: ItemRepository {
 
         let dtos = try context.fetch(descriptor)
 
-        logger.debug("\(logHeader) ItemDTOs have already exist, so get them from the container")
+        logger.debug("ItemDTOs have already exist, so get them from the container")
         return dtos
     }
 
@@ -99,20 +96,20 @@ final class SwiftDataItemRepository: ItemRepository {
         for item in items {
             do {
                 guard let dto = try fetchSingle(item: item) else {
-                    throw "[SwiftData] no item id=\(item.id)"
+                    throw "no item id=\(item.id)"
                 }
                 context.delete(dto)
-                logger.debug("[SwiftData] delete item id=\(item.id)")
+                logger.debug("delete item id=\(item.id)")
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
         try context.save()
-        logger.debug("[SwiftData] save context")
+        logger.debug("save context")
     }
 
     func deleteAll() throws {
-        logger.warning("[SwiftData] delete all items")
+        logger.warning("delete all items")
         try context.delete(model: ItemDTO.self)
     }
 }

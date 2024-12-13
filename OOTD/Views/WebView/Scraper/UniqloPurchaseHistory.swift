@@ -8,7 +8,7 @@
 import Foundation
 import SwiftSoup
 
-private let logger = getLogger(#file)
+
 
 struct UniqloPurchaseHistory: EcPurchaseHistory, FirstRetailingPage {
     let url: String

@@ -8,8 +8,6 @@
 import Combine
 import Foundation
 
-private let logger = getLogger(#file)
-
 class ItemStore: ObservableObject {
     var repository: ItemRepository
 
@@ -72,7 +70,7 @@ class ItemStore: ObservableObject {
 
         let searchItemsByQuery = InMemorySearchItems(items: items)
         let tabs = await queries.asyncCompactMap(isParallel: false) { query -> Tab? in
-            guard let items = await doWithErrorLog({
+            guard let items = await safeDo({
                 try await searchItemsByQuery(query: query)
             }) else {
                 return nil
@@ -178,7 +176,7 @@ class ItemStore: ObservableObject {
     }
 
     func export(_ target: ItemRepository, limit: Int? = nil) async throws {
-        logger.debug("\(String(describing: Self.self)).\(#function) to \(String(describing: type(of: target)))")
+        logger.debug("export to \(String(describing: type(of: target)))")
 
         let items: [Item]
         if let limit {
@@ -191,7 +189,7 @@ class ItemStore: ObservableObject {
     }
 
     func import_(_ source: ItemRepository) async throws {
-        logger.debug("\(String(describing: Self.self)).\(#function) from \(String(describing: type(of: source)))")
+        logger.debug("import from \(String(describing: type(of: source)))")
 
         var items = try await source.findAll()
 

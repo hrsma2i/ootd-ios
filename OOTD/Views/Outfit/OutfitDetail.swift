@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 struct OutfitDetail: HashableView {
     @State var outfit: Outfit

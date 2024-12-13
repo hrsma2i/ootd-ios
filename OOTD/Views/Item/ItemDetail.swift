@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 struct ItemDetail: HashableView {
     @State var items: [Item]

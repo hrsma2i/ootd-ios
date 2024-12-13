@@ -24,7 +24,7 @@ struct AddOutfits {
 
         var successOutfits: [Outfit] = []
         for outfit in outfits {
-            await doWithErrorLog {
+            await safeDo {
                 try await saveOutfitImage(outfit)
                 successOutfits.append(outfit)
             }

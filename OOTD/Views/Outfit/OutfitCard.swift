@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 private extension NSError {
     var isFileNotFoundError: Bool {
