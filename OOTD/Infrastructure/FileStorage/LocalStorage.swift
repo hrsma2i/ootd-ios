@@ -31,7 +31,7 @@ struct LocalStorage: FileStorage {
         try manager.createDirectory(at: saveDirectory, withIntermediateDirectories: true, attributes: nil)
 
         try data.write(to: path, options: Data.WritingOptions.atomic)
-        logger.debug("[LocalStorage] save to \(path)")
+        logger.debug("save to \(path)")
     }
 
     func load(from relPath: String) async throws -> Data {
@@ -43,7 +43,7 @@ struct LocalStorage: FileStorage {
     func remove(at relPath: String) async throws {
         let path = directory.appendingPathComponent(relPath)
         try manager.removeItem(at: path)
-        logger.debug("[LocalStorage] remove \(path)")
+        logger.debug("remove \(path)")
     }
 
     func exists(at relPath: String) async throws -> Bool {
