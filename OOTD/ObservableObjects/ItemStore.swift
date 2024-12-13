@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-private let logger = CustomLogger(#file)
+
 
 class ItemStore: ObservableObject {
     var repository: ItemRepository

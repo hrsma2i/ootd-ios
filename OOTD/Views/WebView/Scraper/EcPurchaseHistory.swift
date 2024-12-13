@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let logger = CustomLogger(#file)
+
 
 protocol EcPurchaseHistory {
     static func isValidUrl(_ url: String) -> Bool

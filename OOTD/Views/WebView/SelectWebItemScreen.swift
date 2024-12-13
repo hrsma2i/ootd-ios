@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = CustomLogger(#file)
+
 
 struct SelectWebItemScreen: HashableView {
     @State var items: [Item]

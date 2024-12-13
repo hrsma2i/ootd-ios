@@ -9,7 +9,7 @@ import BrightroomEngine
 import BrightroomUI
 import SwiftUI
 
-private let logger = CustomLogger(#file)
+
 
 struct ImageCropView: HashableView {
     let editingStack: EditingStack

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftSoup
 
-private let logger = CustomLogger(#file)
+
 
 struct ZozoItemDetail: EcItemDetail, ZozoPage {
     let url: String

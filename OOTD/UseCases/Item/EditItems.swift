@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let logger = CustomLogger(#file)
+
 
 struct EditItems {
     let repository: ItemRepository

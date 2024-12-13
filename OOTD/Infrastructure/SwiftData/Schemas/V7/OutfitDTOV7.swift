@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-private let logger = CustomLogger(#file)
+
 
 extension SchemaV7 {
     @Model

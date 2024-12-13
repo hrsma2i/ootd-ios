@@ -8,7 +8,7 @@
 import SwiftUI
 import WebKit
 
-private let logger = CustomLogger(#file)
+
 
 struct ItemAddSelectWebSiteScreen: HashableView {
     @State private var searchQuery: String = ""

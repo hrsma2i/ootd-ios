@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let logger = CustomLogger(#file)
+
 
 enum Config {
     static var DATA_SOURCE: RepositoryType {
