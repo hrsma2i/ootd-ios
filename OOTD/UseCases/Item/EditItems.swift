@@ -132,7 +132,7 @@ struct EditItems {
         }
         
         // 変更前のアイテムをDBに書き戻す
-        _ = await doWithErrorLog {
+        _ = await safeDo {
             try await repository.save(onlySaveImageFailures.map(\.item.original))
         }
     }

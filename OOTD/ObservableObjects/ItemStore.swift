@@ -70,7 +70,7 @@ class ItemStore: ObservableObject {
 
         let searchItemsByQuery = InMemorySearchItems(items: items)
         let tabs = await queries.asyncCompactMap(isParallel: false) { query -> Tab? in
-            guard let items = await doWithErrorLog({
+            guard let items = await safeDo({
                 try await searchItemsByQuery(query: query)
             }) else {
                 return nil

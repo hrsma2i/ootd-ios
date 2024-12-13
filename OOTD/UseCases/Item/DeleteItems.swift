@@ -16,7 +16,7 @@ struct DeleteItems {
         try await repository.delete(items)
 
         for item in items {
-            await doWithErrorLog {
+            await safeDo {
                 try await deleteImage(item)
             }
         }
