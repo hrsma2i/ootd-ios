@@ -8,32 +8,66 @@
 import Foundation
 import os
 
+let logger = CustomLogger.shared
+
 struct CustomLogger {
     private var logger: Logger
     private var template: String
 
-    init(_ category: String, template: String = "{message}") {
-        self.logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "unknown", category: category)
+    static let shared = CustomLogger()
+
+    struct Fields {
+        let file: String
+        let function: String
+        let line: Int
+
+        var fileStem: String {
+            let basename = URL(fileURLWithPath: file).lastPathComponent
+            let stem = basename.replacingOccurrences(of: ".swift", with: "")
+            return stem
+        }
+
+        var funcName: String {
+            function.split(separator: "(").first.map { String($0) } ?? function
+        }
+    }
+
+    private init(template: String = "{message}") {
+        self.logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "unknown", category: "unknown")
         self.template = template
     }
 
-    private func format(_ message: String) -> String {
-        template.replacingOccurrences(of: "{message}", with: message)
+    func debug(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
+        let fields = Fields(file: file, function: function, line: line)
+        log(level: .debug, message: message, fields: fields)
     }
 
-    func debug(_ message: String) {
-        logger.debug("\(format(message))")
+    func warning(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
+        let fields = Fields(file: file, function: function, line: line)
+        log(level: .error, message: message, fields: fields)
     }
 
-    func info(_ message: String) {
-        logger.info("\(format(message))")
+    func critical(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
+        let fields = Fields(file: file, function: function, line: line)
+        log(level: .fault, message: message, fields: fields)
     }
 
-    func warning(_ message: String) {
-        logger.warning("\(format(message))")
+    private func log(level: OSLogType, message: String, fields: Fields) {
+        let formatted = format(message, fields: fields)
+
+        switch level {
+        case .error:
+            logger.warning("\(formatted)")
+        case .fault:
+            logger.fault("\(formatted)")
+        default:
+            logger.debug("\(formatted)")
+        }
     }
 
-    func error(_ message: String) {
-        logger.error("\(format(message))")
+    private func format(_ message: String, fields: Fields) -> String {
+        var s = template.replacingOccurrences(of: "{message}", with: message)
+        s = "[\(fields.fileStem).\(fields.funcName):L\(fields.line)] \(s)"
+        return s
     }
 }
