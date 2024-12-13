@@ -8,7 +8,7 @@
 import Foundation
 import os
 
-private let logger = getLogger(#file)
+private let logger = CustomLogger(#file)
 
 func doWithErrorLog<T>(_ f: () throws -> T, file: String = #file, line: Int = #line) -> T? {
     do {

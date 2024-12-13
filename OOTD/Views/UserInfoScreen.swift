@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+private let logger = CustomLogger(#file)
 
 struct UserInfoScreen: View {
     @EnvironmentObject var itemStore: ItemStore

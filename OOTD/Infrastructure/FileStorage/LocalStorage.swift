@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-private let logger = getLogger(#file)
+private let logger = CustomLogger(#file)
 
 struct LocalStorage: FileStorage {
     // https://gist.github.com/y-takagi/9f2cea659fb3f55b56aa04530bf0af39

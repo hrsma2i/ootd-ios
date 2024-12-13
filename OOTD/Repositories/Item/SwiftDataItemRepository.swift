@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 import UIKit
 
-private let logger = getLogger(#file)
+private let logger = CustomLogger(#file)
 
 typealias ItemDTO = SchemaV7.ItemDTO
 

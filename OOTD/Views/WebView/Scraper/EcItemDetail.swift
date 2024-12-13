@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let logger = getLogger(#file)
+private let logger = CustomLogger(#file)
 
 protocol EcItemDetail {
     var url: String { get }

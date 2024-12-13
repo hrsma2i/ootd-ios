@@ -9,7 +9,7 @@ import CachedAsyncImage
 import SwiftUI
 import UIKit
 
-private let logger = getLogger(#file)
+private let logger = CustomLogger(#file)
 
 struct ImageCard: View {
     let source: ImageSource

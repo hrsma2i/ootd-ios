@@ -8,7 +8,7 @@
 import SwiftUI
 import WebKit
 
-private let logger = getLogger(#file)
+private let logger = CustomLogger(#file)
 
 struct WebViewRepresentable: UIViewRepresentable {
     public func makeUIView(context: Context) -> WKWebView {

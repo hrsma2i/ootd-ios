@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+private let logger = CustomLogger(#file)
 
 struct OutfitGrid: View {
     @EnvironmentObject var outfitStore: OutfitStore

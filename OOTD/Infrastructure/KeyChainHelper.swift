@@ -9,7 +9,7 @@ import Foundation
 import Security
 import WebKit
 
-private let logger = getLogger(#file)
+private let logger = CustomLogger(#file)
 
 extension Date {
     func iso8601String() -> String {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+private let logger = CustomLogger(#file)
 
 struct RootView: View {
     @StateObject private var itemStore = ItemStore(Config.DATA_SOURCE)

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import os
 
 class SnackbarStore: ObservableObject {
     @Published var active: Snackbar?
@@ -17,7 +16,7 @@ class SnackbarStore: ObservableObject {
     }
 
     @MainActor
-    func notify(_ logger: Logger, process: @escaping () async throws -> Void) async {
+    func notify(_ logger: CustomLogger, process: @escaping () async throws -> Void) async {
         do {
             try await process()
             notifySuccess()
