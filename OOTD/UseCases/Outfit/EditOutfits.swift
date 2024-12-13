@@ -64,7 +64,7 @@ struct EditOutfits {
 
         for outfit in commandOutfits {
             if outfit.isToSave {
-                logger.info("\(outfit.diff)")
+                logger.debug("\(outfit.diff)")
             }
         }
 

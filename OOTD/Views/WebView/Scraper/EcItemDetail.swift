@@ -63,7 +63,7 @@ func generateEcItemDetail(html html_: String? = nil, url urlString_: String) asy
         urlString = httpResponse.url?.absoluteString ?? urlString_
 
         if urlString != urlString_ {
-            logger.info("url redirected: \(urlString_) -> \(urlString)")
+            logger.debug("url redirected: \(urlString_) -> \(urlString)")
         }
     }
 

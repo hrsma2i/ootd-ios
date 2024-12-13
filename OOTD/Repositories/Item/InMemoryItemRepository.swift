@@ -29,10 +29,10 @@ class InMemoryItemRepository: ItemRepository {
 
         for newItem in items {
             if let index = self.items.firstIndex(where: { $0.id == newItem.id }) {
-                logger.info("[\(self.className)] update an existing item id=\(newItem.id)")
+                logger.debug("[\(self.className)] update an existing item id=\(newItem.id)")
                 self.items[index] = newItem
             } else {
-                logger.info("[\(self.className)] create a new item id=\(newItem.id)")
+                logger.debug("[\(self.className)] create a new item id=\(newItem.id)")
                 self.items.append(newItem)
             }
 
