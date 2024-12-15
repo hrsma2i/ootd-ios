@@ -18,16 +18,27 @@ struct Category: Codable, Comparable, Hashable {
     static let outerwear = Category(id: 4, displayName: "アウター")
     static let bottoms = Category(id: 5, displayName: "ボトムス")
     static let shoes = Category(id: 6, displayName: "シューズ")
+    static let allInOne = Category(id: 7, displayName: "オールインワン")
+    static let headwear = Category(id: 8, displayName: "帽子")
+    static let legwear = Category(id: 9, displayName: "レッグウェア")
+    static let accessories = Category(id: 10, displayName: "アクセサリー")
+    static let bag = Category(id: 11, displayName: "カバン")
     static let others = Category(id: 999, displayName: "その他")
     static let uncategorized = Category(id: 1000, displayName: "未分類")
 
+    // よく使われる順にしてる
     static let allCases: [Category] = [
         .lightShortSleeveTops,
         .lightLongSleeveTops,
         .heavyTops,
         .outerwear,
         .bottoms,
+        .allInOne,
         .shoes,
+        .bag,
+        .legwear,
+        .headwear,
+        .accessories,
         .others,
         .uncategorized
     ]
