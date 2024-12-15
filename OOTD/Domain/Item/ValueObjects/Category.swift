@@ -12,9 +12,9 @@ struct Category: Codable, Comparable, Hashable {
     let id: Int
     let displayName: String
 
-    static let halfInnerTops = Category(id: 1, displayName: "Tシャツ・半袖シャツ")
-    static let longInnerTops = Category(id: 2, displayName: "シャツ・ロンT")
-    static let middleTops = Category(id: 3, displayName: "ニット・スウェット")
+    static let lightShortSleeveTops = Category(id: 1, displayName: "Tシャツ・半袖シャツ")
+    static let lightLongSleeveTops = Category(id: 2, displayName: "シャツ・ロンT")
+    static let heavyTops = Category(id: 3, displayName: "ニット・スウェット")
     static let outerwear = Category(id: 4, displayName: "アウター")
     static let bottoms = Category(id: 5, displayName: "ボトムス")
     static let shoes = Category(id: 6, displayName: "シューズ")
@@ -22,9 +22,9 @@ struct Category: Codable, Comparable, Hashable {
     static let uncategorized = Category(id: 1000, displayName: "未分類")
 
     static let allCases: [Category] = [
-        .halfInnerTops,
-        .longInnerTops,
-        .middleTops,
+        .lightShortSleeveTops,
+        .lightLongSleeveTops,
+        .heavyTops,
         .outerwear,
         .bottoms,
         .shoes,
