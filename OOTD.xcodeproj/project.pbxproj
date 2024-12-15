@@ -22,6 +22,7 @@
 		88004E4D2CBBF82400A80A80 /* LocalJsonItemRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E4C2CBBF82400A80A80 /* LocalJsonItemRepository.swift */; };
 		88004E4F2CBE35EF00A80A80 /* LocalJsonOutfitRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88004E4E2CBE35EF00A80A80 /* LocalJsonOutfitRepository.swift */; };
 		880083A12D09E75F008FF387 /* SaveOutfitImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880083A02D09E75F008FF387 /* SaveOutfitImage.swift */; };
+		880083A92D0C6515008FF387 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 880083A82D0C6515008FF387 /* GRDB */; };
 		880E082F2D048170007F96C0 /* FileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880E082E2D048170007F96C0 /* FileStorage.swift */; };
 		881B6B5A2CA5BAC7008274FF /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B592CA5BAC7008274FF /* SchemaV3.swift */; };
 		881B6B5C2CA5BAD6008274FF /* ItemDTOV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881B6B5B2CA5BAD6008274FF /* ItemDTOV3.swift */; };
@@ -151,6 +152,11 @@
 		88E3DC3E2CC7D8FF0006D201 /* ItemDTOV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC3A2CC7D8FF0006D201 /* ItemDTOV7.swift */; };
 		88E3DC3F2CC7D8FF0006D201 /* OutfitDTOV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC3B2CC7D8FF0006D201 /* OutfitDTOV7.swift */; };
 		88E3DC402CC7D8FF0006D201 /* SchemaV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC3C2CC7D8FF0006D201 /* SchemaV7.swift */; };
+		88E7680E2D0C68450005A3EF /* GRDBItemRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E7680D2D0C68450005A3EF /* GRDBItemRepository.swift */; };
+		88EF96FF2D10862300DFFD16 /* Migration1_CreateItemTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EF96FE2D10862300DFFD16 /* Migration1_CreateItemTable.swift */; };
+		88EF97012D10863D00DFFD16 /* DatabaseMigrator+registerAll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EF97002D10863D00DFFD16 /* DatabaseMigrator+registerAll.swift */; };
+		88EF97072D11C15E00DFFD16 /* StringArray+JSONString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EF97062D11C15E00DFFD16 /* StringArray+JSONString.swift */; };
+		88EF97092D11C48C00DFFD16 /* String+toStringArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EF97082D11C48C00DFFD16 /* String+toStringArray.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -341,6 +347,11 @@
 		88E3DC3A2CC7D8FF0006D201 /* ItemDTOV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDTOV7.swift; sourceTree = "<group>"; };
 		88E3DC3B2CC7D8FF0006D201 /* OutfitDTOV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitDTOV7.swift; sourceTree = "<group>"; };
 		88E3DC3C2CC7D8FF0006D201 /* SchemaV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaV7.swift; sourceTree = "<group>"; };
+		88E7680D2D0C68450005A3EF /* GRDBItemRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GRDBItemRepository.swift; sourceTree = "<group>"; };
+		88EF96FE2D10862300DFFD16 /* Migration1_CreateItemTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Migration1_CreateItemTable.swift; sourceTree = "<group>"; };
+		88EF97002D10863D00DFFD16 /* DatabaseMigrator+registerAll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrator+registerAll.swift"; sourceTree = "<group>"; };
+		88EF97062D11C15E00DFFD16 /* StringArray+JSONString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringArray+JSONString.swift"; sourceTree = "<group>"; };
+		88EF97082D11C48C00DFFD16 /* String+toStringArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+toStringArray.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -353,6 +364,7 @@
 				886232772C7CC6CD00A1802D /* CachedAsyncImage in Frameworks */,
 				88CD55A72C8755E700A9B78A /* SwiftSoup in Frameworks */,
 				883B54472C8DD547007DB1E8 /* BrightroomUI in Frameworks */,
+				880083A92D0C6515008FF387 /* GRDB in Frameworks */,
 				88C00C3E2CAD7DF9007D83FF /* ACarousel in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -522,6 +534,7 @@
 				8862329D2C7CC7D100A1802D /* String+errorDescription.swift */,
 				88004E482CB7E8F600A80A80 /* String+extract.swift */,
 				883FCB362C9671870001DAAF /* String+matches.swift */,
+				88EF97082D11C48C00DFFD16 /* String+toStringArray.swift */,
 			);
 			path = String;
 			sourceTree = "<group>";
@@ -532,6 +545,7 @@
 				8862329B2C7CC7D100A1802D /* Array+asyncMap.swift */,
 				886064122C90790D003C7001 /* Sequence+compactMapWithErrorLog.swift */,
 				883FCB382C9674060001DAAF /* Sequence+unique.swift */,
+				88EF97062D11C15E00DFFD16 /* StringArray+JSONString.swift */,
 			);
 			path = Sequence;
 			sourceTree = "<group>";
@@ -690,6 +704,7 @@
 				88B2BCE82C7E0E89008F45B7 /* SwiftDataItemRepository.swift */,
 				88004E4C2CBBF82400A80A80 /* LocalJsonItemRepository.swift */,
 				88E0C98A2D08744200EAFE8D /* InMemoryItemRepository.swift */,
+				88E7680D2D0C68450005A3EF /* GRDBItemRepository.swift */,
 			);
 			path = Item;
 			sourceTree = "<group>";
@@ -725,6 +740,7 @@
 		886232442C7CC10A00A1802D /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				88EF96FC2D1085E500DFFD16 /* GRDB */,
 				880E082D2D048163007F96C0 /* FileStorage */,
 				883FCB492CA5A8620001DAAF /* SwiftData */,
 				886232672C7CC4C600A1802D /* Config.swift */,
@@ -951,6 +967,23 @@
 			path = V7;
 			sourceTree = "<group>";
 		};
+		88EF96FC2D1085E500DFFD16 /* GRDB */ = {
+			isa = PBXGroup;
+			children = (
+				88EF97002D10863D00DFFD16 /* DatabaseMigrator+registerAll.swift */,
+				88EF96FD2D1085EC00DFFD16 /* Migrations */,
+			);
+			path = GRDB;
+			sourceTree = "<group>";
+		};
+		88EF96FD2D1085EC00DFFD16 /* Migrations */ = {
+			isa = PBXGroup;
+			children = (
+				88EF96FE2D10862300DFFD16 /* Migration1_CreateItemTable.swift */,
+			);
+			path = Migrations;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -975,6 +1008,7 @@
 				883B54462C8DD547007DB1E8 /* BrightroomUI */,
 				88C00C3D2CAD7DF9007D83FF /* ACarousel */,
 				88B8B7C22CE2417500131843 /* GoogleMobileAds */,
+				880083A82D0C6515008FF387 /* GRDB */,
 			);
 			productName = OOTD;
 			productReference = 8862320C2C7CBDD900A1802D /* OOTD.Debug.app */;
@@ -1074,6 +1108,7 @@
 				883B54432C8DD547007DB1E8 /* XCRemoteSwiftPackageReference "Brightroom" */,
 				88C00C3C2CAD7DF9007D83FF /* XCRemoteSwiftPackageReference "ACarousel" */,
 				88B8B7C12CE2417500131843 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+				880083A72D0C6515008FF387 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
 			);
 			productRefGroup = 8862320D2C7CBDD900A1802D /* Products */;
 			projectDirPath = "";
@@ -1153,6 +1188,7 @@
 				88AAE5AC2CC3EF5200DAEC0F /* FlowLayout.swift in Sources */,
 				886232892C7CC71F00A1802D /* SelectedItemsGrid.swift in Sources */,
 				88CD55942C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift in Sources */,
+				88EF96FF2D10862300DFFD16 /* Migration1_CreateItemTable.swift in Sources */,
 				88A036D82CFDEE08003E2E89 /* Color+softRed.swift in Sources */,
 				88E0C98D2D087C5700EAFE8D /* InMemoryStorage.swift in Sources */,
 				88B2BCE92C7E0E89008F45B7 /* SwiftDataItemRepository.swift in Sources */,
@@ -1187,10 +1223,12 @@
 				881B6B5A2CA5BAC7008274FF /* SchemaV3.swift in Sources */,
 				88CD559D2C8749E800A9B78A /* WebViewManager.swift in Sources */,
 				881B6B642CA6D49A008274FF /* Date+initYMD.swift in Sources */,
+				88E7680E2D0C68450005A3EF /* GRDBItemRepository.swift in Sources */,
 				888257582D009279004A98F6 /* GetItems.swift in Sources */,
 				883B54492C8DD5B8007DB1E8 /* CropView.swift in Sources */,
 				88B012B32CC15F2600CD9153 /* ItemDTOV5.swift in Sources */,
 				88D8EF0E2CE231630070AD8D /* AdBanner.swift in Sources */,
+				88EF97072D11C15E00DFFD16 /* StringArray+JSONString.swift in Sources */,
 				883FCB552CA5AA720001DAAF /* ItemDTOV2.swift in Sources */,
 				886232722C7CC65200A1802D /* ItemDetail.swift in Sources */,
 				886232682C7CC4C600A1802D /* Config.swift in Sources */,
@@ -1205,6 +1243,7 @@
 				886232AD2C7CC9F500A1802D /* RootView.swift in Sources */,
 				886064112C906B45003C7001 /* SwiftDataOutfitRepository.swift in Sources */,
 				883FCB3F2C99BB560001DAAF /* Color+gray.swift in Sources */,
+				88EF97092D11C48C00DFFD16 /* String+toStringArray.swift in Sources */,
 				8882575C2D0099B3004A98F6 /* InMemorySearchOutfits.swift in Sources */,
 				884F5A712CF63184004228C6 /* AddItems.swift in Sources */,
 				88E3DC402CC7D8FF0006D201 /* SchemaV7.swift in Sources */,
@@ -1248,6 +1287,7 @@
 				884CF6762C8201F900250026 /* AspectRatioContainer.swift in Sources */,
 				88004E4D2CBBF82400A80A80 /* LocalJsonItemRepository.swift in Sources */,
 				8882575E2D0099D7004A98F6 /* SearchOutfits.swift in Sources */,
+				88EF97012D10863D00DFFD16 /* DatabaseMigrator+registerAll.swift in Sources */,
 				888257542D0091CD004A98F6 /* DeleteOutfits.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1645,6 +1685,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		880083A72D0C6515008FF387 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.29.3;
+			};
+		};
 		883B54432C8DD547007DB1E8 /* XCRemoteSwiftPackageReference "Brightroom" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/FluidGroup/Brightroom.git";
@@ -1688,6 +1736,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		880083A82D0C6515008FF387 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 880083A72D0C6515008FF387 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
 		883B54442C8DD547007DB1E8 /* BrightroomEngine */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 883B54432C8DD547007DB1E8 /* XCRemoteSwiftPackageReference "Brightroom" */;
