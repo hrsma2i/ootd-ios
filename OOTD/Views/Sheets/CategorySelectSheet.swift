@@ -35,10 +35,10 @@ struct CategorySelectSheet: HashableView {
                     return "すべて"
                 }
 
-                return category.rawValue
+                return category.displayName
             }
         ) {
-            onSelect(Category(rawValue: $0))
+            onSelect(Category(displayName: $0))
         }
     }
 }

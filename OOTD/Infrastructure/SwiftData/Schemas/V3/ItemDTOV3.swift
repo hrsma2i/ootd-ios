@@ -27,7 +27,7 @@ extension SchemaV3 {
         init(item: Item) {
             id = item.id
             name = item.name
-            category = item.category.rawValue
+            category = item.category.displayName
             sourceUrl = item.sourceUrl
             createdAt = item.createdAt!
             updatedAt = item.updatedAt!
@@ -35,7 +35,7 @@ extension SchemaV3 {
         }
 
         func toItem() throws -> Item {
-            guard let category = Category(rawValue: category) else {
+            guard let category = Category(displayName: category) else {
                 throw "[ItemDTO.toItem] failed to convert ItemDTO to Item. unknown category: \(category)"
             }
 

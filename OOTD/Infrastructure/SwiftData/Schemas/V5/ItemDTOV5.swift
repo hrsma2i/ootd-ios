@@ -37,7 +37,7 @@ extension SchemaV5 {
         init(item: Item) {
             id = item.id
             name = item.name
-            category = item.category.rawValue
+            category = item.category.displayName
             tags = item.tags
             purchasedPrice = item.purchasedPrice
             purchasedOn = item.purchasedOn
@@ -54,7 +54,7 @@ extension SchemaV5 {
 
         func update(from item: Item) {
             name = item.name
-            category = item.category.rawValue
+            category = item.category.displayName
             tags = item.tags
             purchasedPrice = item.purchasedPrice
             purchasedOn = item.purchasedOn
@@ -69,7 +69,7 @@ extension SchemaV5 {
         }
 
         func toItem() throws -> Item {
-            guard let category = Category(rawValue: category) else {
+            guard let category = Category(displayName: category) else {
                 throw "[ItemDTO.toItem] failed to convert ItemDTO to Item. unknown category: \(category)"
             }
 
