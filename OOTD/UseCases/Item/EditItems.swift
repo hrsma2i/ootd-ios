@@ -45,12 +45,12 @@ struct EditItems {
                 original item:
                     id: \(original.id)
                     name: \(original.name)
-                    category: \(original.category.rawValue)
+                    category: \(original.category.displayName)
                 
                 edited item:
                     id: \(edited.id)
                     name: \(edited.name)
-                    category: \(edited.category.rawValue)
+                    category: \(edited.category.displayName)
                 """)
             }
         }

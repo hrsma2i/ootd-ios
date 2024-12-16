@@ -32,14 +32,14 @@ let sampleItems = [
         imageSource: .url("https://lh3.googleusercontent.com/pw/AP1GczN37a2OxZWuuFhgc0V5mgEUM76wf8xwGgkOiwJkRvfisUHr-a6XbVDbNgZVEyNK2fKR0tXB_JL7xZMIgxNS7mwPYT2vSKdzavCUmmpeQpvpuD0SG-0=w2400"),
         option: .init(
             name: "famima t shirts",
-            category: .halfInnerTops
+            category: .lightShortSleeveTops
         )
     ),
     Item(
         imageSource: .url("https://lh3.googleusercontent.com/pw/AP1GczOCGS6_8gRn_I1h9P1wgLr7vZEHIPVmPN6xqWt6l4DK1Y1ZzpEBwjbDlD8gxdaGDZkr6h4H8zdUPcb2BQY5lbhNdGaB4ItB_mGWYDDpEimTWkf41jU=w2400"),
         option: .init(
             name: "adidas pique",
-            category: .longInnerTops
+            category: .lightLongSleeveTops
         )
     ),
     Item(
@@ -81,7 +81,7 @@ let sampleItems = [
         imageSource: .url("https://lh3.googleusercontent.com/pw/AP1GczOIMlFQxM0XWXZM8M9AvfS2S0oJXkoPahRzByLYuhonmOx-UZQj8aoHx_u8fxH-w903lO2h61T8d7hFHcD8-zTBdAds1DaFi9yzKZX2-JZ7ahViK6A=w2400"),
         option: .init(
             name: "gray sweat",
-            category: .middleTops
+            category: .heavyTops
         )
     ),
     Item(

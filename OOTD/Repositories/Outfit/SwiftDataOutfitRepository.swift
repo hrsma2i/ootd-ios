@@ -10,8 +10,6 @@ import Foundation
 import SwiftData
 import UIKit
 
-
-
 typealias OutfitDTO = SchemaV7.OutfitDTO
 
 final class SwiftDataOutfitRepository: OutfitRepository {
@@ -37,6 +35,7 @@ final class SwiftDataOutfitRepository: OutfitRepository {
         return dto
     }
 
+    @MainActor
     func findAll() async throws -> [Outfit] {
         logger.debug("fetch all outfits")
         let descriptor = FetchDescriptor<OutfitDTO>()
