@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-private let logger = getLogger(#file)
+
 
 extension SchemaV7 {
     @Model
@@ -31,7 +31,7 @@ extension SchemaV7 {
             do {
                 items = try SwiftDataItemRepository.shared.fetch(items: outfit.items)
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
             
             tags = outfit.tags

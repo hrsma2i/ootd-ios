@@ -23,7 +23,7 @@ extension SchemaV1 {
         // この原因は id に @Attribute(.unique) 制約があるから。なので、すでに保存済み（update, delete）の場合は container から取得する。
         init(item: Item) {
             id = item.id
-            category = item.category.rawValue
+            category = item.category.displayName
             sourceUrl = item.sourceUrl
             outfits = []
         }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let logger = getLogger(#file)
+
 
 func request(_ urlString: String) async throws -> Data {
     logger.debug("request to \(urlString)")

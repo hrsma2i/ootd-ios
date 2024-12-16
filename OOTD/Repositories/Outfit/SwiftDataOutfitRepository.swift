@@ -10,8 +10,6 @@ import Foundation
 import SwiftData
 import UIKit
 
-private let logger = getLogger(#file)
-
 typealias OutfitDTO = SchemaV7.OutfitDTO
 
 final class SwiftDataOutfitRepository: OutfitRepository {
@@ -37,8 +35,9 @@ final class SwiftDataOutfitRepository: OutfitRepository {
         return dto
     }
 
+    @MainActor
     func findAll() async throws -> [Outfit] {
-        logger.debug("[SwiftData] fetch all outfits")
+        logger.debug("fetch all outfits")
         let descriptor = FetchDescriptor<OutfitDTO>()
         let dtos = try context.fetch(descriptor)
         let outfits = await dtos.asyncCompactMap(isParallel: false) {
@@ -55,12 +54,6 @@ final class SwiftDataOutfitRepository: OutfitRepository {
     func save(_ outfits: [Outfit]) async throws {
         for outfit in outfits {
             do {
-                // TODO: 画像を編集したときだけ更新したい
-                // Item と異なり、 imageSource = nil はよくあることなので、 Outfit 自体の保存は中断されないようにする
-                if outfit.imageSource != nil {
-                    try await saveImage(outfit)
-                }
-
                 let dto: OutfitDTO
                 let message: String
                 if let existing = try fetchSingle(outfit: outfit) {
@@ -74,23 +67,13 @@ final class SwiftDataOutfitRepository: OutfitRepository {
 
                 // SwiftData は context に同一idのオブジェクトが複数存在する場合、 save 時点の最後のオブジェクトが採用されるので、 update の場合も insert でよい。
                 context.insert(dto)
-                logger.debug("[SwiftData] \(message) id=\(dto.id)")
+                logger.debug("\(message) id=\(dto.id)")
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
         try context.save()
-        logger.debug("[SwiftData] save context")
-    }
-
-    func saveImage(_ outfit: Outfit) async throws {
-        guard let image = try await outfit.imageSource?.getUiImage() else {
-            // 画像がない場合は特に何もしない
-            return
-        }
-
-        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Outfit.imageSize), to: outfit.imagePath)
-        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Outfit.thumbnailSize), to: outfit.thumbnailPath)
+        logger.debug("save context")
     }
 
     func delete(_ outfits: [Outfit]) async throws {
@@ -101,24 +84,18 @@ final class SwiftDataOutfitRepository: OutfitRepository {
                 }
 
                 context.delete(dto)
-                logger.debug("[SwiftData] delete outfit id=\(outfit.id)")
-
-                // .imageSource == .localPath のときだけ削除するのはダメ
-                // create したばかりのものをすぐ削除しようとすると imageSource = .uiImage | .url となり、
-                // LocalStorage に保存した画像が削除されなくなる
-                // Item と異なり、 imageSource = nil の場合が普通にあり、その場合は削除不要。
-                if outfit.imageSource != nil {
-                    try await LocalStorage.applicationSupport.remove(at: outfit.imagePath)
-                    try await LocalStorage.applicationSupport.remove(at: outfit.thumbnailPath)
-                }
+                logger.debug("delete outfit id=\(outfit.id)")
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
+
+        try context.save()
+        logger.debug("save context")
     }
 
     func deleteAll() throws {
-        logger.warning("[SwiftData] delete all outfits")
+        logger.warning("delete all outfits")
         try context.delete(model: OutfitDTO.self)
     }
 }

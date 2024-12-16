@@ -8,7 +8,7 @@
 import SwiftUI
 import WebKit
 
-private let logger = getLogger(#file)
+
 
 struct WebViewRepresentable: UIViewRepresentable {
     public func makeUIView(context: Context) -> WKWebView {
@@ -31,7 +31,7 @@ struct CustomWebView: HashableView {
         do {
             try WebViewManager.shared.load(url: url)
         } catch {
-            logger.warning("\(error)")
+            logger.critical("\(error)")
         }
         self.buttonText = buttonText
         self.onButtonTapped = onButtonTapped
@@ -70,7 +70,7 @@ struct CustomWebView: HashableView {
                 do {
                     try manager.load(url: newUrl)
                 } catch {
-                    logger.error("\(error)")
+                    logger.critical("\(error)")
                 }
             }
             .onChange(of: manager.url) {

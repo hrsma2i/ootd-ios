@@ -9,7 +9,7 @@ import BrightroomEngine
 import BrightroomUI
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 struct ImageCropView: HashableView {
     let editingStack: EditingStack
@@ -32,7 +32,7 @@ struct ImageCropView: HashableView {
                     let uiImage: UIImage = try editingStack.makeRenderer().render().uiImage
                     onCropped(uiImage)
                 } catch {
-                    logger.error("\(error)")
+                    logger.critical("\(error)")
                 }
             }
         }

@@ -9,8 +9,6 @@ import Foundation
 import SwiftData
 import UIKit
 
-private let logger = getLogger(#file)
-
 typealias ItemDTO = SchemaV7.ItemDTO
 
 final class SwiftDataItemRepository: ItemRepository {
@@ -26,30 +24,28 @@ final class SwiftDataItemRepository: ItemRepository {
         context = SwiftDataManager.shared.context
     }
 
+    @MainActor
     func findAll() async throws -> [Item] {
-        logger.debug("[SwiftData] fetch all items")
+        logger.debug("fetch all items")
         let descriptor = FetchDescriptor<ItemDTO>()
         let dtos = try context.fetch(descriptor)
         let items = dtos.compactMap {
             do {
                 return try $0.toItem()
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
                 return nil
             }
         }
         return items
     }
 
-    func save(_ items: [Item]) async throws {
-        for item in items {
+    func save(_ items: [Item]) async throws -> [(item: Item, error: Error?)] {
+        let results: [(item: Item, error: Error?)] = await items.asyncMap(isParallel: false) { item in
             do {
-                // TODO: 画像を編集したときだけ更新したい
-                try await saveImage(item)
-
                 let dto: ItemDTO
                 let message: String
-                if let existing = try fetchSingle(item: item) {
+                if let existing = try self.fetchSingle(item: item) {
                     dto = existing
                     dto.update(from: item)
                     message = "update an existing item"
@@ -59,18 +55,19 @@ final class SwiftDataItemRepository: ItemRepository {
                 }
 
                 // SwiftData は context に同一idのオブジェクトが複数存在する場合、 save 時点の最後のオブジェクトが採用されるので、 update の場合も insert でよい。
-                context.insert(dto)
-                logger.debug("[SwiftData] \(message) id=\(dto.id)")
+                self.context.insert(dto)
+                logger.debug("\(message) id=\(dto.id)")
+                return (item: item, error: nil)
             } catch {
-                logger.error("\(error)")
+                return (item: item, error: error)
             }
         }
         try context.save()
-        logger.debug("[SwiftData] save context")
+        logger.debug("save context")
+        return results
     }
 
     func fetch(items: [Item]) throws -> [ItemDTO] {
-        let logHeader = "[\(className).\(#function)]"
         // dto.id == item.id としてしまうと、以下のエラーになるので、いったん String だけの変数にしてる
         // Cannot convert value of type 'PredicateExpressions.SequenceContainsWhere<PredicateExpressions.Value<[Item]>, PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<Item>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Variable<ItemDTO>, String>>>' (aka 'PredicateExpressions.SequenceContainsWhere<PredicateExpressions.Value<Array<Item>>, PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<Item>, String>, PredicateExpressions.KeyPath<PredicateExpressions.Variable<SchemaV4.ItemDTO>, String>>>') to closure result type 'any StandardPredicateExpression<Bool>'
         let ids = items.map(\.id)
@@ -80,7 +77,7 @@ final class SwiftDataItemRepository: ItemRepository {
 
         let dtos = try context.fetch(descriptor)
 
-        logger.debug("\(logHeader) ItemDTOs have already exist, so get them from the container")
+        logger.debug("ItemDTOs have already exist, so get them from the container")
         return dtos
     }
 
@@ -96,35 +93,24 @@ final class SwiftDataItemRepository: ItemRepository {
         return dto
     }
 
-    func saveImage(_ item: Item) async throws {
-        let image = try await item.imageSource.getUiImage()
-
-        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Item.imageSize), to: item.imagePath)
-        try await LocalStorage.applicationSupport.saveImage(image: image.resized(to: Item.thumbnailSize), to: item.thumbnailPath)
-    }
-
     func delete(_ items: [Item]) async throws {
         for item in items {
             do {
                 guard let dto = try fetchSingle(item: item) else {
-                    throw "[SwiftData] no item id=\(item.id)"
+                    throw "no item id=\(item.id)"
                 }
-                // Item.imageSource == .localPath のときだけ削除するのはダメ
-                // create したばかりのアイテムをすぐ削除しようとすると imageSource = .uiImage | .url となり、
-                // LocalStorage に保存した画像が削除されなくなる
-                try await LocalStorage.applicationSupport.remove(at: item.imagePath)
-                try await LocalStorage.applicationSupport.remove(at: item.thumbnailPath)
-
                 context.delete(dto)
-                logger.debug("[SwiftData] delete item id=\(item.id)")
+                logger.debug("delete item id=\(item.id)")
             } catch {
-                logger.error("\(error)")
+                logger.critical("\(error)")
             }
         }
+        try context.save()
+        logger.debug("save context")
     }
 
     func deleteAll() throws {
-        logger.warning("[SwiftData] delete all items")
+        logger.warning("delete all items")
         try context.delete(model: ItemDTO.self)
     }
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 struct ItemDetail: HashableView {
     @State var items: [Item]
@@ -49,7 +49,7 @@ struct ItemDetail: HashableView {
     
     var categoryDisplayed: String {
         if let category = items.first?.category, items.allSatisfy({ $0.category == category }) {
-            return category.rawValue
+            return category.displayName
         }
         return "バラバラ"
     }

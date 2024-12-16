@@ -9,7 +9,7 @@ import Foundation
 import Security
 import WebKit
 
-private let logger = getLogger(#file)
+
 
 extension Date {
     func iso8601String() -> String {
@@ -61,7 +61,7 @@ class KeyChainHelper {
                   let path = cookieDict["path"] as? String,
                   let secure = cookieDict["secure"] as? Bool
             else {
-                logger.error("convert cookieDict=\(cookieDict) has some nil value")
+                logger.critical("convert cookieDict=\(cookieDict) has some nil value")
                 return nil
             }
             
@@ -105,10 +105,10 @@ class KeyChainHelper {
             if status != noErr {
                 throw "\(status)"
             }
-            logger.debug("[KeyChain] save \(service)")
+            logger.debug("save \(service)")
         case errSecSuccess:
             SecItemUpdate(query, [kSecValueData as String: data] as CFDictionary)
-            logger.debug("[KeyChain] update \(service)")
+            logger.debug("update \(service)")
         default:
             throw "Failed to save data to keychain"
         }
@@ -129,7 +129,7 @@ class KeyChainHelper {
             throw "loaded keychain result is not Data"
         }
         
-        logger.debug("[KeyChain] load \(service)")
+        logger.debug("load \(service)")
         return data
     }
     

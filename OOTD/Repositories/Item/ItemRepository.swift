@@ -10,7 +10,8 @@ import Foundation
 protocol ItemRepository {
     func findAll() async throws -> [Item]
 
-    func save(_ items: [Item]) async throws
+    // error のときも入力の item の情報がほしいので Result 型は使わない
+    func save(_ items: [Item]) async throws -> [(item: Item, error: Error?)]
 
     func delete(_ items: [Item]) async throws
 }

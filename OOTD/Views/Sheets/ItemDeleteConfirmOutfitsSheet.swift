@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 struct ItemDeleteConfirmOutfitsSheet: View {
     let items: [Item]

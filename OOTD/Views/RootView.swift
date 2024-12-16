@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 struct RootView: View {
     @StateObject private var itemStore = ItemStore(Config.DATA_SOURCE)
@@ -65,7 +65,7 @@ struct RootView: View {
 
                 outfitStore.joinItems(itemStore.items)
             } catch {
-                logger.error("\(error.localizedDescription)")
+                logger.critical("\(error.localizedDescription)")
             }
         }
     }

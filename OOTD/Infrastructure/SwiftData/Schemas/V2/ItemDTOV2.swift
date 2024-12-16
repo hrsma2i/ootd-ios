@@ -25,7 +25,7 @@ extension SchemaV2 {
         init(item: Item) {
             id = item.id
             name = item.name
-            category = item.category.rawValue
+            category = item.category.displayName
             sourceUrl = item.sourceUrl
             outfits = []
         }

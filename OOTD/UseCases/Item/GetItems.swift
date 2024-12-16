@@ -10,6 +10,7 @@ import Foundation
 struct GetItems {
     let repository: ItemRepository
 
+    @MainActor
     func callAsFunction() async throws -> [Item] {
         let items = try await repository.findAll()
         return items

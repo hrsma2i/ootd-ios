@@ -10,6 +10,7 @@ import Foundation
 struct GetOutfits {
     let repository: OutfitRepository
 
+    @MainActor
     func callAsFunction() async throws -> [Outfit] {
         let outfits = try await repository.findAll()
         return outfits

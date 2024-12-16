@@ -8,7 +8,7 @@
 import CachedAsyncImage
 import SwiftUI
 
-private let logger = getLogger(#file)
+
 
 struct ItemCard: View {
     // TODO: 削除してよさそう。ImageCard で十分そう

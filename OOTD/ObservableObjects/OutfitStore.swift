@@ -8,10 +8,9 @@
 import Combine
 import Foundation
 
-private let logger = getLogger(#file)
-
 class OutfitStore: ObservableObject {
     private let repository: OutfitRepository
+    private let storage: FileStorage
 
     @Published var outfits: [Outfit] = []
     @Published var searchText: String = ""
@@ -28,8 +27,10 @@ class OutfitStore: ObservableObject {
         switch repositoryType {
         case .sample:
             repository = SampleOutfitRepository()
+            storage = InMemoryStorage()
         case .swiftData:
             repository = SwiftDataOutfitRepository.shared
+            storage = LocalStorage.applicationSupport
         }
 
         // outfits または query が更新されるたびに tabs を更新
@@ -75,7 +76,10 @@ class OutfitStore: ObservableObject {
                 .copyWith(\.updatedAt, value: now)
         }
 
-        try await AddOutfits(repository: repository)(outfits)
+        try await AddOutfits(
+            repository: repository,
+            storage: storage
+        )(outfits)
 
         self.outfits.append(contentsOf: outfits)
     }
@@ -88,7 +92,10 @@ class OutfitStore: ObservableObject {
             isWriting = false
         }
 
-        let updatedOutfits = try await EditOutfits(repository: repository)(editedOutfits, originalOutfits: originalOutfits)
+        let updatedOutfits = try await EditOutfits(
+            repository: repository,
+            storage: storage
+        )(editedOutfits, originalOutfits: originalOutfits)
 
         for outfit in updatedOutfits {
             if let index = outfits.firstIndex(where: { $0.id == outfit.id }) {
@@ -118,12 +125,15 @@ class OutfitStore: ObservableObject {
             isWriting = false
         }
 
-        try await DeleteOutfits(repository: repository)(outfits)
+        try await DeleteOutfits(
+            repository: repository,
+            storage: storage
+        )(outfits)
         self.outfits.removeAll { outfit in outfits.contains { outfit.id == $0.id } }
     }
 
     func export(_ target: OutfitRepository, limit: Int? = nil) async throws {
-        logger.debug("\(String(describing: Self.self)).\(#function) to \(String(describing: type(of: target)))")
+        logger.debug("export to \(String(describing: type(of: target)))")
 
         let outfits: [Outfit]
         if let limit {
@@ -136,7 +146,7 @@ class OutfitStore: ObservableObject {
     }
 
     func import_(_ source: OutfitRepository) async throws {
-        logger.debug("\(String(describing: Self.self)).\(#function) from \(String(describing: type(of: source)))")
+        logger.debug("import from \(String(describing: type(of: source)))")
 
         var outfits = try await source.findAll()
 
