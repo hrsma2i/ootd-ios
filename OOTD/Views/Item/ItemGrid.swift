@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct ItemGrid: HashableView {
     init(isOnlySelectable: Bool = false, numColumns: Int = 3, selected: [Item] = [], onSelected: @escaping ([Item]) -> Void = { _ in }) {
         self.isOnlySelectable = isOnlySelectable
@@ -274,13 +272,13 @@ struct ItemGrid: HashableView {
         let spacing: CGFloat = 2
         let columns = Array(repeating: GridItem(.flexible(), spacing: spacing), count: numColumns)
 
-        VStack(spacing: 0) {
-            ScrollableTabView(
-                itemStore.tabs,
-                id: \.query.id,
-                title: \.query.name
-            ) { tab in
-                AdBannerContainer {
+        AdBannerContainer {
+            VStack(spacing: 0) {
+                ScrollableTabView(
+                    itemStore.tabs,
+                    id: \.query.id,
+                    title: \.query.name
+                ) { tab in
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: spacing) {
                             ForEach(tab.items, id: \.self) { item in
@@ -291,17 +289,17 @@ struct ItemGrid: HashableView {
                         .padding(.bottom, 70)
                     }
                     .background(Color(red: 240 / 255, green: 240 / 255, blue: 240 / 255))
+                } footer: {
+                    innerFooter
+                        .padding(.bottom, 7)
+                } onChange: { _, newId in
+                    if let index = itemStore.tabs.firstIndex(where: { $0.query.id == newId }) {
+                        activeTabIndex = index
+                    }
                 }
-            } footer: {
-                innerFooter
-                    .padding(.bottom, 7)
-            } onChange: { _, newId in
-                if let index = itemStore.tabs.firstIndex(where: { $0.query.id == newId }) {
-                    activeTabIndex = index
-                }
-            }
 
-            bottomBar
+                bottomBar
+            }
         }
         .if(isOnlySelectable) {
             $0
