@@ -29,7 +29,8 @@ class ItemStore: ObservableObject {
         case .sample:
             repository = SampleItemRepository()
         case .swiftData:
-            repository = SwiftDataItemRepository.shared
+            // TODO: xcconfig の RepositoryType を .grdb に変更する
+            repository = GRDBItemRepository.shared
         }
 
         initQueries()
