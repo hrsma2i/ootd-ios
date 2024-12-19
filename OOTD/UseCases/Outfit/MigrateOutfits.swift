@@ -32,7 +32,8 @@ struct MigrateOutfits {
     }
 
     private func migrateData() async throws -> [(outfit: Outfit, error: Error?)] {
-        let outfits = try await source.repository.findAll()
+        // repository.findAll ではなく GetOutfits を使う。なぜなら、 Outfit.imageSource を設定しなければいけないから。 storage に画像があれば設定される。
+        let outfits = try await GetOutfits(repository: source.repository, storage: source.storage)()
         do {
             try await target.repository.save(outfits)
             logger.debug("migrated outfits from \(sourceName.repository) to \(targetName.repository)")
