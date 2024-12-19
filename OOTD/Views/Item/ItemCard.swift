@@ -8,8 +8,6 @@
 import CachedAsyncImage
 import SwiftUI
 
-
-
 struct ItemCard: View {
     // TODO: 削除してよさそう。ImageCard で十分そう
     let item: Item
@@ -71,7 +69,7 @@ struct ItemCard: View {
             .padding(spacing)
             .background(.gray)
             .task {
-                let image = try! await itemHasURL.imageSource.getUiImage()
+                let image = try! await itemHasURL.imageSource.getUiImage(storage: nil)
                 itemHasUIImage = .init(imageSource: .uiImage(image))
             }
         }

@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct WebItemDetail: HashableView {
     @State var item: Item
     var colorOptions: [String]?
@@ -70,7 +68,7 @@ struct WebItemDetail: HashableView {
     var cropImageButton: some View {
         Button("切り抜く") {
             Task {
-                let originalImage = try await item.imageSource.getUiImage()
+                let originalImage = try await item.imageSource.getUiImage(storage: LocalStorage.applicationSupport)
 
                 navigation.path.append(
                     ImageCropView(uiImage: originalImage) { editedImage in

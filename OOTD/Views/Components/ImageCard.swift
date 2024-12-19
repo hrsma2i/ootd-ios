@@ -9,8 +9,6 @@ import CachedAsyncImage
 import SwiftUI
 import UIKit
 
-
-
 struct ImageCard: View {
     let source: ImageSource
     var aspectRatio: CGFloat?
@@ -21,6 +19,8 @@ struct ImageCard: View {
 
     @State var image: UIImage? = nil
     @State var isError = false
+
+    private let storage = LocalStorage.applicationSupport
 
     func imageView(_ image: Image) -> some View {
         AspectRatioContainer(aspectRatio: aspectRatio) {
@@ -91,7 +91,7 @@ struct ImageCard: View {
                 do {
                     switch source {
                     case .storagePath, .uiImage:
-                        image = try await source.getUiImage()
+                        image = try await source.getUiImage(storage: storage)
                     default:
                         break
                     }
