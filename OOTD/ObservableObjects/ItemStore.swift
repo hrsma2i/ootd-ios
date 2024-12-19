@@ -10,6 +10,7 @@ import Foundation
 
 class ItemStore: ObservableObject {
     var repository: ItemRepository
+    let storage: FileStorage = LocalStorage.applicationSupport
 
     @Published var items: [Item] = []
     @Published var searchText: String = ""
@@ -106,7 +107,11 @@ class ItemStore: ObservableObject {
                 .copyWith(\.purchasedOn, value: $0.purchasedOn ?? now)
         }
 
-        let results = try await AddItems(repository: repository, storage: LocalStorage.applicationSupport)(items)
+        let results = try await AddItems(
+            repository: repository,
+            targetStorage: LocalStorage.applicationSupport,
+            sourceStorage: nil
+        )(items)
         let succeses: [Item] = results.compactMap {
             $0.error == nil ? $0.item : nil
         }
@@ -143,7 +148,8 @@ class ItemStore: ObservableObject {
 
         let results = try await EditItems(
             repository: repository,
-            storage: LocalStorage.applicationSupport
+            targetStorage: LocalStorage.applicationSupport,
+            sourceStorage: LocalStorage.applicationSupport
         )(editCommandItems)
 
         for result in results {

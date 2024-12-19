@@ -30,7 +30,8 @@ final class AddItemTests: XCTestCase {
         let storage = MockStorage()
         let addItems = AddItems(
             repository: repository,
-            storage: storage
+            targetStorage: storage,
+            sourceStorage: nil
         )
 
         let itemSuccess = sampleItems[0]

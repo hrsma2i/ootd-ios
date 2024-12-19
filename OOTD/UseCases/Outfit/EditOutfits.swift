@@ -7,11 +7,16 @@
 
 import Foundation
 
-
-
 struct EditOutfits {
     let repository: OutfitRepository
-    let storage: FileStorage
+    let targetStorage: FileStorage
+    let sourceStorage: FileStorage?
+
+    init(repository: OutfitRepository, targetStorage: FileStorage, sourceStorage: FileStorage?) {
+        self.repository = repository
+        self.targetStorage = targetStorage
+        self.sourceStorage = sourceStorage
+    }
 
     struct CommandOutfit {
         let edited: Outfit
@@ -72,7 +77,7 @@ struct EditOutfits {
     }
 
     private func saveImages(_ outfits: [CommandOutfit]) async -> [CommandOutfit] {
-        let saveOutfitImage = SaveOutfitImage(storage: storage)
+        let saveOutfitImage = SaveOutfitImage(target: targetStorage, source: sourceStorage)
 
         var successOutfits: [CommandOutfit] = []
         for outfit in outfits {

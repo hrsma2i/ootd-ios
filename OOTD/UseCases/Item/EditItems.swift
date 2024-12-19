@@ -7,11 +7,16 @@
 
 import Foundation
 
-
-
 struct EditItems {
     let repository: ItemRepository
-    let storage: FileStorage
+    let targetStorage: FileStorage
+    let sourceStorage: FileStorage?
+    
+    init(repository: ItemRepository, targetStorage: FileStorage, sourceStorage: FileStorage?) {
+        self.repository = repository
+        self.targetStorage = targetStorage
+        self.sourceStorage = sourceStorage
+    }
     
     struct CommandItem {
         let edited: Item
@@ -93,7 +98,7 @@ struct EditItems {
     }
 
     private func saveImages(_ saveResults: [(item: EditItems.CommandItem, error: Error?)]) async -> [(item: EditItems.CommandItem, error: Error?)] {
-        let saveImage = SaveItemImage(storage: storage)
+        let saveImage = SaveItemImage(target: targetStorage, source: sourceStorage)
         let results: [(item: EditItems.CommandItem, error: Error?)] = await saveResults.asyncMap(isParallel: false) { saveResult in
             let item = saveResult.item
             if saveResult.error != nil || !item.isImageEdited {

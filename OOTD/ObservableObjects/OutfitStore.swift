@@ -78,7 +78,8 @@ class OutfitStore: ObservableObject {
 
         try await AddOutfits(
             repository: repository,
-            storage: storage
+            targetStorage: storage,
+            sourceStorage: nil
         )(outfits)
 
         self.outfits.append(contentsOf: outfits)
@@ -94,7 +95,8 @@ class OutfitStore: ObservableObject {
 
         let updatedOutfits = try await EditOutfits(
             repository: repository,
-            storage: storage
+            targetStorage: storage,
+            sourceStorage: storage
         )(editedOutfits, originalOutfits: originalOutfits)
 
         for outfit in updatedOutfits {
