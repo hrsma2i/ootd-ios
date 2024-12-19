@@ -59,7 +59,7 @@ class OutfitStore: ObservableObject {
     @MainActor
     func fetch() async throws {
         logger.debug("fetch outfits")
-        outfits = try await GetOutfits(repository: repository)()
+        outfits = try await GetOutfits(repository: repository, storage: storage)()
     }
 
     @MainActor
