@@ -21,9 +21,11 @@ struct EditOutfits {
     struct CommandOutfit {
         let edited: Outfit
         let original: Outfit
+        let isImageEdited: Bool
 
         var isToSave: Bool {
-            edited != original
+            // UIImage は異なっても等しいとみなされてしまうので、画像は別途判定
+            edited != original || isImageEdited
         }
 
         var diff: String {
@@ -49,7 +51,12 @@ struct EditOutfits {
         }
         var commandOutfits: [CommandOutfit] = []
         for (edited, original) in zip(editedOutfits, originalOutfits) {
-            commandOutfits.append(.init(edited: edited, original: original))
+            commandOutfits.append(.init(
+                edited: edited,
+                original: original,
+                // TODO: View 側で適切な値を設定する
+                isImageEdited: true
+            ))
         }
 
         // TODO: とりあえず、DB書き込み or 画像保存の片方が失敗したときの、もう片方の rollback は後回しにしてる
