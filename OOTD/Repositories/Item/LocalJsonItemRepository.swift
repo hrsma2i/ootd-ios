@@ -44,8 +44,8 @@ extension Item: Codable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        imageSource = .applicatinoSupport(Item.generateImagePath(id, size: Item.imageSize))
-        thumbnailSource = .applicatinoSupport(Item.generateImagePath(id, size: Item.thumbnailSize))
+        imageSource = .storagePath(Item.generateImagePath(id, size: Item.imageSize))
+        thumbnailSource = .storagePath(Item.generateImagePath(id, size: Item.thumbnailSize))
         name = try container.decode(String.self, forKey: .name)
         category = try container.decode(Category.self, forKey: .category)
         purchasedPrice = try container.decodeIfPresent(Int.self, forKey: .purchasedPrice)

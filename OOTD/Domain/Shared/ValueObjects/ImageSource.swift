@@ -11,21 +11,21 @@ import UIKit
 enum ImageSource: Hashable {
     case uiImage(UIImage)
     case url(String)
-    case applicatinoSupport(String)
-    case documents(String)
+    case storagePath(String)
 
-    func getUiImage() async throws -> UIImage {
+    func getUiImage(storage: FileStorage?) async throws -> UIImage {
         switch self {
         case .uiImage(let image):
             return image
         case .url(let url):
             let image = try await downloadImage(url)
             return image
-        case .applicatinoSupport(let path):
-            let image = try await LocalStorage.applicationSupport.loadImage(from: path)
-            return image
-        case .documents(let path):
-            let image = try await LocalStorage.documents.loadImage(from: path)
+        case .storagePath(let path):
+            guard let storage else {
+                throw "failed to load image from storage because storage is nil"
+            }
+
+            let image = try await storage.loadImage(from: path)
             return image
         }
     }

@@ -56,8 +56,8 @@ extension SchemaV7 {
                 // check there are images in the storage
                 let _ = try await LocalStorage.applicationSupport.loadImage(from: imagePath)
                 let _ = try await LocalStorage.applicationSupport.loadImage(from: thumbnailPath)
-                imageSource = .applicatinoSupport(imagePath)
-                thumbnailSource = .applicatinoSupport(thumbnailPath)
+                imageSource = .storagePath(imagePath)
+                thumbnailSource = .storagePath(thumbnailPath)
             } catch {
                 imageSource = nil
                 thumbnailSource = nil

@@ -80,8 +80,8 @@ struct Item: Hashable, Identifiable {
     init(id: String, createdAt: Date, updatedAt: Date, option: Option = .init()) {
         self.init(
             id: id,
-            imageSource: .applicatinoSupport(Item.generateImagePath(id, size: Item.imageSize)),
-            thumbnailSource: .applicatinoSupport(Item.generateImagePath(id, size: Item.thumbnailSize)),
+            imageSource: .storagePath(Item.generateImagePath(id, size: Item.imageSize)),
+            thumbnailSource: .storagePath(Item.generateImagePath(id, size: Item.thumbnailSize)),
             option: option,
             createdAt: createdAt,
             updatedAt: updatedAt

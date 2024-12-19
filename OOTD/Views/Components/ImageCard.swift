@@ -62,7 +62,7 @@ struct ImageCard: View {
     var body: some View {
         Group {
             switch source {
-            case .applicatinoSupport, .documents, .uiImage:
+            case .storagePath, .uiImage:
                 if let image {
                     imageView(Image(uiImage: image))
                 } else if isError {
@@ -90,7 +90,7 @@ struct ImageCard: View {
             Task {
                 do {
                     switch source {
-                    case .applicatinoSupport, .documents, .uiImage:
+                    case .storagePath, .uiImage:
                         image = try await source.getUiImage()
                     default:
                         break
