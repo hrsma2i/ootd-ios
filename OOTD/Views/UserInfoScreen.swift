@@ -11,6 +11,8 @@ struct UserInfoScreen: View {
     @EnvironmentObject var itemStore: ItemStore
     @EnvironmentObject var outfitStore: OutfitStore
     @EnvironmentObject var navigation: NavigationManager
+    @EnvironmentObject var snackbarStore: SnackbarStore
+
     @State var activeSheet: ActiveSheet? = nil
     enum ActiveSheet: Int, Identifiable {
         case export,
@@ -54,7 +56,10 @@ struct UserInfoScreen: View {
 
             Task {
                 async let exportItemsTask: () = itemStore.export(to: (repository: LocalJsonItemRepository.shared, storage: LocalStorage.documentsBuckup))
-                async let exportOutfitsTask: () = outfitStore.export(to: (repository: LocalJsonOutfitRepository.shared, storage: LocalStorage.documentsBuckup))
+                async let exportOutfitsTask: () = outfitStore.export(
+                    to: (repository: LocalJsonOutfitRepository.shared, storage: LocalStorage.documentsBuckup),
+                    itemsToJoin: itemStore.items
+                )
 
                 do { try await exportItemsTask } catch { logger.critical("\(error)") }
 
@@ -70,14 +75,16 @@ struct UserInfoScreen: View {
             activeSheet = .import_
 
             Task {
-                async let importItemsTask: () = itemStore.import_(from: (repository: LocalJsonItemRepository.shared, storage: LocalStorage.documentsBuckup))
-                async let importOutfitsTask: () = outfitStore.import_(from: (repository: LocalJsonOutfitRepository.shared, storage: LocalStorage.documentsBuckup))
+                await snackbarStore.notify(logger) {
+                    let fromItemRepository = LocalJsonItemRepository.shared
+                    try await itemStore.import_(from: (repository: fromItemRepository, storage: LocalStorage.documentsBuckup))
 
-                do { try await importItemsTask } catch { logger.critical("\(error)") }
-
-                do { try await importOutfitsTask } catch { logger.critical("\(error)") }
-
-                outfitStore.joinItems(itemStore.items)
+                    let items = try await GetItems(repository: fromItemRepository)()
+                    try await outfitStore.import_(
+                        from: (repository: LocalJsonOutfitRepository.shared, storage: LocalStorage.documentsBuckup),
+                        itemsToJoin: items
+                    )
+                }
 
                 activeSheet = nil
             }

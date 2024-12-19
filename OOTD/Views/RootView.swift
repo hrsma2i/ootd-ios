@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct RootView: View {
     @StateObject private var itemStore = ItemStore(Config.DATA_SOURCE)
     @StateObject private var outfitStore = OutfitStore(Config.DATA_SOURCE)
@@ -57,13 +55,8 @@ struct RootView: View {
         .environmentObject(snackbarStore)
         .task {
             do {
-                async let itemFetch: () = itemStore.fetch()
-                async let outfitFetch: () = outfitStore.fetch()
-
-                try await itemFetch
-                try await outfitFetch
-
-                outfitStore.joinItems(itemStore.items)
+                try await itemStore.fetch()
+                try await outfitStore.fetch(itemsToJoin: itemStore.items)
             } catch {
                 logger.critical("\(error.localizedDescription)")
             }

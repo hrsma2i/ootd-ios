@@ -11,13 +11,21 @@ struct GetOutfits {
     let repository: OutfitRepository
     let storage: FileStorage
 
+    // ItemStore.items から直接渡せるように [Item] にしている。 ItemRepository を引数にしない理由:
+    //   1. ItemStore での取得と合わせて二重で全ての Item を取得してしまうから
+    //   2. 結局 InMemoryRepository しか使わないので
     @MainActor
-    func callAsFunction() async throws -> [Outfit] {
+    func callAsFunction(itemsToJoin: [Item]) async throws -> [Outfit] {
         var outfits = try await repository.findAll()
         // TODO: 順序保証されてれば isParallel: true にしたほうが初回読み込みが速そう
         outfits = await outfits.asyncMap(isParallel: false) {
             await setImageSourceIfExists($0)
         }
+
+        if repository.shouldClientSideJoin {
+            outfits = join(outfits, with: itemsToJoin)
+        }
+
         return outfits
     }
 
@@ -35,5 +43,19 @@ struct GetOutfits {
         }
 
         return outfit
+    }
+
+    private func join(_ outfits: [Outfit], with items: [Item]) -> [Outfit] {
+        let outfits = outfits.map { outfit in
+            if !outfit.items.isEmpty {
+                return outfit
+            }
+
+            return outfit.copyWith(\.items, value: outfit.itemIDs.compactMap { itemID in
+                items.first { $0.id == itemID }
+            })
+        }
+        logger.debug("joined outfits with items at the client side")
+        return outfits
     }
 }

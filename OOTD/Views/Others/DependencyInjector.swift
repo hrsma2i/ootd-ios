@@ -27,7 +27,7 @@ struct DependencyInjector<Content: View>: View {
             Task {
                 do {
                     try await itemStore.fetch()
-                    try await outfitStore.fetch()
+                    try await outfitStore.fetch(itemsToJoin: itemStore.items)
                 }
             }
         }

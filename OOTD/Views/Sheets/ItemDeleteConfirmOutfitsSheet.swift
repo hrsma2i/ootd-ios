@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct ItemDeleteConfirmOutfitsSheet: View {
     let items: [Item]
     let relatedOutfits: [Outfit]
@@ -170,12 +168,12 @@ struct ItemDeleteConfirmOutfitsSheet: View {
 #Preview {
     @MainActor
     struct PreviewView: View {
-        let outfitStore = OutfitStore()
-        let itemStore = ItemStore()
         let items = sampleItems.filter { ["black_cocoon_denim", "white_ma1"].contains($0.id) }
         @State private var outfits: [Outfit] = []
         @State private var path = NavigationPath()
         @State private var isSheetPresented = true
+        @EnvironmentObject var outfitStore: OutfitStore
+        @EnvironmentObject var itemStore: ItemStore
 
         var body: some View {
             Button {
@@ -192,11 +190,6 @@ struct ItemDeleteConfirmOutfitsSheet: View {
                 }
                 .task {
                     do {
-                        try await itemStore.fetch()
-                        try await outfitStore.fetch()
-
-                        outfitStore.joinItems(itemStore.items)
-
                         outfits = try await InMemorySearchOutfits(outfits: outfitStore.outfits)(usingAny: items)
                     } catch {}
                 }
@@ -206,5 +199,7 @@ struct ItemDeleteConfirmOutfitsSheet: View {
         }
     }
 
-    return PreviewView()
+    return DependencyInjector {
+        PreviewView()
+    }
 }
