@@ -68,7 +68,7 @@ struct WebItemDetail: HashableView {
     var cropImageButton: some View {
         Button("切り抜く") {
             Task {
-                let originalImage = try await item.imageSource.getUiImage(storage: LocalStorage.applicationSupport)
+                let originalImage = try await item.imageSource.getUiImage(storage: itemStore.storage)
 
                 navigation.path.append(
                     ImageCropView(uiImage: originalImage) { editedImage in

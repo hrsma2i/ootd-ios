@@ -10,7 +10,7 @@ import Foundation
 
 class OutfitStore: ObservableObject {
     private let repository: OutfitRepository
-    private let storage: FileStorage
+    let storage: FileStorage
     
     @Published var outfits: [Outfit] = []
     @Published var searchText: String = ""

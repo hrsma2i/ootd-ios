@@ -85,7 +85,7 @@ struct ItemDetail: HashableView {
             
             Button {
                 Task {
-                    let originalImage = try await item.imageSource.getUiImage(storage: LocalStorage.applicationSupport)
+                    let originalImage = try await item.imageSource.getUiImage(storage: itemStore.storage)
 
                     navigation.path.append(
                         ImageCropView(uiImage: originalImage) { editedImage in

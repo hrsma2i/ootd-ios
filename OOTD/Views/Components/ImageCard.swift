@@ -20,7 +20,14 @@ struct ImageCard: View {
     @State var image: UIImage? = nil
     @State var isError = false
 
-    private let storage = LocalStorage.applicationSupport
+    private var storage: FileStorage {
+        switch Config.DATA_SOURCE {
+        case .swiftData:
+            return LocalStorage.applicationSupport
+        case .sample:
+            return InMemoryStorage()
+        }
+    }
 
     func imageView(_ image: Image) -> some View {
         AspectRatioContainer(aspectRatio: aspectRatio) {

@@ -10,7 +10,7 @@ import Foundation
 
 class ItemStore: ObservableObject {
     var repository: ItemRepository
-    let storage: FileStorage = LocalStorage.applicationSupport
+    let storage: FileStorage
 
     @Published var items: [Item] = []
     @Published var searchText: String = ""
@@ -29,8 +29,10 @@ class ItemStore: ObservableObject {
         switch repositoryType {
         case .sample:
             repository = SampleItemRepository()
+            storage = InMemoryStorage()
         case .swiftData:
             repository = SwiftDataItemRepository.shared
+            storage = LocalStorage.applicationSupport
         }
 
         initQueries()
@@ -109,7 +111,7 @@ class ItemStore: ObservableObject {
 
         let results = try await AddItems(
             repository: repository,
-            targetStorage: LocalStorage.applicationSupport,
+            targetStorage: storage,
             sourceStorage: nil
         )(items)
         let succeses: [Item] = results.compactMap {
@@ -148,8 +150,8 @@ class ItemStore: ObservableObject {
 
         let results = try await EditItems(
             repository: repository,
-            targetStorage: LocalStorage.applicationSupport,
-            sourceStorage: LocalStorage.applicationSupport
+            targetStorage: storage,
+            sourceStorage: storage
         )(editCommandItems)
 
         for result in results {
@@ -177,12 +179,12 @@ class ItemStore: ObservableObject {
             isWriting = false
         }
 
-        try await DeleteItems(repository: repository)(items)
+        try await DeleteItems(repository: repository, storage: storage)(items)
         self.items.removeAll { item in items.contains { item.id == $0.id } }
     }
 
     func export(to target: (repository: ItemRepository, storage: FileStorage), limit: Int? = nil) async throws {
-        let results = try await MigrateItems(
+        _ = try await MigrateItems(
             source: (repository: repository, storage: storage),
             target: target
         )()

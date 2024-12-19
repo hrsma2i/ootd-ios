@@ -9,6 +9,7 @@ import Foundation
 
 struct DeleteItems {
     let repository: ItemRepository
+    let storage: FileStorage
 
     func callAsFunction(_ items: [Item]) async throws {
         // TODO: とりあえず、DB書き込み or 画像保存の片方が失敗したときの、もう片方の rollback は後回しにしてる
@@ -26,7 +27,7 @@ struct DeleteItems {
         // Item.imageSource == .localPath のときだけ削除するのはダメ
         // create したばかりのアイテムをすぐ削除しようとすると imageSource = .uiImage | .url となり、
         // LocalStorage に保存した画像が削除されなくなる
-        try await LocalStorage.applicationSupport.remove(at: item.imagePath)
-        try await LocalStorage.applicationSupport.remove(at: item.thumbnailPath)
+        try await storage.remove(at: item.imagePath)
+        try await storage.remove(at: item.thumbnailPath)
     }
 }

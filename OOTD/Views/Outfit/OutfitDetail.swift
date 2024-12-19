@@ -76,7 +76,7 @@ struct OutfitDetail: HashableView {
     var cropImageButton: some View {
         Button("切り抜く") {
             Task {
-                guard let originalImage = try await outfit.imageSource?.getUiImage(storage: LocalStorage.applicationSupport) else { return }
+                guard let originalImage = try await outfit.imageSource?.getUiImage(storage: outfitStore.storage) else { return }
 
                 navigation.path.append(
                     ImageCropView(uiImage: originalImage) { editedImage in
