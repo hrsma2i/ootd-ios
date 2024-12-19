@@ -12,6 +12,7 @@ extension Item: Codable {
         case id,
              name,
              category,
+             tags,
              purchasedPrice,
              purchasedOn,
              createdAt,
@@ -29,6 +30,7 @@ extension Item: Codable {
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         try container.encode(category, forKey: .category)
+        try container.encode(tags, forKey: .tags)
         try container.encode(purchasedPrice, forKey: .purchasedPrice)
         try container.encode(purchasedOn, forKey: .purchasedOn)
         try container.encode(createdAt, forKey: .createdAt)
@@ -48,6 +50,7 @@ extension Item: Codable {
         thumbnailSource = .storagePath(Item.generateImagePath(id, size: Item.thumbnailSize))
         name = try container.decode(String.self, forKey: .name)
         category = try container.decode(Category.self, forKey: .category)
+        tags = try container.decode([String].self, forKey: .tags)
         purchasedPrice = try container.decodeIfPresent(Int.self, forKey: .purchasedPrice)
         purchasedOn = try container.decodeIfPresent(Date.self, forKey: .purchasedOn)
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)

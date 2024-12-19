@@ -11,13 +11,18 @@ extension Outfit: Codable {
     enum CodingKeys: String, CodingKey {
         case id,
              itemIds = "item_ids",
-             tags
+             tags,
+             createdAt,
+             updatedAt
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encode(itemIDs, forKey: .itemIds)
+        try container.encode(tags, forKey: .tags)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(updatedAt, forKey: .updatedAt)
     }
 
     init(from decoder: any Decoder) throws {
@@ -26,6 +31,8 @@ extension Outfit: Codable {
         itemIDs = try container.decode([String].self, forKey: .itemIds)
         items = []
         tags = try container.decode([String].self, forKey: .tags)
+        createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
+        updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
     }
 }
 
