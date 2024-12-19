@@ -8,6 +8,8 @@
 import Foundation
 
 class SampleOutfitRepository: OutfitRepository {
+    var shouldClientSideJoin: { false }
+
     func findAll() async throws -> [Outfit] {
         sampleOutfits
     }

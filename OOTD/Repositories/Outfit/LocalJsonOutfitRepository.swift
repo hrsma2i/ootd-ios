@@ -37,6 +37,8 @@ extension Outfit: Codable {
 }
 
 struct LocalJsonOutfitRepository: OutfitRepository {
+    var shouldClientSideJoin: Bool { true }
+
     static let shared: LocalJsonOutfitRepository = .init()
 
     private init() {}

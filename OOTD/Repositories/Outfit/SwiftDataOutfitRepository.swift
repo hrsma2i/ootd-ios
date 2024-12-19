@@ -13,6 +13,7 @@ import UIKit
 typealias OutfitDTO = SchemaV7.OutfitDTO
 
 final class SwiftDataOutfitRepository: OutfitRepository {
+    var shouldClientSideJoin: Bool { true }
     var context: ModelContext
 
     @MainActor

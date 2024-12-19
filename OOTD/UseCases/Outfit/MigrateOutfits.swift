@@ -19,8 +19,8 @@ struct MigrateOutfits {
         (String(describing: type(of: target.repository)), target.storage.id)
     }
 
-    func callAsFunction() async throws -> [(outfit: Outfit, error: Error?)] {
-        var results = try await migrateData()
+    func callAsFunction(itemsToJoin: [Item]) async throws -> [(outfit: Outfit, error: Error?)] {
+        var results = try await migrateData(itemsToJoin: itemsToJoin)
 
         if source.storage.id != target.storage.id {
             results = try await migrateImages(results: results)
@@ -31,9 +31,12 @@ struct MigrateOutfits {
         return results
     }
 
-    private func migrateData() async throws -> [(outfit: Outfit, error: Error?)] {
+    private func migrateData(itemsToJoin: [Item]) async throws -> [(outfit: Outfit, error: Error?)] {
         // repository.findAll ではなく GetOutfits を使う。なぜなら、 Outfit.imageSource を設定しなければいけないから。 storage に画像があれば設定される。
-        let outfits = try await GetOutfits(repository: source.repository, storage: source.storage)()
+        let outfits = try await GetOutfits(
+            repository: source.repository,
+            storage: source.storage
+        )(itemsToJoin: itemsToJoin)
         do {
             try await target.repository.save(outfits)
             logger.debug("migrated outfits from \(sourceName.repository) to \(targetName.repository)")

@@ -57,9 +57,9 @@ class OutfitStore: ObservableObject {
     }
     
     @MainActor
-    func fetch() async throws {
+    func fetch(itemsToJoin: [Item]) async throws {
         logger.debug("fetch outfits")
-        outfits = try await GetOutfits(repository: repository, storage: storage)()
+        outfits = try await GetOutfits(repository: repository, storage: storage)(itemsToJoin: itemsToJoin)
     }
     
     @MainActor
@@ -107,19 +107,6 @@ class OutfitStore: ObservableObject {
         }
     }
     
-    func joinItems(_ items: [Item]) {
-        logger.debug("join items")
-        outfits = outfits.map { outfit in
-            if !outfit.items.isEmpty {
-                return outfit
-            }
-            
-            return outfit.copyWith(\.items, value: outfit.itemIDs.compactMap { itemID in
-                items.first { $0.id == itemID }
-            })
-        }
-    }
-    
     @MainActor
     func delete(_ outfits: [Outfit]) async throws {
         isWriting = true
@@ -134,18 +121,18 @@ class OutfitStore: ObservableObject {
         self.outfits.removeAll { outfit in outfits.contains { outfit.id == $0.id } }
     }
     
-    func export(to target: (repository: OutfitRepository, storage: FileStorage), limit: Int? = nil) async throws {
+    func export(to target: (repository: OutfitRepository, storage: FileStorage), itemsToJoin: [Item], limit: Int? = nil) async throws {
         let results = try await MigrateOutfits(
             source: (repository: repository, storage: storage),
             target: target
-        )()
+        )(itemsToJoin: itemsToJoin)
     }
 
-    func import_(from source: (repository: OutfitRepository, storage: FileStorage)) async throws {
+    func import_(from source: (repository: OutfitRepository, storage: FileStorage), itemsToJoin: [Item]) async throws {
         let results = try await MigrateOutfits(
             source: source,
             target: (repository: repository, storage: storage)
-        )()
+        )(itemsToJoin: itemsToJoin)
 
         outfits += results
             .filter { $0.error == nil }
