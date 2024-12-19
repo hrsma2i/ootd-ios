@@ -151,6 +151,8 @@
 		88E3DC3E2CC7D8FF0006D201 /* ItemDTOV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC3A2CC7D8FF0006D201 /* ItemDTOV7.swift */; };
 		88E3DC3F2CC7D8FF0006D201 /* OutfitDTOV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC3B2CC7D8FF0006D201 /* OutfitDTOV7.swift */; };
 		88E3DC402CC7D8FF0006D201 /* SchemaV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3DC3C2CC7D8FF0006D201 /* SchemaV7.swift */; };
+		88EF970D2D13133300DFFD16 /* MigrateItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EF970C2D13133300DFFD16 /* MigrateItems.swift */; };
+		88EF970F2D13244200DFFD16 /* MigrateOutfits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EF970E2D13244200DFFD16 /* MigrateOutfits.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -341,6 +343,8 @@
 		88E3DC3A2CC7D8FF0006D201 /* ItemDTOV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDTOV7.swift; sourceTree = "<group>"; };
 		88E3DC3B2CC7D8FF0006D201 /* OutfitDTOV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutfitDTOV7.swift; sourceTree = "<group>"; };
 		88E3DC3C2CC7D8FF0006D201 /* SchemaV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaV7.swift; sourceTree = "<group>"; };
+		88EF970C2D13133300DFFD16 /* MigrateItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrateItems.swift; sourceTree = "<group>"; };
+		88EF970E2D13244200DFFD16 /* MigrateOutfits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrateOutfits.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -574,6 +578,7 @@
 				884F5A742CF76033004228C6 /* DeleteItems.swift */,
 				884800A02CF7890E00B0E6F1 /* SearchItems.swift */,
 				88E0C9862D071DCB00EAFE8D /* SaveItemImage.swift */,
+				88EF970C2D13133300DFFD16 /* MigrateItems.swift */,
 			);
 			path = Item;
 			sourceTree = "<group>";
@@ -813,6 +818,7 @@
 				888257502D0091CD004A98F6 /* EditOutfits.swift */,
 				8882575D2D0099D7004A98F6 /* SearchOutfits.swift */,
 				880083A02D09E75F008FF387 /* SaveOutfitImage.swift */,
+				88EF970E2D13244200DFFD16 /* MigrateOutfits.swift */,
 			);
 			path = Outfit;
 			sourceTree = "<group>";
@@ -1154,6 +1160,7 @@
 				886232892C7CC71F00A1802D /* SelectedItemsGrid.swift in Sources */,
 				88CD55942C8745C700A9B78A /* ItemAddSelectWebSiteScreen.swift in Sources */,
 				88A036D82CFDEE08003E2E89 /* Color+softRed.swift in Sources */,
+				88EF970F2D13244200DFFD16 /* MigrateOutfits.swift in Sources */,
 				88E0C98D2D087C5700EAFE8D /* InMemoryStorage.swift in Sources */,
 				88B2BCE92C7E0E89008F45B7 /* SwiftDataItemRepository.swift in Sources */,
 				886232402C7CC08600A1802D /* ItemGrid.swift in Sources */,
@@ -1194,6 +1201,7 @@
 				883FCB552CA5AA720001DAAF /* ItemDTOV2.swift in Sources */,
 				886232722C7CC65200A1802D /* ItemDetail.swift in Sources */,
 				886232682C7CC4C600A1802D /* Config.swift in Sources */,
+				88EF970D2D13133300DFFD16 /* MigrateItems.swift in Sources */,
 				884F5A732CF63626004228C6 /* EditItems.swift in Sources */,
 				882D9FC52CCA80DD003A1338 /* request.swift in Sources */,
 				8862325D2C7CC2FF00A1802D /* OutfitRepository.swift in Sources */,

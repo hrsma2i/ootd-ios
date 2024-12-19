@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct UserInfoScreen: View {
     @EnvironmentObject var itemStore: ItemStore
     @EnvironmentObject var outfitStore: OutfitStore
@@ -55,12 +53,12 @@ struct UserInfoScreen: View {
             activeSheet = .export
 
             Task {
-                async let exportItemsTask: () = itemStore.export(LocalJsonItemRepository.shared)
-                async let exportOutfitsTask: () = outfitStore.export(LocalJsonOutfitRepository.shared)
+                async let exportItemsTask: () = itemStore.export(to: (repository: LocalJsonItemRepository.shared, storage: LocalStorage.documentsBuckup))
+                async let exportOutfitsTask: () = outfitStore.export(to: (repository: LocalJsonOutfitRepository.shared, storage: LocalStorage.documentsBuckup))
 
-                do { try await exportItemsTask } catch { logger.warning("\(error)") }
+                do { try await exportItemsTask } catch { logger.critical("\(error)") }
 
-                do { try await exportOutfitsTask } catch { logger.warning("\(error)") }
+                do { try await exportOutfitsTask } catch { logger.critical("\(error)") }
 
                 activeSheet = nil
             }
@@ -72,12 +70,12 @@ struct UserInfoScreen: View {
             activeSheet = .import_
 
             Task {
-                async let importItemsTask: () = itemStore.import_(LocalJsonItemRepository.shared)
-                async let importOutfitsTask: () = outfitStore.import_(LocalJsonOutfitRepository.shared)
+                async let importItemsTask: () = itemStore.import_(from: (repository: LocalJsonItemRepository.shared, storage: LocalStorage.documentsBuckup))
+                async let importOutfitsTask: () = outfitStore.import_(from: (repository: LocalJsonOutfitRepository.shared, storage: LocalStorage.documentsBuckup))
 
-                do { try await importItemsTask } catch { logger.warning("\(error)") }
+                do { try await importItemsTask } catch { logger.critical("\(error)") }
 
-                do { try await importOutfitsTask } catch { logger.warning("\(error)") }
+                do { try await importOutfitsTask } catch { logger.critical("\(error)") }
 
                 outfitStore.joinItems(itemStore.items)
 

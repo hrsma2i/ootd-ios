@@ -181,34 +181,21 @@ class ItemStore: ObservableObject {
         self.items.removeAll { item in items.contains { item.id == $0.id } }
     }
 
-    func export(_ target: ItemRepository, limit: Int? = nil) async throws {
-        logger.debug("export to \(String(describing: type(of: target)))")
-
-        let items: [Item]
-        if let limit {
-            items = Array(self.items.prefix(limit))
-        } else {
-            items = self.items
-        }
-
-        try await target.save(items)
+    func export(to target: (repository: ItemRepository, storage: FileStorage), limit: Int? = nil) async throws {
+        let results = try await MigrateItems(
+            source: (repository: repository, storage: storage),
+            target: target
+        )()
     }
 
-    func import_(_ source: ItemRepository) async throws {
-        logger.debug("import from \(String(describing: type(of: source)))")
+    func import_(from source: (repository: ItemRepository, storage: FileStorage)) async throws {
+        let results = try await MigrateItems(
+            source: source,
+            target: (repository: repository, storage: storage)
+        )()
 
-        var items = try await source.findAll()
-
-        items = items.filter { item in
-            !self.items.contains { item_ in
-                item.id == item_.id
-            }
-        }
-
-        guard !items.isEmpty else {
-            throw "no items to import"
-        }
-
-        try await create(items)
+        items += results
+            .filter { $0.error == nil }
+            .map { $0.item }
     }
 }
