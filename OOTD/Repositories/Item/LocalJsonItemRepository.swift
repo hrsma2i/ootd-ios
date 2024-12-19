@@ -12,6 +12,7 @@ extension Item: Codable {
         case id,
              name,
              category,
+             tags,
              purchasedPrice,
              purchasedOn,
              createdAt,
@@ -29,6 +30,7 @@ extension Item: Codable {
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         try container.encode(category, forKey: .category)
+        try container.encode(tags, forKey: .tags)
         try container.encode(purchasedPrice, forKey: .purchasedPrice)
         try container.encode(purchasedOn, forKey: .purchasedOn)
         try container.encode(createdAt, forKey: .createdAt)
@@ -44,10 +46,11 @@ extension Item: Codable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        imageSource = .applicatinoSupport(Item.generateImagePath(id, size: Item.imageSize))
-        thumbnailSource = .applicatinoSupport(Item.generateImagePath(id, size: Item.thumbnailSize))
+        imageSource = .storagePath(Item.generateImagePath(id, size: Item.imageSize))
+        thumbnailSource = .storagePath(Item.generateImagePath(id, size: Item.thumbnailSize))
         name = try container.decode(String.self, forKey: .name)
         category = try container.decode(Category.self, forKey: .category)
+        tags = try container.decode([String].self, forKey: .tags)
         purchasedPrice = try container.decodeIfPresent(Int.self, forKey: .purchasedPrice)
         purchasedOn = try container.decodeIfPresent(Date.self, forKey: .purchasedOn)
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
@@ -64,6 +67,8 @@ extension Item: Codable {
 struct LocalJsonItemRepository: ItemRepository {
     static let shared: LocalJsonItemRepository = .init()
 
+    private let storage = LocalStorage.documentsBuckup
+
     private init() {}
 
     let className = String(describing: Self.self)
@@ -72,42 +77,40 @@ struct LocalJsonItemRepository: ItemRepository {
         "[\(className).\(#function)]"
     }
 
-    func backup(_ path: String) -> String {
-        "backup/\(path)"
-    }
+    private let jsonName = "items.json"
 
     func findAll() async throws -> [Item] {
         let decoder = JSONDecoder()
-        let data = try await LocalStorage.documents.load(from: backup("items.json"))
-        var items = try decoder.decode([Item].self, from: data)
-        items = items.map { item in
-            item.copyWith(\.imageSource, value: .documents(backup(item.imagePath)))
+        guard let data = try? await storage.load(from: jsonName) else {
+            return []
         }
+        let items = try decoder.decode([Item].self, from: data)
+        logger.debug("fetched \(items.count) items")
         return items
     }
 
     func save(_ items: [Item]) async throws -> [(item: Item, error: Error?)] {
+        var allItems = try await findAll()
+
+        for newItem in items {
+            if let index = allItems.firstIndex(where: { $0.id == newItem.id }) {
+                allItems[index] = newItem
+            }
+            allItems.append(newItem)
+        }
+
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted // オプション: JSONを読みやすくフォーマット
 
-        let imageSaveResults: [(item: Item, error: Error?)] = await items.asyncMap(isParallel: false) { item in
-            do {
-                let image = try await item.imageSource.getUiImage()
-                try await LocalStorage.documents.saveImage(image: image, to: backup(item.imagePath))
-                return (item: item, error: nil)
-            } catch {
-                return (item: item, error: error)
-            }
+        do {
+            let jsonData = try encoder.encode(allItems)
+            try await storage.save(data: jsonData, to: jsonName)
+            logger.debug("saved \(items.count) items")
+            return items.map { ($0, nil) }
+        } catch {
+            logger.debug("failed to save items: \(error)")
+            return items.map { ($0, error) }
         }
-
-        let itemsImageSaveSuccess: [Item] = imageSaveResults.compactMap {
-            $0.error == nil ? $0.item : nil
-        }
-
-        let jsonData = try encoder.encode(itemsImageSaveSuccess)
-        try await LocalStorage.documents.save(data: jsonData, to: backup("items.json"))
-
-        return imageSaveResults
     }
 
     func delete(_ items: [Item]) async throws {

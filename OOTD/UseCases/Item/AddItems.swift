@@ -9,12 +9,19 @@ import Foundation
 
 struct AddItems {
     let repository: ItemRepository
-    let storage: FileStorage
+    let targetStorage: FileStorage
+    let sourceStorage: FileStorage?
+
+    init(repository: ItemRepository, targetStorage: FileStorage, sourceStorage: FileStorage?) {
+        self.repository = repository
+        self.targetStorage = targetStorage
+        self.sourceStorage = sourceStorage
+    }
 
     func callAsFunction(_ items: [Item]) async throws -> [(item: Item, error: Error?)] {
         let saveResults = try await repository.save(items)
 
-        let saveImage = SaveItemImage(storage: storage)
+        let saveImage = SaveItemImage(target: targetStorage, source: sourceStorage)
         let imageSaveResults: [(item: Item, error: Error?)] = await saveResults.asyncMap(isParallel: false) { result in
             if result.error != nil {
                 return result
@@ -46,11 +53,11 @@ struct AddItems {
 
         for item in items {
             await safeDo {
-                try await storage.remove(at: item.imagePath)
+                try await targetStorage.remove(at: item.imagePath)
             }
 
             await safeDo {
-                try await storage.remove(at: item.thumbnailPath)
+                try await targetStorage.remove(at: item.thumbnailPath)
             }
         }
     }

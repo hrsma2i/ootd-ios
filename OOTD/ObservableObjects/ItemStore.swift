@@ -10,6 +10,7 @@ import Foundation
 
 class ItemStore: ObservableObject {
     var repository: ItemRepository
+    let storage: FileStorage
 
     @Published var items: [Item] = []
     @Published var searchText: String = ""
@@ -28,8 +29,10 @@ class ItemStore: ObservableObject {
         switch repositoryType {
         case .sample:
             repository = SampleItemRepository()
+            storage = InMemoryStorage()
         case .swiftData:
             repository = SwiftDataItemRepository.shared
+            storage = LocalStorage.applicationSupport
         }
 
         initQueries()
@@ -106,7 +109,11 @@ class ItemStore: ObservableObject {
                 .copyWith(\.purchasedOn, value: $0.purchasedOn ?? now)
         }
 
-        let results = try await AddItems(repository: repository, storage: LocalStorage.applicationSupport)(items)
+        let results = try await AddItems(
+            repository: repository,
+            targetStorage: storage,
+            sourceStorage: nil
+        )(items)
         let succeses: [Item] = results.compactMap {
             $0.error == nil ? $0.item : nil
         }
@@ -143,7 +150,8 @@ class ItemStore: ObservableObject {
 
         let results = try await EditItems(
             repository: repository,
-            storage: LocalStorage.applicationSupport
+            targetStorage: storage,
+            sourceStorage: storage
         )(editCommandItems)
 
         for result in results {
@@ -171,38 +179,25 @@ class ItemStore: ObservableObject {
             isWriting = false
         }
 
-        try await DeleteItems(repository: repository)(items)
+        try await DeleteItems(repository: repository, storage: storage)(items)
         self.items.removeAll { item in items.contains { item.id == $0.id } }
     }
 
-    func export(_ target: ItemRepository, limit: Int? = nil) async throws {
-        logger.debug("export to \(String(describing: type(of: target)))")
-
-        let items: [Item]
-        if let limit {
-            items = Array(self.items.prefix(limit))
-        } else {
-            items = self.items
-        }
-
-        try await target.save(items)
+    func export(to target: (repository: ItemRepository, storage: FileStorage), limit: Int? = nil) async throws {
+        _ = try await MigrateItems(
+            source: (repository: repository, storage: storage),
+            target: target
+        )()
     }
 
-    func import_(_ source: ItemRepository) async throws {
-        logger.debug("import from \(String(describing: type(of: source)))")
+    func import_(from source: (repository: ItemRepository, storage: FileStorage)) async throws {
+        let results = try await MigrateItems(
+            source: source,
+            target: (repository: repository, storage: storage)
+        )()
 
-        var items = try await source.findAll()
-
-        items = items.filter { item in
-            !self.items.contains { item_ in
-                item.id == item_.id
-            }
-        }
-
-        guard !items.isEmpty else {
-            throw "no items to import"
-        }
-
-        try await create(items)
+        items += results
+            .filter { $0.error == nil }
+            .map { $0.item }
     }
 }

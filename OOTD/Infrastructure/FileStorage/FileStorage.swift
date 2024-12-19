@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 
 protocol FileStorage {
+    var id: String { get }
+
     func save(data: Data, to: String) async throws
 
     func load(from: String) async throws -> Data
@@ -19,6 +21,10 @@ protocol FileStorage {
 }
 
 extension FileStorage {
+    var id: String {
+        String(describing: Self.self)
+    }
+
     func saveImage(image: UIImage, to: String) async throws {
         guard let data = image.pngData() else {
             throw "failed to convert UIImage to Data"

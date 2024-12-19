@@ -9,7 +9,14 @@ import Foundation
 
 struct AddOutfits {
     let repository: OutfitRepository
-    let storage: FileStorage
+    let targetStorage: FileStorage
+    let sourceStorage: FileStorage?
+
+    init(repository: OutfitRepository, targetStorage: FileStorage, sourceStorage: FileStorage?) {
+        self.repository = repository
+        self.targetStorage = targetStorage
+        self.sourceStorage = sourceStorage
+    }
 
     func callAsFunction(_ outfits: [Outfit]) async throws {
         // TODO: とりあえず、DB書き込み or 画像保存の片方が失敗したときの、もう片方の rollback は後回しにしてる
@@ -20,7 +27,7 @@ struct AddOutfits {
     }
 
     private func saveImages(_ outfits: [Outfit]) async -> [Outfit] {
-        let saveOutfitImage = SaveOutfitImage(storage: storage)
+        let saveOutfitImage = SaveOutfitImage(target: targetStorage, source: sourceStorage)
 
         var successOutfits: [Outfit] = []
         for outfit in outfits {

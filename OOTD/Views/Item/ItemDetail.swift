@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct ItemDetail: HashableView {
     @State var items: [Item]
     let mode: DetailMode
@@ -87,7 +85,7 @@ struct ItemDetail: HashableView {
             
             Button {
                 Task {
-                    let originalImage = try await item.imageSource.getUiImage()
+                    let originalImage = try await item.imageSource.getUiImage(storage: itemStore.storage)
 
                     navigation.path.append(
                         ImageCropView(uiImage: originalImage) { editedImage in
